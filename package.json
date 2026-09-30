@@ -1,0 +1,38 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build:local": "env-cmd -f .env.dev vite build",
+        "build:dev": "env-cmd -f .env.dev vite build && copy .\\public\\.htaccess_dev.txt .\\public\\build\\.htaccess",
+        "build:prod": "env-cmd -f .env.production vite build && copy .\\public\\.htaccess_dev.txt .\\public\\build\\.htaccess",
+        "build:asse": "env-cmd -f .env.assefrak vite build && copy .\\public\\.htaccess_dev.txt .\\public\\build\\.htaccess",
+        "build": "vite build",
+        "dev": "env-cmd -f .env.devassefrak vite"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.0.0",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^3.1",
+        "tailwindcss": "^4.0.0",
+        "vite": "^8.0.0"
+    },
+    "dependencies": {
+        "@coreui/coreui": "^5.9.0",
+        "@coreui/react": "^5.13.0",
+        "@fortawesome/fontawesome-svg-core": "^7.3.1",
+        "@fortawesome/free-solid-svg-icons": "^7.3.1",
+        "@fortawesome/react-fontawesome": "^3.5.0",
+        "@inertiajs/react": "^3.6.1",
+        "@vitejs/plugin-react": "^6.0.5",
+        "env-cmd": "^11.0.0",
+        "imask": "^7.6.1",
+        "isotope-layout": "^3.0.6",
+        "jquery": "^4.0.0",
+        "react": "^19.2.8",
+        "react-datepicker": "^9.1.0",
+        "react-dom": "^19.2.8",
+        "react-imask": "^7.6.1",
+        "swiper": "^14.1.0"
+    }
+}
