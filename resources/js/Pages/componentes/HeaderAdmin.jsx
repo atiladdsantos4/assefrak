@@ -147,6 +147,8 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'CategoriaVideo')}>Nova Categoria Vídeos</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaVideos')}>Lista de Vídeos</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Video')}>Novo Vídeo</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaDepartamento')}>Lista Departamentos</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'Departamento')}>Novo Departamento</a></li>
                             {/* <li><a href="#" onClick={(e)=>handleClick(e,'ListaEditoras')}>Lista Editoras</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Editora')}>Nova Editora</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaLivros')}>Lista Livros</a></li>

@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\PHPMailerController;
 use App\Http\Controllers\Api\InscricaoController;
 use App\Http\Controllers\Api\CategoriaVideoController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\DepartamentoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -79,5 +80,5 @@ Route::apiResource('email',PHPMailerController::class)->middleware('auth:sanctum
 Route::apiResource('inscricao',InscricaoController::class)->middleware('auth:sanctum');
 Route::apiResource('categoriavideo',CategoriaVideoController::class)->middleware('auth:sanctum');
 Route::apiResource('video',VideoController::class)->middleware('auth:sanctum');
-
+Route::apiResource('departamento',DepartamentoController::class)->middleware('auth:sanctum');
 
