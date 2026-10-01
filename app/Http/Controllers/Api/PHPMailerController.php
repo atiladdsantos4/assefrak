@@ -10,6 +10,7 @@ use App\Models\Curso;
 use App\Models\Inscricao;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\ProcessMail;
 
 class PHPMailerController extends Controller
 {
@@ -42,6 +43,21 @@ class PHPMailerController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+        if( isset($input["contato"]) ){
+           ProcessMail::dispatch($request)->onConnection('sync');
+           $resp =  true;
+           if($resp){
+               $response = [
+                    'success' => true,
+                    'message' => 'Contato enviado com sucesso',
+                    'data'    => 'ok'
+               ]; 
+               return response()->json($response, 200); 
+           } else {
+              return;
+           }
+        }
+
         if( isset($input["inscricao"]) ){
           ProcessMail::dispatch($request)->onConnection('sync');
           $email = new PHPMailerController();
@@ -74,32 +90,74 @@ class PHPMailerController extends Controller
     }
 
 
+    public function envia_contato(Request $request){
+       $input = $request->all();
+       $this->email->addAddress($input["email"]);
+       $subject = 'Contato Acolhido';
+       $this->email->Subject = mb_convert_encoding($subject, 'ISO-8859-1', 'UTF-8');
+       $mailData = [
+            'empresa'=> 'Assefrak',
+            'title'=> 'Contato Usuário',
+            'assunto'=> $input["assunto"],
+            'nome'=> $input["nome"],
+            'email'=> $input["email"],
+            'conteudo'=> $input["conteudo"],
+       ];
+       $corpo_email = view('mail.geraContato', [ 'mailData' => $mailData])->render();
+       $this->email->Body  = $corpo_email;
+       $this->email->addCC('atiladdsantos4@gmail.com', 'Atila Santos');
+       //$this->email->addReplyTo('atiladdsantos4@gmail.com', 'Atila Santos');
+       try{
+            if( !$this->email->send() ) {
+                    $response = [
+                        'success' => false,
+                        'message' => 'Problemas no envio do email',
+                        'data'    => $this->email->ErrorInfo
+                    ];
+                    return response()->json($response, 200);
+                    //return back()->with("failed", "Email not sent.")->withErrors($mail->ErrorInfo);
+            }
+            else {
+                $response = [
+                    'success' => true,
+                    'message' => 'Email enviado com Sucesso',
+                ];
+                return $response;
+                //response()->json($response, 200);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            return back()->with('error','Message could not be sent.');
+        }
+    }
+
     public function envia_inscricao(Request $request){
        $input = $request->all();
        $this->email->addAddress($input["ins_email"]);
        $subject = 'Inscriçao Recebida';
        $this->email->Subject = mb_convert_encoding($subject, 'ISO-8859-1', 'UTF-8');
-                    $number =  rand(100000,999999);
-                    $mailData = [
-                        'empresa'=> 'Assefrak',
-                        'title'=> 'Inscrição Confirmada',
-                        'titulo'=> $input["titulo"],
-                        'periodo'=> $input["periodo"],
-                        'nome'=> $input["ins_nome"],
-                        'email'=> $input["ins_email"],
-                        'telefone'=> $input["ins_telefone"],
-                        'n1' => substr($number,0,1),
-                        'n2' => substr($number,1,1),
-                        'n3' => substr($number,2,1),
-                        'n4' => substr($number,3,1),
-                        'n5' => substr($number,4,1),
-                        'n6' => substr($number,5,1),
-                    ];
+       $number =  rand(100000,999999);
+       $mailData = [
+            'empresa'=> 'Assefrak',
+            'title'=> 'Inscrição Confirmada',
+            'titulo'=> $input["titulo"],
+            'periodo'=> $input["periodo"],
+            'nome'=> $input["ins_nome"],
+            'email'=> $input["ins_email"],
+            'telefone'=> $input["ins_telefone"],
+            'n1' => substr($number,0,1),
+            'n2' => substr($number,1,1),
+            'n3' => substr($number,2,1),
+            'n4' => substr($number,3,1),
+            'n5' => substr($number,4,1),
+            'n6' => substr($number,5,1),
+       ];
        $corpo_email = view('mail.geraInscricao', [ 'mailData' => $mailData])->render();
     //    $imagePath = Storage::disk('inertia_img')->path('img/logo_email.png');
     //    $cid = 'my_embedded_image';
     //    $this->email->AddEmbeddedImage($imagePath, $cid, 'logo.png');
        $this->email->Body  = $corpo_email;
+       $this->email->addReplyTo('atiladdsantos4@gmail.com', 'Atila Santos');
        try{
             if( !$this->email->send() ) {
                     $response = [
