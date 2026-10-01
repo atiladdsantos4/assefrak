@@ -8,6 +8,7 @@ use PHPMailer\PHPMailer\Exception;
 use App\Models\CodigoEmail;
 use App\Models\Curso;
 use App\Models\Inscricao;
+use App\Models\Departamento;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\ProcessMail;
@@ -51,8 +52,8 @@ class PHPMailerController extends Controller
                     'success' => true,
                     'message' => 'Contato enviado com sucesso',
                     'data'    => 'ok'
-               ]; 
-               return response()->json($response, 200); 
+               ];
+               return response()->json($response, 200);
            } else {
               return;
            }
@@ -105,7 +106,8 @@ class PHPMailerController extends Controller
        ];
        $corpo_email = view('mail.geraContato', [ 'mailData' => $mailData])->render();
        $this->email->Body  = $corpo_email;
-       $this->email->addCC('atiladdsantos4@gmail.com', 'Atila Santos');
+       $emailCC = Departamento::BuscaEmail('Acolhimento');
+       $this->email->addCC($emailCC, 'Acolhimento');
        //$this->email->addReplyTo('atiladdsantos4@gmail.com', 'Atila Santos');
        try{
             if( !$this->email->send() ) {
@@ -152,12 +154,14 @@ class PHPMailerController extends Controller
             'n5' => substr($number,4,1),
             'n6' => substr($number,5,1),
        ];
-       $corpo_email = view('mail.geraInscricao', [ 'mailData' => $mailData])->render();
+       $corpo = view('mail.geraInscricao', [ 'mailData' => $mailData])->render();
+       $corpo_email = mb_convert_encoding($corpo, 'ISO-8859-1', 'UTF-8');
     //    $imagePath = Storage::disk('inertia_img')->path('img/logo_email.png');
     //    $cid = 'my_embedded_image';
     //    $this->email->AddEmbeddedImage($imagePath, $cid, 'logo.png');
        $this->email->Body  = $corpo_email;
-       $this->email->addReplyTo('atiladdsantos4@gmail.com', 'Atila Santos');
+       $emailCC = Departamento::BuscaEmail('Eventos');
+       $this->email->addCC($emailCC, 'Eventos');
        try{
             if( !$this->email->send() ) {
                     $response = [

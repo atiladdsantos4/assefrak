@@ -19,6 +19,7 @@ class DepartamentoController extends Controller
     public function index(Request $request)
     {
         $all = $request->all();
+        $valor = Departamento::BuscaEmail('Acolhimento');
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
            $result_dep = Departamento::orderBy('dep_descricao')->get();
