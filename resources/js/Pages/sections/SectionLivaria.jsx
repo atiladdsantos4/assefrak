@@ -26,6 +26,7 @@ const SectionLivraria = (props) => {
   const [openmodal,setOpenmodal] = useState(false)
   const [loadpage,setLoadPage] = useState(true)
   const [estdiv,setEstdiv] = useState(true)
+  const [idlivro,setIdlivro] = useState('')
   const [livro,setLivro] = useState('')
   const [autor,setAutor] = useState('')
   const [preco,setPreco] = useState(0)
@@ -157,6 +158,7 @@ const SectionLivraria = (props) => {
               item.liv_id_liv === id ? { ...item, load: false } : item
           )
       )
+      setIdlivro(id)
       setOpenmodal(true)
     })
 
@@ -659,7 +661,7 @@ const ordena = (event,valor) =>{
             </div> ) : (<div style={{top:'20px',textAlign:'center'}}><CSpinner color="primary"/></div>)}
 
         </section>
-        <ModalQrCode livro={livro} autor={autor} valor={preco}  copia={copia} imagem={img} isOpen={openmodal} close={setOpenmodal}/>
+        <ModalQrCode livro={livro} autor={autor} valor={preco}  copia={copia} imagem={img} idlivro={idlivro} isOpen={openmodal} close={setOpenmodal}/>
 
     </>
   )
