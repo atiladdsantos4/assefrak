@@ -34,6 +34,10 @@ class Departamento extends Model
         'dep_deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    public static function BuscaEmail($param){
+       $resp = Departamento::where('dep_descricao',$param)->first();
+       return $resp->dep_email;
+    }
     // public function agendamentos(){ //--> especilidade
     //   return $this->hasMany(ClienteAgendado::class, 'cla_id_dep', 'dep_id_dep');
     //   //->makeHidden(['dataini', 'datafim']);
