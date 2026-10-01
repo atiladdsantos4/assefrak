@@ -1,7 +1,36 @@
-import { React,useEffect, useState } from 'react';
-// import { NavbarComp } from '../layouts/NavbarComp';
-// import { SidebarComp } from '../layouts/SidebarComp';
-
+import { React, useEffect, useState, Suspense, useRef } from 'react';
+import {
+    CTable,
+    CTableRow,
+    CTableHeaderCell,
+    CTableBody,
+    CTableDataCell,
+    CTableHead,
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CInputGroup,
+    CInputGroupText,
+    CFormInput,
+    CPagination,
+    CPaginationItem,
+    CCardText,
+    CButton,
+    CSpinner,
+    CFormSelect,
+    CBadge,
+    CRow,
+    CCol,
+    CPlaceholder,
+    CFormCheck,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose,
+    CForm,
+    CAlert 
+} from '@coreui/react'
+import axios from 'axios';
 
 
 // The Main component receives props passed from the Laravel controller
@@ -9,8 +38,65 @@ const SectionContact = (props) => {
   const { path }= props
   const theme_dark = import.meta.env.VITE_APP_THEME_DARK
   const theme_light = import.meta.env.VITE_APP_THEME_LIGHT
-  const [name,setName] = useState('')
+  const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
+  const token  = import.meta.env.VITE_APP_TOKEN
+  const [nome,setNome] = useState('')
+  const [email,setEmail] = useState('')
+  const [assunto,setAssunto] = useState('')
+  const [conteudo,setConteudo] = useState('')
+  const [loademail, setLoademail] = useState(false)
+  const [validated, setValidated] = useState(false)
+  const [showAlert,setShowAlert ] = useState(false)
+  const [textAlert,settextAlert] = useState(false)
+  
 
+
+  const handleSubmit = (event) => {
+       console.log('submit')
+       const form = event.currentTarget
+       let erro = false
+       if (form.checkValidity() === false) {
+            event.preventDefault()
+            event.stopPropagation()
+            erro = true
+       }
+       event.preventDefault()
+       setValidated(true)
+       if(erro == false){
+          EnviaEmail()
+          //EnviaInscricao(event,erro)
+          // let valor = CriaJsonItens()
+          // console.log(valor)
+       }
+  }
+
+  const EnviaEmail = () =>{
+    setLoademail(true)
+    const formData = new FormData()
+    formData.append('nome', nome)
+    formData.append('email', email)//atiladdsantos4@gmail.com
+    formData.append('assunto', assunto)
+    formData.append('conteudo', conteudo)
+    formData.append('contato', 'S')
+    axios
+      .post(`${endpoint}/email`, formData, {
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + token,//dentro do env//
+        },
+    })
+    .then((result) => {
+        setLoademail(false)
+        settextAlert('Email Enviado com Sucesso!!!')
+        setShowAlert(true)
+        setTimeout(() => {
+            setShowAlert(false)
+            setValidated(false)
+        }, 2000)
+    })
+
+ }
 
   return (
       <section id="contact" className="contact section">
@@ -65,37 +151,61 @@ const SectionContact = (props) => {
                   <h3>Compartilhe conosco sua a sua visão sobre nós</h3>
                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere.</p>
                 </div>
-
-                <form action="forms/contact.php" method="post" className="php-email-form">
+                <CAlert color="info" visible={showAlert} variant="solid">{textAlert}</CAlert>
+                <CForm className="row g-3 needs-validation php-email-form" noValidate  id="form-contato" onSubmit={handleSubmit} validated={validated}>
                   <div className="row gy-3">
                     <div className="col-md-4">
                       <div className="input-group-custom">
                         <i className="bi bi-person"></i>
                         <input
                            type="text"
-                           name="name"
+                           name="nome"
                            className="form-control"
                            placeholder="Nome Completo"
-                           onChange={(e) => setName(e.target.value)}
-                           required=""/>
+                           value={nome}
+                           onChange={(e) => setNome(e.target.value)}
+                           required/>
+                           <div class="invalid-feedback" id="button-addon1">O Nome Precisa Preenchido</div>
                       </div>
                     </div>
                     <div className="col-md-4">
                       <div className="input-group-custom">
                         <i className="bi bi-envelope"></i>
-                        <input type="email" name="email" className="form-control" placeholder="Endereço de Email" required="" autocomplete="email"/>
+                        <input 
+                           type="email" 
+                           name="email" 
+                           className="form-control" 
+                           placeholder="Endereço de Email"
+                           value={email}
+                           onChange={(e) => setEmail(e.target.value)} 
+                           required/>
+                           <div class="invalid-feedback" id="button-addon1">O Email Precisa Preenchido</div>
                       </div>
                     </div>
                     <div className="col-md-4">
                       <div className="input-group-custom">
                         <i className="bi bi-tag"></i>
-                        <input type="text" name="subject" className="form-control" placeholder="Assunto" required=""/>
+                        <input type="text" 
+                               name="subject" 
+                               value={assunto} 
+                               className="form-control" 
+                               placeholder="Assunto" 
+                               onChange={(e) => setAssunto(e.target.value)} 
+                        required/>
+                        <div class="invalid-feedback" id="button-addon1">O Assunto Precisa Preenchido</div>
                       </div>
                     </div>
                     <div className="col-12">
                       <div className="input-group-custom textarea-group">
                         <i className="bi bi-chat-text"></i>
-                        <textarea name="message" className="form-control" rows="5" placeholder="Detalhes da sua descrição..." required=""></textarea>
+                        <textarea 
+                           name="message" 
+                           className="form-control" 
+                           rows="5" 
+                           placeholder="Detalhes da sua descrição..."
+                           onChange={(e) => setConteudo(e.target.value)}  
+                           required>{conteudo}</textarea>
+                        <div class="invalid-feedback" id="button-addon1">O Conteúdo da Mensagem Precisa Preenchido</div>
                       </div>
                     </div>
                   </div>
@@ -106,12 +216,16 @@ const SectionContact = (props) => {
                       <div className="error-message"></div>
                       <div className="sent-message">Your message has been sent. Thank you!</div>
                     </div>
-                    <button type="submit" className="btn-submit">
+                    <button type="buton" className="btn-submit">
                       <i className="bi bi-rocket-takeoff"></i>
-                      <span>Launch Message</span>
+                      <span>
+                        Enviar Mensagem
+                        &nbsp;
+                        {loademail ? (<CSpinner size="sm" />) : (<></>)}
+                       </span>
                     </button>
                   </div>
-                </form>
+                </CForm>
               </div>
             </div>
           </div>
