@@ -52,6 +52,8 @@ import ListaCategoriaVideo from './listagem/ListaCategoriaVideo';
 import CategoriaVideo from './cadastros/CategoriaVideo';
 import Video from './cadastros/Video';
 import ListaVideo from './listagem/ListaVideo';
+import ListaDepartamento from './listagem/ListaDepartamento';
+import Departamento from './cadastros/Departamento';
 // import SectionAbout from './sections/SectionAbout';
 // import SectionServices from './sections/SectionServices';
 // import SectionWhyUs from './sections/SectionWhyUs';
@@ -258,6 +260,12 @@ const Main = ({ appName }) => {
        break
     case "ListaVideos":
         return(<ListaVideo tela={setTelaatual} altera={setParam}/>)
+       break
+    case "ListaDepartamento":
+        return(<ListaDepartamento tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Departamento":
+        return(<Departamento tela={setTelaatual} param={param}/>)
        break
 
     }

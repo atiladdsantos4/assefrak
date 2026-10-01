@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('vid_id_cav')->nullable();
             $table->string('vid_descricao',500);
             $table->string('vid_hash_link',500);
-            $table->string('vid_ativo',500);
+            $table->char('vid_ativo',1);
             $table->timestamp('vid_created_at');
             $table->timestamp('vid_updated_at')->nullable();
             $table->timestamp('vid_deleted_at')->nullable();
