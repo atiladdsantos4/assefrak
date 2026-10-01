@@ -1,13 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 // import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react'
 import {CAlert, CSpinner,CForm, CRow, CBadge, CCol, CButton, CModal, CModalHeader, CModalTitle, CModalFooter,CModalBody, CInputGroup, CInputGroupText, CFormInput, CFormSelect, CFormTextarea  } from '@coreui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQrcode } from '@fortawesome/free-solid-svg-icons'
+import { faHourglass1, faQrcode } from '@fortawesome/free-solid-svg-icons'
+import { text } from '@fortawesome/fontawesome-svg-core';
+
+
 export const ModalQrCode = (props) => {
 
-  const { isOpen, close, imagem, copia, valor, livro, autor, idscroll } = props
+  const { isOpen, close, imagem, copia, valor, livro, autor, idscroll,idlivro } = props
   const [visible, setVisible] = useState(false)
+  const [horario, setHorario] = useState(0)
+  const [segundot, setSegundot] = useState(10)
+  const [minutot, setMinutot] = useState(2)
   const [showAlert,setShowAlert] = useState(false)
+  const [expirado,setExpirado] = useState(false)
+  const [colorAlert,setcolorAlert] = useState('info')
+  const [textoAlert,settextoAlert] = useState('Link Copiado')
   const largura = {width:'120px',cursor:'pointer'}
 
 
@@ -41,6 +50,15 @@ export const ModalQrCode = (props) => {
     }
   }
 
+  useEffect(()=>{
+      setSegundot(60)
+      setMinutot(9)
+      setExpirado(false)
+      setShowAlert(false)
+      settextoAlert('Link Copiado!!!')
+      setcolorAlert('info')
+  },[idlivro])
+
   const scrollToId = (id) => {
        const element = document.getElementById(id);
        if (element) {
@@ -54,6 +72,65 @@ export const ModalQrCode = (props) => {
        scrollToId(idscroll)
     }, 200)
   }
+
+
+  const MudaSegundo = () =>{
+     let segundo = segundot - 1
+     let saida  = null
+     if(segundo < 10){
+         saida ='0'+segundo
+     } else {
+         saida = segundo
+     }
+     if(segundo == 0){
+       let minuto = minutot - 1
+       setMinutot(minuto)
+       setSegundot(59)
+     } else {
+       setSegundot(saida)
+     }
+  }
+
+  const DateTime = () => {
+    //console.log('renderizei')
+    var [date,setDate] = useState(new Date());
+
+    useEffect(() => {
+
+            //var timer = setInterval(()=>setDate(new Date()), 1000 )
+            var segundo = setInterval(()=>{MudaSegundo()}, 1000 )
+            if(minutot == -1 && segundot == 59){
+                setExpirado(true)
+                settextoAlert('Tempo Expirado!!!')
+                setcolorAlert('danger')
+                setShowAlert(true)
+                setTimeout(() => {
+                    setShowAlert(false)
+                    fechar()
+                }, 3000)
+            }
+            return function cleanup() {
+                //clearInterval(timer)
+                clearInterval(segundo)
+            }
+
+    });
+
+    return(
+         <>
+         <CButton color="primary" style={{backgroundColor:'rgb(104, 149, 193)'}}>
+             Tempo de Espera <CBadge color="light" textColor="danger">{minutot+':'+segundot}</CBadge>
+         </CButton>
+         </>
+        // <div>
+        //      <p> Time : {date.toLocaleTimeString('pt-BR')}</p>
+        //     <p> Date : {date.toLocaleDateString('pt-BR')}</p>
+        //     <p> segundo : {date.getMinutes()+':'+exibeSegundos(date)}</p>
+        //     <p> horario : {horario}</p>
+
+        // </div>
+    )
+}
 
   return (
     <>
@@ -69,8 +146,8 @@ export const ModalQrCode = (props) => {
            </CModalTitle>
         </CModalHeader>
         <CModalBody>
-            <CAlert color="info" visible={showAlert} variant="solid">
-                  Link Copiado
+            <CAlert color={colorAlert} visible={showAlert} variant="solid">
+                  {textoAlert}
             </CAlert>
             <CRow>
                <CCol md={12} xs={12}>
@@ -111,11 +188,24 @@ export const ModalQrCode = (props) => {
                    </CInputGroup>
                </CCol>
            </CRow>
+           <CRow>
+              <CCol md={12} xs={12}>
+                  <p style={{color:'red',fontSize:'13px'}}>
+                    <i class="bi bi-exclamation-circle"></i>
+                    &nbsp;Como não possuímos muitos produtos no estoque você terá até 10 minutos pra concluir o seu pagamento. Clique em "Confirmar Compra" para finalizar a sua compra</p>
+              </CCol>
+           </CRow>
         </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => close()}>
-            Close
-          </CButton>
+        <CModalFooter style={{display:'flex !important'}}>
+             { expirado == false
+             ? (<DateTime/>)
+             : ( <CButton color="primary" style={{backgroundColor:'rgb(104, 149, 193)'}}>Tempo de Espera <CBadge textColor="danger" color="light">{'00:00'}</CBadge></CButton>)}
+             <CButton color="primary" onClick={() => close()}>
+                Confirmar Compra&nbsp;<i class="bi bi-cart-check-fill"></i>
+             </CButton>
+             <CButton color="secondary" onClick={() => close()}>
+               Close
+             </CButton>
         </CModalFooter>
       </CModal>
     </>
