@@ -149,6 +149,12 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'Video')}>Novo Vídeo</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaDepartamento')}>Lista Departamentos</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Departamento')}>Novo Departamento</a></li>
+                            <li class="dropdown"><a href="#"><span>Estoque</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'EntradaEstoque')}>Entradas</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaEntradasEstoque')}>Listagem Entradas</a></li>
+                                </ul>
+                            </li>
                             {/* <li><a href="#" onClick={(e)=>handleClick(e,'ListaEditoras')}>Lista Editoras</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Editora')}>Nova Editora</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaLivros')}>Lista Livros</a></li>

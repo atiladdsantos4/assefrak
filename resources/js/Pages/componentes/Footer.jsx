@@ -13,7 +13,7 @@ const Footer = ({ appName }) => {
   })
 
   return (
-     <footer id="footer" class="footer dark-background">
+     <footer id="footer" class="footer dark-background" style={{zIndex:'10'}}>
 
         <div class="container">
                 <div class="row gy-5">
@@ -112,7 +112,7 @@ const Footer = ({ appName }) => {
                 </div>
         </div>
 
-        <div class="footer-bottom">
+        <div class="footer-bottom" style={{position:'fixed'}}>
             <div class="container">
                 <div class="row align-items-center">
                 <div class="col-lg-6">
@@ -127,10 +127,6 @@ const Footer = ({ appName }) => {
                     <a href="#">Cookie Policy</a>
                     </div>
                     <div class="credits">
-                    {/* <!-- All the links in the footer should remain intact. --> */}
-                    {/* <!-- You can delete the links only if you've purchased the pro version. --> */}
-                    {/* <!-- Licensing information: https://bootstrapmade.com/license/ --> */}
-                    {/* <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] --> */}
                     Designed by <a href="https://bootstrapmade.com/">Átila Santos</a> | <a href="https://bootstrapmade.com/tools/">DevTools</a>
                     </div>
                 </div>
