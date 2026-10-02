@@ -495,7 +495,7 @@ const PrecoLivro = (props) => {
     //console.log(id)
  }
 
-  const SelectLivros = (props) =>{
+ const SelectLivros = (props) =>{
        let array =['badge1','badge2','badge3','badge4','badge5','badge6','badge7']
        let classe = ''
        let idxclasse = -1
