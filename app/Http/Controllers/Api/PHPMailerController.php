@@ -186,6 +186,62 @@ class PHPMailerController extends Controller
         }
 
     }
+    /*
+     $request->merge(['livro' => $saida->entrada->livro->liv_titulo]);
+        $request->merge(['autor' => $saida->entrada->livro->autor->aut_nome]);
+        $request->merge(['valor' => $saida->sae_valor_total]);
+        $request->merge(['qrcode' => $dadospix->lip_qrcode]);
+        $request->merge(['copia' => $dadospix->lip_copy_qrcode]);
+        $request->merge(['email' => $input["email"]]);
+        $request->merge(['compra' => 'S']);
+    */
+
+    public function envia_compra(Request $request){
+       $input = $request->all();
+       $this->email->addAddress($input["email"]);
+       $subject = 'Finalização de Compra';
+       $this->email->Subject = mb_convert_encoding($subject, 'ISO-8859-1', 'UTF-8');
+       $base64Data = substr($input["qrcode"], strpos($input["qrcode"], ",") + 1);
+       $this->email->addStringAttachment(base64_decode($base64Data), 'qrcode.png', 'base64', 'image/png');
+       $number =  rand(100000,999999);
+       $mailData = [
+            'empresa'=> 'Assefrak',
+            'title'=> 'Finalização de Compra',
+            'livro'=> $input["livro"],
+            'autor'=> $input["autor"],
+            'valor'=> $input["valor"],
+            'copia'=> $input["copia"],
+            'hash' => $input["hash"],
+       ];
+       $corpo = view('mail.geraCompra', [ 'mailData' => $mailData])->render();
+       $corpo_email = mb_convert_encoding($corpo, 'ISO-8859-1', 'UTF-8');
+       $this->email->Body  = $corpo_email;
+       $emailCC = Departamento::BuscaEmail('Financeiro');
+       $this->email->addCC($emailCC, 'Financeiro');
+       try{
+            if( !$this->email->send() ) {
+                    $response = [
+                        'success' => false,
+                        'message' => 'Problemas no envio do email',
+                        'data'    => $this->email->ErrorInfo
+                    ];
+                    return response()->json($response, 200);
+                    //return back()->with("failed", "Email not sent.")->withErrors($mail->ErrorInfo);
+            }
+            else {
+                $response = [
+                    'success' => true,
+                    'message' => 'Email enviado com Sucesso',
+                ];
+                return $response;
+                //response()->json($response, 200);
+            }
+        } catch (Exception $e) {
+            dd($e);
+            return back()->with('error','Message could not be sent.');
+        }
+
+    }
 
 
     public function envia_email(Request $request){

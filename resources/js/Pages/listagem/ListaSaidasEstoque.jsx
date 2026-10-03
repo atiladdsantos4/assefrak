@@ -48,7 +48,7 @@ const ListaSaidasEstoque = (props) => {
   const [registroini,setRegistroini] = useState(0)
   const [registrofim,setRegistrofim] = useState(0)
   const [qtderegistros,setQtderegistros] = useState(0)
-  const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
+  const [qtderegistrospagina,setQtderegistrospagina] = useState(10)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
   const [toast, addToast] = useState()//toast
@@ -171,7 +171,7 @@ const ListaSaidasEstoque = (props) => {
       if( tam == 0){
          return(
             <CTableRow color={classe}>
-                <CTableDataCell colspan="9" style={{textAlign:'center'}}>Não há Registros para Listagem</CTableDataCell>
+                <CTableDataCell colspan="12" style={{textAlign:'center'}}>Não há Registros para Listagem</CTableDataCell>
             </CTableRow>
         )
       }
@@ -193,7 +193,6 @@ const ListaSaidasEstoque = (props) => {
                     <CTableDataCell>{item.sae_valor_unit}</CTableDataCell>
                     <CTableDataCell>{item.sae_valor_total}</CTableDataCell>
                     <CTableDataCell>{item.sae_confirmado == 'S' ? <CBadge color="success">Confirmado</CBadge> : <CBadge color="info">Aguardando Confirmação</CBadge>}</CTableDataCell>
-                    {/* <CTableDataCell>{item.sae_cancelado == 'N' ? 'N' : <CBadge color="danger">Cancelado</CBadge>}</CTableDataCell> */}
                     <CTableDataCell><CompCheckbox id={item.sae_id_sae} cancelado={item.sae_cancelado}/>&nbsp;{item.sae_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.sae_cancelado == 'N' ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Suspenso</CBadge>}</CTableDataCell>
                     <CTableDataCell>{item.sae_created_at}</CTableDataCell>
                     <CTableDataCell>{item.sae_updated_at}</CTableDataCell>
@@ -377,7 +376,7 @@ const ListaSaidasEstoque = (props) => {
                         <CTableBody>
                             {load
                             ? (<CorpoTabela lista={listasaida} estado={est}/>)
-                            : (<CTableRow><CTableDataCell colspan="9" style={{textAlign:'center'}}><CSpinner color="info"></CSpinner></CTableDataCell></CTableRow>)}
+                            : (<CTableRow><CTableDataCell colspan="12" style={{textAlign:'center'}}><CSpinner color="info"></CSpinner></CTableDataCell></CTableRow>)}
                         </CTableBody>
                     </CTable>
                     <div>
