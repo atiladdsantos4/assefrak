@@ -13,9 +13,9 @@ const Footer = ({ appName }) => {
   })
 
   return (
-     <footer id="footer" class="footer_admin dark-background">
+     <footer id="footer" class="footer dark-background">
 
-        {/* <div class="container">
+        <div class="container">
                 <div class="row gy-5">
 
                     <div class="col-lg-4">
@@ -110,7 +110,7 @@ const Footer = ({ appName }) => {
                     </div>
 
                 </div>
-        </div> */}
+        </div>
 
         <div class="footer-bottom">
             <div class="container">

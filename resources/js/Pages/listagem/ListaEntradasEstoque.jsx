@@ -95,6 +95,8 @@ const ListaEntradasEstoque = (props) => {
       let classe = null
       let cont = 0
       let tam = props.lista.length
+      let qtde = null
+      let estoque_atual = null
       if( tam == 0){
          return(
             <CTableRow color={classe}>
@@ -105,6 +107,8 @@ const ListaEntradasEstoque = (props) => {
       return(
          props.lista.map((item,index)=>{
             cont++
+            qtde = parseInt(item.ene_saida)
+            estoque_atual = parseInt(item.ene_qtde) - parseInt(item.ene_saida)
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
                return
@@ -116,8 +120,9 @@ const ListaEntradasEstoque = (props) => {
                     <CTableDataCell>{item.ene_id_liv}</CTableDataCell>
                     <CTableDataCell>{item.ene_livro}</CTableDataCell>
                     <CTableDataCell>{item.ene_autor}</CTableDataCell>
-                    <CTableDataCell>{item.ene_qtde}</CTableDataCell>
-                    <CTableDataCell>{item.ene_saida}</CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}>{item.ene_qtde}</CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}>{parseInt(item.ene_saida)}</CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}>{estoque_atual}</CTableDataCell>
                     <CTableDataCell>{item.ene_valor_unit}</CTableDataCell>
                     <CTableDataCell>{item.ene_valor_total}</CTableDataCell>
                     <CTableDataCell>{item.ene_created_at}</CTableDataCell>
@@ -288,8 +293,9 @@ const ListaEntradasEstoque = (props) => {
                                 <CTableHeaderCell className='clthinterno' scope="col">Cod Livro</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Livro</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Autor</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Qdte</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Saída</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col" style={{textAlign:'center'}}>QtdEntrada</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col" style={{textAlign:'center'}}>Saída</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col" style={{textAlign:'center'}}>Estoque</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Valor Unit</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Valor Total</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Criação</CTableHeaderCell>

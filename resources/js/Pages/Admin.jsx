@@ -1,6 +1,5 @@
 import { React, useEffect, useState, Suspense,lazy } from 'react';
 import Footer from './componentes/Footer';
-import FooterAdmin from './componentes/FooterAdmin';
 import HeaderAdmin from './componentes/HeaderAdmin';
 import Acolhido from './cadastros/Acolhido';
 import Passe from './cadastros/Passe';
@@ -57,6 +56,8 @@ import ListaDepartamento from './listagem/ListaDepartamento';
 import Departamento from './cadastros/Departamento';
 import ListaEntradasEstoque from './listagem/ListaEntradasEstoque';
 import EntradaEstoque from './cadastros/EntradaEstoque';
+import ListaSaidasEstoque from './listagem/ListaSaidasEstoque';
+import SaidaEstoque from './cadastros/SaidaEstoque';
 // import SectionAbout from './sections/SectionAbout';
 // import SectionServices from './sections/SectionServices';
 // import SectionWhyUs from './sections/SectionWhyUs';
@@ -276,6 +277,12 @@ const Main = ({ appName }) => {
     case "EntradaEstoque":
         return(<EntradaEstoque tela={setTelaatual} param={param}/>)
        break
+    case "ListaSaidasEstoque":
+        return(<ListaSaidasEstoque tela={setTelaatual} altera={setParam}/>)
+       break
+    case "SaidaEstoque":
+        return(<SaidaEstoque tela={setTelaatual} param={param}/>)
+       break
 
     }
 
@@ -291,7 +298,7 @@ const Main = ({ appName }) => {
                 </Suspense>
                 {/* <Acolhido/> */}
             </main>
-           <FooterAdmin/>
+           <Footer/>
         </>
   )
 }

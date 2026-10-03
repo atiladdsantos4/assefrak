@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\CategoriaVideoController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\DepartamentoController;
 use App\Http\Controllers\Api\EntradaEstoqueController;
+use App\Http\Controllers\Api\SaidaEstoqueController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -83,4 +84,5 @@ Route::apiResource('categoriavideo',CategoriaVideoController::class)->middleware
 Route::apiResource('video',VideoController::class)->middleware('auth:sanctum');
 Route::apiResource('departamento',DepartamentoController::class)->middleware('auth:sanctum');
 Route::apiResource('entradaestoque',EntradaEstoqueController::class)->middleware('auth:sanctum');
+Route::apiResource('saidaestoque',SaidaEstoqueController::class)->middleware('auth:sanctum');
 

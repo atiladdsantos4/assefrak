@@ -391,6 +391,6 @@
 }
 
 .dropdown-class {
-  max-height: 330px; /* Change this value to fit your design */
+  max-height: 345px; /* Change this value to fit your design */
   overflow-y: auto;  /* Adds a scroll bar only when content exceeds the max-height */
 }

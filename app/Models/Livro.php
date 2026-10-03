@@ -16,7 +16,7 @@ class Livro extends Model
     public $timestamps = true; //--> update livomarically by laravel <--//
     protected $table = 'liv_livros';
     protected $primaryKey = 'liv_id_liv';
-    protected $appends = ['acao'];
+    protected $appends = ['estoque'];
     protected $fillable = [
       'liv_id_liv','liv_id_aut','liv_id_edi','liv_titulo','liv_traducao','liv_sinopse','liv_isbn','liv_paginas','liv_edicao','liv_imagem','liv_ativo','liv_created_at','liv_updated_at','liv_deleted_at'
     ];
@@ -55,6 +55,7 @@ class Livro extends Model
        ->join('lip_livro_pix','lip_livro_pix.lip_id_prl','prl_preco_livro.prl_id_prl')
        ->select('lip_id_lip');
     }
+
     /*
     protected function getPacPlanosaudeAttribute(){ //--> especilidade
        if( isset($this->pac_id_pla) ){
@@ -76,8 +77,13 @@ class Livro extends Model
     }
     */
 
-    protected function getacaoAttribute(){ //--> qtde_escopos
-        return 1;
+    protected function getestoqueAttribute(){ //--> qtde_escopos
+       $estoque = EntradaEstoque::where('ene_id_liv',$this->liv_id_liv)
+        ->selectRaw('sum(ene_qtde - coalesce(nullif(ene_saida,0),0)) as total')
+        ->groupBy('ene_id_liv')->first();
+       $valor = $estoque->total ?? 0;
+
+       return $valor;
     }
 
     //boot events
