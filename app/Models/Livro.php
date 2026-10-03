@@ -53,6 +53,7 @@ class Livro extends Model
     public function qrcode(){
        return $this->hasOne(PrecoLivro::class, 'prl_id_liv', 'liv_id_liv')
        ->join('lip_livro_pix','lip_livro_pix.lip_id_prl','prl_preco_livro.prl_id_prl')
+       ->where('prl_preco_livro.prl_valor_atual',1)
        ->select('lip_id_lip');
     }
 

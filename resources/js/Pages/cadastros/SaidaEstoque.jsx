@@ -35,6 +35,8 @@ const SaidaEstoque = (props) => {
   const [valorunit, setValorunit] = useState(null)
   const [valortotal, setValortotal] = useState(null)
   const [saida, setSaida] = useState(0)
+  const [email, setEmail] = useState(0)
+  const [emailenviado, setEmailenviado] = useState(false)
   const [descricao, setDescricao] = useState('')
   const [cadastro, setCadastro] = useState('')
   const [atualizacao, setAtualizacao] = useState('')
@@ -151,10 +153,13 @@ const SaidaEstoque = (props) => {
                   setCadastro(result_saida.data.data.sae_created_at)
                   setAtualizacao(result_saida.data.data.sae_updated_at)
                   setValhash(result_saida.data.data.sae_hash)
+                  setEmail(result_saida.data.data.sae_email)
                   let ck = result_saida.data.data.sae_confirmado == 'S' ? true : false
                   setConfirmado(ck)
-                  let ckcanc = result_saida.data.data.sae_cancelado == 'S' ? true : false
-                  setCancelado(ckcanc)
+                  ck = result_saida.data.data.sae_cancelado == 'S' ? true : false
+                  setCancelado(ck)
+                  ck = result_saida.data.data.sae_email_enviado == 'S' ? true : false
+                  setEmailenviado(ck)
                   //setItematualtexto(result_entrada.data.data.sae_livro+' - '+result_entrada.data.data.sae_autor)
                   setLoadpage(false)
               }
@@ -448,6 +453,8 @@ const SaidaEstoque = (props) => {
         formData.append('sae_confirmado', ck)
         ck = cancelado ? 'S' : 'N'
         formData.append('sae_cancelado', ck)
+        ck = emailenviado ? 'S' : 'N'
+        formData.append('sae_email_enviado', ck)
         formData.append('_method', 'put')
         axios
          .post(`${endpoint}/saidaestoque/${idsaida}`, formData, {
@@ -546,7 +553,64 @@ const SaidaEstoque = (props) => {
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (<ValorTotal valor={valortotal}/>)}
                             </CCol>
-                            <CCol xs={2}>
+                            <CCol md={6}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idlivro"
+                                    label="Livro"
+                                    placeholder="Informe a Qtde"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={livro}
+                                    readOnly
+                                />)}
+                            </CCol>
+                            <CCol md={3}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idlivro"
+                                    label="Autor"
+                                    placeholder="Informe a Qtde"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={autor}
+                                    readOnly
+                                />)}
+                            </CCol>
+                            <CCol md={3}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idemaio"
+                                    label="Email"
+                                    placeholder="Informe a Qtde"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={email}
+                                    readOnly
+                                />)}
+                            </CCol>
+                            <CCol xs={3} className="ms-2" style={{border:'1px solid #6895C1',borderRadius:'5px'}}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
+                                : (
+                                <>
+                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormCheck
+                                    type="checkbox"
+                                    id="invalidCheck"
+                                    label="Email Enviado"
+                                    feedbackInvalid="Informe se Acolhido esta Ativo"
+                                    checked={emailenviado}
+                                    onChange={(e)=>setEmailenviado(e.target.checked)}
+                                />
+                                <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </>)}
+                            </CCol>
+
+                            <CCol xs={2} className="ms-2" style={{border:'1px solid #6895C1',borderRadius:'5px'}}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
@@ -563,10 +627,10 @@ const SaidaEstoque = (props) => {
                                 <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
                                 </>)}
                             </CCol>
-                            <CCol xs={4} style={{textAlign:'left'}} className="mt-4">
+                            <CCol xs={3} style={{textAlign:'left'}} className="mt-4">
                                 <div className='mt-4'>{ confirmado ? <></> : <CBadge color="danger">Pendente Confirmação</CBadge>}</div>
                             </CCol>
-                            <CCol xs={2}>
+                            <CCol xs={2} style={{marginLeft:'-5px',border:'1px solid #6895C1',borderRadius:'5px'}}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
@@ -583,7 +647,7 @@ const SaidaEstoque = (props) => {
                                 <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
                                 </>)}
                             </CCol>
-                            <CCol md={2}>
+                            <CCol md={3}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (
@@ -609,32 +673,6 @@ const SaidaEstoque = (props) => {
                                     feedbackInvalid="Please provide a valid zip."
                                     readOnly
                                     required
-                                />)}
-                            </CCol>
-                            <CCol md={3}>
-                                { loadpage
-                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
-                                : (<CFormInput
-                                    id="idlivro"
-                                    label="Livro"
-                                    placeholder="Informe a Qtde"
-                                    aria-label="Example text with button addon"
-                                    aria-describedby="button-addon1"
-                                    value={livro}
-                                    readOnly
-                                />)}
-                            </CCol>
-                            <CCol md={3}>
-                                { loadpage
-                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
-                                : (<CFormInput
-                                    id="idlivro"
-                                    label="Autor"
-                                    placeholder="Informe a Qtde"
-                                    aria-label="Example text with button addon"
-                                    aria-describedby="button-addon1"
-                                    value={autor}
-                                    readOnly
                                 />)}
                             </CCol>
                             {/* <CCol md={12}>

@@ -400,6 +400,7 @@ const EntradaEstoque = (props) => {
         const formData = new FormData()
         formData.append('ene_id_liv', livro)
         formData.append('ene_qtde', qtde)
+        formData.append('ene_saida', 0)
         formData.append('ene_valor_unit', valorunit)
         formData.append('ene_valor_total', valortotal)
         axios

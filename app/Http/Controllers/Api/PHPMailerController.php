@@ -212,6 +212,7 @@ class PHPMailerController extends Controller
             'valor'=> $input["valor"],
             'copia'=> $input["copia"],
             'hash' => $input["hash"],
+            'email'=> $input["email"]
        ];
        $corpo = view('mail.geraCompra', [ 'mailData' => $mailData])->render();
        $corpo_email = mb_convert_encoding($corpo, 'ISO-8859-1', 'UTF-8');

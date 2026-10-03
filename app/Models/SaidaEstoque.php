@@ -21,7 +21,7 @@ class SaidaEstoque extends Model
 
     //,'pla_planosaude','pac_planosaude'];
     protected $fillable = [
-       'sae_id_sae','sae_id_ene','sae_valor_unit','sae_valor_total','sae_qtde_saida','sae_confirmado','sae_cancelado','sae_hash','sae_created_at','sae_updated_at','sae_deleted_at'
+       'sae_id_sae','sae_id_ene','sae_valor_unit','sae_valor_total','sae_qtde_saida','sae_confirmado','sae_cancelado','sae_hash','sae_email','sae_email_enviado','sae_created_at','sae_updated_at','sae_deleted_at'
     ];
 
     protected $dates = ['sae_deleted_at'];//campo obrigatório pra o SoftDeletes

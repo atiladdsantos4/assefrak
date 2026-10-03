@@ -20,6 +20,8 @@ return new class extends Migration
             $table->char('sae_confirmado',1);
             $table->char('sae_cancelado',1);
             $table->string('sae_hash',6);
+            $table->string('sae_email',400)->nullable();
+            $table->char('sae_email_enviado',1)->nullable();
             $table->timestamp('sae_created_at');
             $table->timestamp('sae_updated_at')->nullable();
             $table->timestamp('sae_deleted_at')->nullable();

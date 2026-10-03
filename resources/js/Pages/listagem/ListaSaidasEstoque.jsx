@@ -187,16 +187,17 @@ const ListaSaidasEstoque = (props) => {
                 <CTableRow color={classe}>
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.sae_id_ene}</CTableDataCell>
-                    <CTableDataCell>{item.sae_hash}</CTableDataCell>
-                    <CTableDataCell>{item.sae_livro+' - '+item.sae_autor}</CTableDataCell>
-                    <CTableDataCell>{item.sae_qtde_saida}</CTableDataCell>
+                    <CTableDataCell className='ct'>{item.sae_hash}</CTableDataCell>
+                    <CTableDataCell className='lf'>{item.sae_livro+' - '+item.sae_autor}</CTableDataCell>
+                    <CTableDataCell className='lf'>{item.sae_email}</CTableDataCell>
+                    <CTableDataCell className='ct'>{item.sae_qtde_saida}</CTableDataCell>
                     <CTableDataCell>{item.sae_valor_unit}</CTableDataCell>
                     <CTableDataCell>{item.sae_valor_total}</CTableDataCell>
-                    <CTableDataCell>{item.sae_confirmado == 'S' ? <CBadge color="success">Confirmado</CBadge> : <CBadge color="info">Aguardando Confirmação</CBadge>}</CTableDataCell>
-                    <CTableDataCell><CompCheckbox id={item.sae_id_sae} cancelado={item.sae_cancelado}/>&nbsp;{item.sae_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.sae_cancelado == 'N' ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Suspenso</CBadge>}</CTableDataCell>
+                    <CTableDataCell>{item.sae_confirmado == 'S' ? <CBadge color="success">Confirmado</CBadge> : <CBadge color="warning" textColor="dark">Aguardando Confirmação</CBadge>}</CTableDataCell>
+                    <CTableDataCell style={{whiteSpace:'nowrap'}}><CompCheckbox id={item.sae_id_sae} cancelado={item.sae_cancelado}/>&nbsp;{item.sae_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.sae_cancelado == 'N' ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Suspenso</CBadge>}</CTableDataCell>
                     <CTableDataCell>{item.sae_created_at}</CTableDataCell>
                     <CTableDataCell>{item.sae_updated_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.sae_id_sae}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.sae_id_sae}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -210,7 +211,9 @@ const ListaSaidasEstoque = (props) => {
      let valor =  event.target.value
      if( valor.trim() != ''){
         let lista = listafiltro.filter(
-            (item)=>item.sae_descricao.toLowerCase().includes(valor.toLowerCase())
+            (item)=>item.sae_livro.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.sae_hash.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.sae_email.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)
         setListasaida(lista.slice(0,qtderegistrospagina))
@@ -361,9 +364,10 @@ const ListaSaidasEstoque = (props) => {
                             <CTableRow>
                                 <CTableHeaderCell className='clthinputtext'style={{borderRadius:'5px 0px 0px 0px',fontSize:'11px !important'}} scope="col">#</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Nº Estoque</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Hash</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Livro</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Qtde Saída</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno ct' scope="col">Hash</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno ct' scope="col">Livro</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno ct' scope="col">Email</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno ct' scope="col">Qtde Saída</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Valor Unitário</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Valor Total</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Confirmado</CTableHeaderCell>

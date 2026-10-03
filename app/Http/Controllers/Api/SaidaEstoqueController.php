@@ -24,7 +24,7 @@ class SaidaEstoqueController extends Controller
         $all = $request->all();
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
-           $result_sae = SaidaEstoque::orderBy('sae_created_at')->get();
+           $result_sae = SaidaEstoque::orderBy('sae_created_at','DESC')->get();
            $result = SaidaEstoqueResource::collection($result_sae); //only works for colection
 
            $response = [
@@ -90,7 +90,7 @@ class SaidaEstoqueController extends Controller
         //'sae_autor' => $this->entrada->livro->autor->aut_nome,
         //lip_qrcode,lip_copy_qrcode
 
-        $preco = PrecoLivro::where('prl_id_liv',$input["sae_id_liv"])->first();
+        $preco = PrecoLivro::where('prl_id_liv',$input["sae_id_liv"])->where('prl_valor_atual',1)->first();
         //$idqrcode = $preco->qrcode->lip_id_lip;
         $dadospix = LivroPix::find($preco->qrcode->lip_id_lip);
         $request->merge(['livro' => $saida->entrada->livro->liv_titulo]);
@@ -99,8 +99,9 @@ class SaidaEstoqueController extends Controller
         $request->merge(['qrcode' => $dadospix->lip_qrcode]);
         $request->merge(['copia' => $dadospix->lip_copy_qrcode]);
         $request->merge(['hash' => $saida->sae_hash]);
-        $request->merge(['email' => $input["email"]]);
+        $request->merge(['email' => $input["sae_email"]]);
         $request->merge(['compra' => 'S']);
+        $request->merge(['sae_id_sae' => $saida->sae_id_sae]);
         ProcessMail::dispatch($request)->onConnection('sync');
 
         $sae = new SaidaEstoqueResource(SaidaEstoque::findOrFail($saida->sae_id_sae));
