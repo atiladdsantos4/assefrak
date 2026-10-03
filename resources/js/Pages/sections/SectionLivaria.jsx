@@ -124,14 +124,20 @@ const SectionLivraria = (props) => {
 
 
   const ButtonCompra = (props) =>{
-    return(
-       <CButton  onClick={(e) => AbreModal(props.livro,props.autor,props.preco,props.id,props.qrcode)} size="sm" color="primary" style={{backgroundColor:'#6895C1',border:'1px solid #6895C1'}} className="rounded-pill">
-        Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
-        {
-          props.load ? (<CSpinner size="sm"/>) : (<></>)
-        }
-       </CButton>
-    )
+    if(props.habilita > 0){
+        return(
+        <CButton  onClick={(e) => AbreModal(props.livro,props.autor,props.preco,props.id,props.qrcode)} size="sm" color="primary" style={{backgroundColor:'#6895C1',border:'1px solid #6895C1',cursor:'pointer'}} className="rounded-pill">
+            Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
+            {
+            props.load ? (<CSpinner size="sm"/>) : (<></>)
+            }
+        </CButton>
+        )
+   } else {
+      <CButton disabled size="sm" color="primary" style={{backgroundColor:'#6895C1',border:'1px solid #6895C1',cursor:'pointer'}} className="rounded-pill">
+            Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
+      </CButton>
+   }
   }
 
   const AbreModal = (livro,autor,preco,id,idqrcode) =>{
@@ -178,6 +184,7 @@ const SectionLivraria = (props) => {
        </CButton>
     )
   }
+
 
   const CompColapse=(props)=>{
       const [visible,setVisible] = useState(false)
@@ -406,6 +413,10 @@ const IsotopeLista = () => {
                                 <i class="bi bi-star-fill"></i>
                                 <span>{'Pag: '+item.liv_paginas}</span>
                             </div>
+                            <div class="project-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <span>{'Pag: '+item.liv_paginas}</span>
+                            </div>
                             </div>
                             <h3>{item.liv_titulo}</h3>
                             <p>{item.liv_sinopse.substr(0,104)}&nbsp;
@@ -516,6 +527,8 @@ const ordena = (event,valor) =>{
                                         <div class="project-rating">
                                             <i class="bi bi-star-fill"></i>
                                             <span>{'Pag: '+item.liv_paginas}</span>
+                                            {/* <i class="bi bi-star-fill"></i>
+                                            <span>{'Estoque: '+item.liv_estoque}</span> */}
                                         </div>
                                         </div>
                                         <h3 className="name">{item.liv_titulo}</h3>
@@ -527,12 +540,13 @@ const ordena = (event,valor) =>{
                                         </p>
                                         <div class="portfolio-tech">
                                         {/* <div className='symbol' style={{display:'flex',justifyContent:'center',alignItems:'center',width:'50px',borderRadius:'50px',backgroundColor:'blue',color:'white'}}>{item.liv_preco}</div> */}
-                                        <CButton color="success" className='rounded-pill'>
-                                            Valor <CBadge color="secondary">{item.liv_preco}</CBadge>
-                                            <div className="symbol visually-hidden">{item.liv_preco}</div>
+                                        <CButton color="success" size="sm" className='rounded-pill'>
+                                            Valor <CBadge color="secondary">{'R$ '+item.liv_preco}</CBadge>&nbsp;
+                                            Qtde Estoque <CBadge textColor="danger" color="light">{parseInt(item.liv_estoque)}</CBadge>
                                         </CButton>
                                         {/* <ButtonPreco valor={item.liv_preco}></ButtonPreco> */}
                                         <ButtonCompra
+                                            habilita={item.liv_estoque}
                                             livro={item.liv_titulo}
                                             id={item.liv_id_liv}
                                             autor={item.liv_autor}

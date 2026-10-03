@@ -26,7 +26,7 @@
     <!-- Main CSS File -->
     <link href="{{asset('assets/css/main.css')}}" rel="stylesheet"></link>
     <link href="{{asset('assets/css/cad.css')}}" rel="stylesheet"></link>
-    <!-- <link href="{{asset('assets/css/iso.css')}}" rel="stylesheet"></link> -->
+    <link href="{{asset('assets/css/footer_admin.css')}}" rel="stylesheet"></link>
     <link href="{{asset('assets/css/swiper.css')}}" rel="stylesheet"></link>
 
 

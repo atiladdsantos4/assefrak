@@ -4,15 +4,19 @@ import {CAlert, CSpinner,CForm, CRow, CBadge, CCol, CButton, CModal, CModalHeade
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHourglass1, faQrcode } from '@fortawesome/free-solid-svg-icons'
 import { text } from '@fortawesome/fontawesome-svg-core';
+import axios from 'axios';
 
 
 export const ModalQrCode = (props) => {
-
+  const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
+  const token  = import.meta.env.VITE_APP_TOKEN
   const { isOpen, close, imagem, copia, valor, livro, autor, idscroll,idlivro } = props
   const [visible, setVisible] = useState(false)
+  const [loadconfirma, setLoadconfirma] = useState(false)
   const [horario, setHorario] = useState(0)
   const [segundot, setSegundot] = useState(10)
   const [minutot, setMinutot] = useState(2)
+  const [email, setEmail] = useState(null)
   const [showAlert,setShowAlert] = useState(false)
   const [expirado,setExpirado] = useState(false)
   const [colorAlert,setcolorAlert] = useState('info')
@@ -55,6 +59,7 @@ export const ModalQrCode = (props) => {
       setMinutot(9)
       setExpirado(false)
       setShowAlert(false)
+      setEmail(null)
       settextoAlert('Link Copiado!!!')
       setcolorAlert('info')
   },[idlivro])
@@ -68,6 +73,7 @@ export const ModalQrCode = (props) => {
 
   const fechar = () =>{
     close()
+    setEmail(null)
     setTimeout(() => {
        scrollToId(idscroll)
     }, 200)
@@ -118,7 +124,7 @@ export const ModalQrCode = (props) => {
 
     return(
          <>
-         <CButton color="primary" style={{backgroundColor:'rgb(104, 149, 193)'}}>
+         <CButton size="sm" color="primary" style={{backgroundColor:'rgb(104, 149, 193)'}}>
              Tempo de Espera <CBadge color="light" textColor="danger">{minutot+':'+segundot}</CBadge>
          </CButton>
          </>
@@ -131,6 +137,44 @@ export const ModalQrCode = (props) => {
         // </div>
     )
 }
+
+const Confirma = (id) =>{
+  if( email == null){
+     settextoAlert('É necessario informar o seu email')
+     setcolorAlert('info')
+     setShowAlert(true)
+     setTimeout(() => {
+        setShowAlert(false)
+     }, 3000)
+     return
+  }
+  console.log('confirmado: '+id)
+  setLoadconfirma(true)
+  const formData = new FormData()
+  formData.append('sae_id_liv', id)
+  formData.append('sae_qtde_saida', 1)
+  formData.append('sae_confirmado', 'N')
+  formData.append('sae_cancelado', 'N')
+  formData.append('sae_valor_unit', valor)
+  formData.append('sae_valor_total', valor)
+  axios.post(`${endpoint}/saidaestoque`, formData, {
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + token,//dentro do env//
+            },
+   })
+   .then((result) => {
+      setLoadconfirma(false)
+      settextoAlert('Confirmação Enviada com sucesso')
+      setcolorAlert('success')
+      setShowAlert(true)
+      setTimeout(() => {
+        setShowAlert(false)
+      }, 3000)
+   })
+}
+
 
   return (
     <>
@@ -192,18 +236,26 @@ export const ModalQrCode = (props) => {
               <CCol md={12} xs={12}>
                   <p style={{color:'red',fontSize:'13px'}}>
                     <i class="bi bi-exclamation-circle"></i>
-                    &nbsp;Como não possuímos muitos produtos no estoque você terá até 10 minutos pra concluir o seu pagamento. Clique em "Confirmar Compra" para finalizar a sua compra</p>
+                    &nbsp;Como não possuímos muitos produtos no estoque você terá até 10 minutos pra concluir o seu pagamento. Após Efetuar o Pgto, Informe o seu email e Clique em "Confirmar Compra" para finalizar a sua compra</p>
               </CCol>
            </CRow>
+           <CCol md={12} xs={12}>
+                   <CInputGroup size="sm" className="mb-1 nowrap">
+                      <CInputGroupText className="inputwidth" style={largura} id="basic-addon1">Infome seu Email&nbsp;</CInputGroupText>
+                      <CFormInput style={{fontSize:'13px'}} id="idemail" className="input-text" aria-label="Username" value={email}
+                        aria-describedby="basic-addon1" onChange={(e)=>setEmail(e.target.value)}/>
+                   </CInputGroup>
+            </CCol>
         </CModalBody>
         <CModalFooter style={{display:'flex !important'}}>
              { expirado == false
              ? (<DateTime/>)
              : ( <CButton color="primary" style={{backgroundColor:'rgb(104, 149, 193)'}}>Tempo de Espera <CBadge textColor="danger" color="light">{'00:00'}</CBadge></CButton>)}
-             <CButton color="primary" onClick={() => close()}>
+             <CButton size="sm" color="primary" onClick={() => Confirma(idlivro)}>
                 Confirmar Compra&nbsp;<i class="bi bi-cart-check-fill"></i>
+                &nbsp;{loadconfirma ? <CSpinner size="sm" color="light"/> :<></>}
              </CButton>
-             <CButton color="secondary" onClick={() => close()}>
+             <CButton size="sm" color="secondary" onClick={() => close()}>
                Close
              </CButton>
         </CModalFooter>

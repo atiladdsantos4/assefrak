@@ -37,6 +37,7 @@ class LivroResource extends JsonResource
                 'liv_imagem' => $this->liv_imagem,
                 'liv_ativo' => $this->liv_ativo,
                 'liv_preco' => $this->precoatual != null ? $this->precoatual->prl_valor_desconto : 0,
+                'liv_estoque' => $this->estoque,
                 'liv_qrcode' => $this->qrcode != null ? $this->qrcode->lip_id_lip : 0,
                 'liv_created_at' => Carbon::parse($this->liv_created_at)->format('d/m/Y H:i:s'),
                 'liv_updated_at' => $this->liv_updated_at != null ? Carbon::parse($this->liv_updated_at)->format('d/m/Y H:i:s') : null,
@@ -57,6 +58,7 @@ class LivroResource extends JsonResource
                 'liv_edicao' => $this->liv_edicao,
                 'liv_imagem' => $this->liv_imagem,
                 'liv_ativo' => $this->liv_ativo,
+                'liv_estoque' => $this->estoque,
                 'liv_created_at' => Carbon::parse($this->liv_created_at)->format('d/m/Y H:i:s'),
                 'liv_updated_at' => $this->liv_updated_at != null ? Carbon::parse($this->liv_updated_at)->format('d/m/Y H:i:s') : null,
             ];

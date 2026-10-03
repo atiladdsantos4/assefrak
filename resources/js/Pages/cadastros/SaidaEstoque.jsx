@@ -11,8 +11,8 @@ import axios from 'axios';
 
 
 
-// The Main component receives props Fortenecimentod from the Laravel controller
-const EntradaEstoque = (props) => {
+// The Main component receives props Fortsaecimentod from the Laravel controller
+const SaidaEstoque = (props) => {
   console.log(props.param)
   const { tela } = props
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
@@ -21,17 +21,23 @@ const EntradaEstoque = (props) => {
   const [validated, setValidated] = useState(false)
   const [loadpage, setLoadpage] = useState(false)
   const [loadsave, setLoadsave] = useState(false)
-  const [identrada, setIdentrada] = useState(null)
+  const [idsaida, setIdsaida] = useState(null)
   const [listalivro, setListalivro] = useState([])
   const [itematualtexto,setItematualtexto] = useState('')
   const [listaclasse, setListaclasse] = useState([])
+  const [nestoque, setNestoque] = useState(null)
+  const [confirmado, setConfirmado] = useState(null)
+  const [cancelado, setCancelado] = useState(null)
+  const [valhash, setValhash] = useState(null)
   const [livro, setLivro] = useState(null)
+  const [autor, setAutor] = useState(null)
   const [qtde, setQtde] = useState(null)
   const [valorunit, setValorunit] = useState(null)
   const [valortotal, setValortotal] = useState(null)
   const [saida, setSaida] = useState(0)
   const [descricao, setDescricao] = useState('')
   const [cadastro, setCadastro] = useState('')
+  const [atualizacao, setAtualizacao] = useState('')
   const [saved,setSaved] = useState(false)
   const [toast, addToast] = useState()//toast
   const [param, setParam] = useState(props.param)//toast
@@ -43,7 +49,7 @@ const EntradaEstoque = (props) => {
   '--cui-dropdown-bg': '#efefef',
   '--cui-dropdown-zindex':100000
  }
-  //ene_id_ene,ene_id_liv,ene_qtde,ene_valor_unit,ene_valor_total,ene_saida,ene_created_at,ene_updated_at,ene_deleted_at
+  //sae_id_sae,sae_id_sae,sae_qtde_saida,sae_valor_unit,sae_valor_total,sae_confirmado,sae_created_at,sae_updated_at,sae_deleted_at
 
   /*
   useEffect(()=>{
@@ -52,7 +58,7 @@ const EntradaEstoque = (props) => {
     if( props.param != null){
        setLoadpage(true)
        axios
-        .get(`${endpoint}/entradaestoque/${param}`, {
+        .get(`${endpoint}/saidaestoque/${param}`, {
             headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
@@ -60,9 +66,9 @@ const EntradaEstoque = (props) => {
             },
         })
         .then((result) => {
-            setIdentrada(result.data.data.ene_id_ene)
-            setDescricao(result.data.data.ene_descricao)
-            setCadastro(result.data.data.ene_created_at)
+            setIdsaida(result.data.data.sae_id_sae)
+            setDescricao(result.data.data.sae_descricao)
+            setCadastro(result.data.data.sae_created_at)
             console.log('teste')
             setLoadpage(false)
         })
@@ -102,7 +108,7 @@ const EntradaEstoque = (props) => {
                             Authorization: 'Bearer ' + token,//dentro do env//
                         },
                       }),
-                      axios.get(`${endpoint}/entradaestoque/${param}`, {
+                      axios.get(`${endpoint}/saidaestoque/${param}`, {
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'multipart/form-data',
@@ -113,8 +119,8 @@ const EntradaEstoque = (props) => {
                   const responses = await Promise.all(requests);
                   let result_livro= responses[0]
                   let result_precolivro = responses[1]
-                  let result_entrada = responses[2]
-                  console.log(result_entrada)
+                  let result_saida = responses[2]
+                  console.log(result_saida)
                   let array_liv = result_livro.data.data.filter((item)=>item.liv_ativo == 1)
                   array_liv.unshift({liv_id_liv:'',liv_titulo:'Selecione o Livro'})
                   setListalivro(array_liv)
@@ -134,13 +140,22 @@ const EntradaEstoque = (props) => {
                         }
                   })
                   setListaclasse(vet_filtro)
-                  setIdentrada(result_entrada.data.data.ene_id_ene)
-                  setLivro(result_entrada.data.data.ene_id_liv)
-                  setQtde(result_entrada.data.data.ene_qtde)
-                  setValorunit(result_entrada.data.data.ene_valor_unit)
-                  setValortotal(result_entrada.data.data.ene_valor_total)
-                  setSaida(result_entrada.data.data.ene_saida)
-                  setItematualtexto(result_entrada.data.data.ene_livro+' - '+result_entrada.data.data.ene_autor)
+                  setIdsaida(result_saida.data.data.sae_id_sae)
+                  setNestoque(result_saida.data.data.sae_id_ene)
+                  setLivro(result_saida.data.data.sae_livro)
+                  setAutor(result_saida.data.data.sae_autor)
+                  setQtde(result_saida.data.data.sae_qtde_saida)
+                  setValorunit(result_saida.data.data.sae_valor_unit)
+                  setValortotal(result_saida.data.data.sae_valor_total)
+                  setSaida(result_saida.data.data.sae_saida)
+                  setCadastro(result_saida.data.data.sae_created_at)
+                  setAtualizacao(result_saida.data.data.sae_updated_at)
+                  setValhash(result_saida.data.data.sae_hash)
+                  let ck = result_saida.data.data.sae_confirmado == 'S' ? true : false
+                  setConfirmado(ck)
+                  let ckcanc = result_saida.data.data.sae_cancelado == 'S' ? true : false
+                  setCancelado(ckcanc)
+                  //setItematualtexto(result_entrada.data.data.sae_livro+' - '+result_entrada.data.data.sae_autor)
                   setLoadpage(false)
               }
               catch (error) {
@@ -393,17 +408,17 @@ const EntradaEstoque = (props) => {
 
   const  handleSave = (erro) =>{
 
-    if( erro == false && identrada == null) {
+    if( erro == false && idsaida == null) {
         console.log('entre_aqui_post')
         setLoadsave(false)
-        ////ene_id_ene,ene_id_liv,ene_qtde,ene_valor_unit,ene_valor_total,ene_saida,ene_created_at,ene_updated_at,ene_deleted_at
+        ////sae_id_sae,sae_id_liv,sae_qtde,sae_valor_unit,sae_valor_total,sae_saida,sae_created_at,sae_updated_at,sae_deleted_at
         const formData = new FormData()
-        formData.append('ene_id_liv', livro)
-        formData.append('ene_qtde', qtde)
-        formData.append('ene_valor_unit', valorunit)
-        formData.append('ene_valor_total', valortotal)
+        formData.append('sae_id_liv', livro)
+        formData.append('sae_qtde', qtde)
+        formData.append('sae_valor_unit', valorunit)
+        formData.append('sae_valor_total', valortotal)
         axios
-        .post(`${endpoint}/entradaestoque`, formData, {
+        .post(`${endpoint}/saidaestoque`, formData, {
             headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
@@ -424,13 +439,18 @@ const EntradaEstoque = (props) => {
     } else {
         setLoadsave(false)
         const formData = new FormData()
-        formData.append('ene_id_liv', livro)
-        formData.append('ene_qtde', qtde)
-        formData.append('ene_valor_unit', valorunit)
-        formData.append('ene_valor_total', valortotal)
+        //sae_id_sae,sae_id_ene,sae_qtde_saida,sae_valor_unit,sae_valor_total,sae_confirmado,sae_cancelado
+        formData.append('sae_id_ene', nestoque)
+        formData.append('sae_qtde_saida', qtde)
+        formData.append('sae_valor_unit', valorunit)
+        formData.append('sae_valor_total', valortotal)
+        let ck = confirmado ? 'S' : 'N'
+        formData.append('sae_confirmado', ck)
+        ck = cancelado ? 'S' : 'N'
+        formData.append('sae_cancelado', ck)
         formData.append('_method', 'put')
         axios
-         .post(`${endpoint}/entradaestoque/${identrada}`, formData, {
+         .post(`${endpoint}/saidaestoque/${idsaida}`, formData, {
             headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
@@ -443,7 +463,7 @@ const EntradaEstoque = (props) => {
             setTimeout(() => {
                 document.getElementById('idtoast').classList.remove('show')
                 document.getElementById('idtoast').remove()
-                tela('ListaEntradasEstoque')
+                tela('ListaSaidasEstoque')
             }, 2000)
         })
     }
@@ -460,76 +480,169 @@ const EntradaEstoque = (props) => {
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" style={{minWidth:'400px'}} data-aos="fade-up">
-          <h2>Entrada de Estoque</h2>
+          <h2>Saídas de Estoque</h2>
           <p>Cadastro</p>
         </div>
         <div class="container">
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
                 <CCard className='card_bottom'>
-                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Entrada de Estoques de Segurança</CCardHeader>
+                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Saídas de Estoques de Segurança</CCardHeader>
                 <CCardBody>
                     <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
-                            <CCol md={12}>
-                                { loadpage
-                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
-                                : (<SelectLivros/>)}
-                            </CCol>
-                            <CCol md={3}>
-                                { loadpage
-                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
-                                : (<ValorUnitario valor={valorunit}/>)}
-                            </CCol>
-                            <CCol md={3}>
+                            <CCol md={2}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (<CFormInput
-                                    id="identrada"
+                                    id="idestoque"
+                                    label="Nº Estoque"
+                                    placeholder="Informe Nº do Estoque"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={nestoque}
+                                    feedbackInvalid="O Nº do Estoque precisa ser preenchida"
+                                    required
+                                    onChange={(e)=>setNestoque(e.target.value)}
+                                />)}
+                            </CCol>
+                            <CCol md={2}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idhash"
+                                    label="Nº Hash"
+                                    placeholder="Informe Nº Hash"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={valhash}
+                                    feedbackInvalid="O Nº do Hash precisa ser preenchida"
+                                    required
+                                    onChange={(e)=>setValhash(e.target.value)}
+                                />)}
+                            </CCol>
+                            <CCol md={2}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idqtde"
                                     type='number'
-                                    label="Quantidade"
+                                    label="Quantidade Saída"
                                     placeholder="Informe a Qtde"
                                     aria-label="Example text with button addon"
                                     aria-describedby="button-addon1"
                                     value={qtde}
                                     onBlur={(e)=>Calcula(e)}
-                                    feedbackInvalid="A Qtde precisa ser preenchida"
+                                    feedbackInvalid="A Qtde Saída precisa ser preenchida"
                                     required
                                     onChange={(e)=>setQtde(e.target.value)}
                                 />)}
                             </CCol>
-                            <CCol md={3}>
+                            <CCol md={2}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<ValorUnitario valor={valorunit}/>)}
+                            </CCol>
+                            <CCol md={4}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (<ValorTotal valor={valortotal}/>)}
                             </CCol>
-                            <CCol md={3}>
+                            <CCol xs={2}>
                                 { loadpage
-                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
-                                : (<CFormInput
-                                    id="idsaida"
-                                    label="Saidas do Estoque"
-                                    placeholder="Informe Qtde de Saída do Estoque"
-                                    aria-label="Example text with button addon"
-                                    aria-describedby="button-addon1"
-                                    value={saida}
-                                    feedbackInvalid="A Descrição precisa ser preenchida"
-                                    required
-                                    onChange={(e)=>setSaida(e.target.value)}
-                                />)}
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
+                                : (
+                                <>
+                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormCheck
+                                    type="checkbox"
+                                    id="invalidCheck"
+                                    label="Saida Confirmada"
+                                    feedbackInvalid="Informe se Acolhido esta Ativo"
+                                    checked={confirmado}
+                                    onChange={(e)=>setConfirmado(e.target.checked)}
+                                />
+                                <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </>)}
                             </CCol>
-                            <CCol md={6}>
+                            <CCol xs={4} style={{textAlign:'left'}} className="mt-4">
+                                <div className='mt-4'>{ confirmado ? <></> : <CBadge color="danger">Pendente Confirmação</CBadge>}</div>
+                            </CCol>
+                            <CCol xs={2}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
+                                : (
+                                <>
+                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormCheck
+                                    type="checkbox"
+                                    id="invalidCheck"
+                                    label="Cancelado"
+                                    feedbackInvalid="Informe se Acolhido esta Ativo"
+                                    checked={cancelado}
+                                    onChange={(e)=>setCancelado(e.target.checked)}
+                                />
+                                <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </>)}
+                            </CCol>
+                            <CCol md={2}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (
                                 <CFormInput
                                     type="text"
                                     id="IdCadastro"
-                                    label="Cadastro"
+                                    label="Data da Transação"
                                     defaultValue={cadastro}
                                     feedbackInvalid="Please provide a valid zip."
                                     readOnly
                                     required
                                 />)}
                             </CCol>
+                            <CCol md={2}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (
+                                <CFormInput
+                                    type="text"
+                                    id="IdCadastro"
+                                    label="Atualização"
+                                    defaultValue={atualizacao}
+                                    feedbackInvalid="Please provide a valid zip."
+                                    readOnly
+                                    required
+                                />)}
+                            </CCol>
+                            <CCol md={3}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idlivro"
+                                    label="Livro"
+                                    placeholder="Informe a Qtde"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={livro}
+                                    readOnly
+                                />)}
+                            </CCol>
+                            <CCol md={3}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                    id="idlivro"
+                                    label="Autor"
+                                    placeholder="Informe a Qtde"
+                                    aria-label="Example text with button addon"
+                                    aria-describedby="button-addon1"
+                                    value={autor}
+                                    readOnly
+                                />)}
+                            </CCol>
+                            {/* <CCol md={12}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<SelectLivros/>)}
+                            </CCol> */}
+
                             <CCol xs={12}>
                                 <CButton color="primary" type="submit">
                                 <FontAwesomeIcon size="lg" icon={faSave} />&nbsp;Salvar
@@ -537,7 +650,7 @@ const EntradaEstoque = (props) => {
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaEntradasEstoque')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaSaidasEstoque')}>Listar</CButton>
                             </CCol>
                         </CForm>
 
@@ -548,4 +661,4 @@ const EntradaEstoque = (props) => {
     </div>
   )
 }
-export default EntradaEstoque
+export default SaidaEstoque
