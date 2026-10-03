@@ -18,6 +18,7 @@ class ProcessMail implements ShouldQueue
     private $recebido;
     private $pacote;
     private $contato;
+    private $compra;
 
 
     /**
@@ -30,6 +31,7 @@ class ProcessMail implements ShouldQueue
        $this->recebido = $request->input('recebido') ?? null;
        $this->pacote = $request->input('pacote') ?? null;
        $this->contato = $request->input('contato') ?? null;
+       $this->compra = $request->input('compra') ?? null;
     }
 
     /**
@@ -48,24 +50,28 @@ class ProcessMail implements ShouldQueue
            }
 
         }
-        
+
         //contato
         if( $this->contato != null){
            $resp = $mail->envia_contato($request);
-              
+
         //        $ins = Inscricao::find($request->input('ins_id_ins'));
         //        $ins->ins_envio_email = 'S';
         //        $ins->update();
         //    }
 
         }
-        
+
         if( $this->recebido != null){
            $mail->envia_email($request);
         }
-        
+
         if( $this->pacote != null){
            $mail->envia_email_pacote($request);
+        }
+
+        if( $this->compra != null){
+           $mail->envia_compra($request);
         }
         // Write your time-consuming logic here (e.g., API requests, processing files)
         logger()->info('Email esta sendo processado in background!');

@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\SaidaEstoque;
 use App\Models\EntradaEstoque;
 use App\Http\Resources\SaidaEstoqueResource;
-
+use App\Models\PrecoLivro;
+use App\Models\LivroPix;
+use App\Jobs\ProcessMail;
 
 class SaidaEstoqueController extends Controller
 {
@@ -18,6 +20,7 @@ class SaidaEstoqueController extends Controller
      */
     public function index(Request $request)
     {
+
         $all = $request->all();
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
@@ -52,7 +55,7 @@ class SaidaEstoqueController extends Controller
         $exist = true;
         $random = null;
         while($exist):
-           $random = rand(10,999999);
+           $random = rand(100000,999999);
            $exist = SaidaEstoque::where('sae_hash',$random)->exists();
         endwhile;
         $input = $request->all();
@@ -82,8 +85,26 @@ class SaidaEstoqueController extends Controller
         $saida = SaidaEstoque::create($input);
         $qtdesaida = $disponivel->ene_saida + 1;
         EntradaEstoque::where('ene_id_ene',$disponivel->ene_id_ene)->update(['ene_saida'=> $qtdesaida]);
+        //dados email//
+        //'sae_livro' => $this->entrada->livro->liv_titulo,
+        //'sae_autor' => $this->entrada->livro->autor->aut_nome,
+        //lip_qrcode,lip_copy_qrcode
+
+        $preco = PrecoLivro::where('prl_id_liv',$input["sae_id_liv"])->first();
+        //$idqrcode = $preco->qrcode->lip_id_lip;
+        $dadospix = LivroPix::find($preco->qrcode->lip_id_lip);
+        $request->merge(['livro' => $saida->entrada->livro->liv_titulo]);
+        $request->merge(['autor' => $saida->entrada->livro->autor->aut_nome]);
+        $request->merge(['valor' => $saida->sae_valor_total]);
+        $request->merge(['qrcode' => $dadospix->lip_qrcode]);
+        $request->merge(['copia' => $dadospix->lip_copy_qrcode]);
+        $request->merge(['hash' => $saida->sae_hash]);
+        $request->merge(['email' => $input["email"]]);
+        $request->merge(['compra' => 'S']);
+        ProcessMail::dispatch($request)->onConnection('sync');
 
         $sae = new SaidaEstoqueResource(SaidaEstoque::findOrFail($saida->sae_id_sae));
+
 
         $arr_result = [
             "status" => true,

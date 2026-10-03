@@ -157,6 +157,7 @@ const Confirma = (id) =>{
   formData.append('sae_cancelado', 'N')
   formData.append('sae_valor_unit', valor)
   formData.append('sae_valor_total', valor)
+  formData.append('email', email)
   axios.post(`${endpoint}/saidaestoque`, formData, {
             headers: {
             Accept: 'application/json',
@@ -166,12 +167,13 @@ const Confirma = (id) =>{
    })
    .then((result) => {
       setLoadconfirma(false)
-      settextoAlert('Confirmação Enviada com sucesso')
+      settextoAlert('Confirmação Enviada com sucesso. Verifique sua caixa de Email')
       setcolorAlert('success')
       setShowAlert(true)
       setTimeout(() => {
         setShowAlert(false)
-      }, 3000)
+        fechar()
+      }, 3500)
    })
 }
 
