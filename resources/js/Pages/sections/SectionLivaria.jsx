@@ -84,6 +84,7 @@ const SectionLivraria = (props) => {
             let obj = null
             let existe = []
             let zidx = 1000
+            let filtroEst = null
             vet.map((item,index)=>{
                 zidx--
                 string = JSON.parse(item.liv_imagem)
@@ -99,7 +100,9 @@ const SectionLivraria = (props) => {
                 if(existe.length == 0){
                     vet_filtro.push(obj)
                 }
+
           })
+          vet_filtro.push({filtro:'disponivel',nome:'Disponíveis',classe:''})
           vet_filtro.unshift({filtro:'*',nome:'Todos Livros',classe:'filter-active'})
           setListafiltro(vet_filtro)
           setLista(vet)
@@ -112,6 +115,7 @@ const SectionLivraria = (props) => {
                 getSortData: {
                    symbol: '.symbol parseInt',
                    name: '.name',
+                   disponivel: '.disponivel parseInt',
                    autor:'.autor'
                 }
           })
@@ -125,17 +129,17 @@ const SectionLivraria = (props) => {
 
   const ButtonCompra = (props) =>{
     if(props.habilita > 0){
-        return(
-        <CButton  onClick={(e) => AbreModal(props.livro,props.autor,props.preco,props.id,props.qrcode)} size="sm" color="primary" style={{backgroundColor:'#6895C1',border:'1px solid #6895C1',cursor:'pointer'}} className="rounded-pill">
-            Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
-            {
-            props.load ? (<CSpinner size="sm"/>) : (<></>)
-            }
-        </CButton>
-        )
+      return(
+           <CButton onClick={(e) => AbreModal(props.livro,props.autor,props.preco,props.id,props.qrcode)} size="sm" color="primary" style={{backgroundColor:'#6895C1',border:'1px solid #6895C1',cursor:'pointer'}} className="rounded-pill">
+              Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
+              {
+               props.load ? (<CSpinner size="sm"/>) : (<></>)
+              }
+           </CButton>
+      )
    } else {
       <CButton disabled size="sm" color="primary" style={{backgroundColor:'#6895C1',border:'1px solid #6895C1',cursor:'pointer'}} className="rounded-pill">
-            Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
+           Comprar&nbsp;<FontAwesomeIcon size="lg" icon={faCartPlus} />
       </CButton>
    }
   }
@@ -180,7 +184,7 @@ const SectionLivraria = (props) => {
   const ButtonPreco = (props) =>{
     return(
        <CButton size="sm" color="info" style={{backgroundColor:'#106613',border:'1px solid #a7e6cb',color:'white'}} className="symbol rounded-pill">
-        Valor: R$&nbsp;{props.valor}
+        {props.valor}
        </CButton>
     )
   }
@@ -470,6 +474,10 @@ const ordena = (event,valor) =>{
   if (valor == 'autor'){
     filtro = 'autor'
   }
+//   if (valor == 'disponivel'){
+//     handleFilterKeyChange(event,'disponivel',null)
+//     //filtro = 'disponivel'
+//   }
   let options = { sortBy: `${filtro}` };
   iso.arrange(options)
   console.log(iso)
@@ -505,8 +513,7 @@ const ordena = (event,valor) =>{
                     {
                         lista.map((item,index)=>{
                             return(
-                            <div className={'col-xl-3 col-lg-6 portfolio-item isotope-item ' +item.liv_filter} style={item.zindex}>
-                                {/* <h3 className="symbolaaaa">{item.liv_id_liv}</h3> */}
+                            <div className={'col-xl-3 col-lg-6 portfolio-item isotope-item ' +item.liv_filter_busca} style={item.zindex}>
                                 <div class="portfolio-wrapper">
                                     <div class="portfolio-image">
                                         <img src={imagem+item.img} alt="Creative Web Project" class="img-fluid" loading="lazy"/>
@@ -534,14 +541,15 @@ const ordena = (event,valor) =>{
                                         <h3 className="name">{item.liv_titulo}</h3>
                                         <p>{item.liv_sinopse.substr(0,104)}&nbsp;
                                             { item.liv_sinopse.substr(104,2000) != ''
-                                            ? (<CPopover content={item.liv_sinopse} placement="top" trigger={['hover','click']}><div style={{width:'80px'}}>Saiba mais</div></CPopover>)
+                                            ? (<CPopover title="Sinopse do Livro" content={item.liv_sinopse} placement="top" trigger={['hover','click']}><div style={{width:'80px'}}>Saiba mais</div></CPopover>)
                                             : (<></>)
                                             }
                                         </p>
                                         <div class="portfolio-tech">
                                         {/* <div className='symbol' style={{display:'flex',justifyContent:'center',alignItems:'center',width:'50px',borderRadius:'50px',backgroundColor:'blue',color:'white'}}>{item.liv_preco}</div> */}
                                         <CButton color="success" size="sm" className='rounded-pill'>
-                                            Valor <CBadge color="secondary">{'R$ '+item.liv_preco}</CBadge>&nbsp;
+                                            {/* <span className='disponivel'>{item.liv_preco}</span> */}
+                                            Valor <CBadge color="secondary symbol">{item.liv_preco}</CBadge>&nbsp;
                                             Qtde Estoque <CBadge textColor="danger" color="light">{parseInt(item.liv_estoque)}</CBadge>
                                         </CButton>
                                         {/* <ButtonPreco valor={item.liv_preco}></ButtonPreco> */}

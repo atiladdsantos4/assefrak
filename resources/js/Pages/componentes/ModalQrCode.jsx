@@ -157,7 +157,8 @@ const Confirma = (id) =>{
   formData.append('sae_cancelado', 'N')
   formData.append('sae_valor_unit', valor)
   formData.append('sae_valor_total', valor)
-  formData.append('email', email)
+  formData.append('sae_email', email)
+  formData.append('sae_email_enviado', 'N')
   axios.post(`${endpoint}/saidaestoque`, formData, {
             headers: {
             Accept: 'application/json',

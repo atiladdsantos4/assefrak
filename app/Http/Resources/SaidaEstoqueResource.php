@@ -28,6 +28,8 @@ class SaidaEstoqueResource extends JsonResource
                 'sae_confirmado' => $this->sae_confirmado,
                 'sae_cancelado'  => $this->sae_cancelado,
                 'sae_hash' => $this->sae_hash,
+                'sae_email' => $this->sae_email,
+                'sae_email_enviado' => $this->sae_email_enviado,
                 'sae_load'  => false,
                 'sae_created_at' => Carbon::parse($this->sae_created_at)->format('d/m/Y H:i:s'),
                 'sae_updated_at' => $this->sae_updated_at != null ? Carbon::parse($this->sae_updated_at)->format('d/m/Y H:i:s') : null,
@@ -45,6 +47,8 @@ class SaidaEstoqueResource extends JsonResource
                 'sae_confirmado' => $this->sae_confirmado,
                 'sae_hash' => $this->sae_hash,
                 'sae_cancelado'  => $this->sae_cancelado,
+                'sae_email' => $this->sae_email,
+                'sae_email_enviado' => $this->sae_email_enviado,
                 'sae_created_at' => Carbon::parse($this->sae_created_at)->format('d/m/Y H:i:s'),
                 'sae_updated_at' => $this->sae_updated_at != null ? Carbon::parse($this->sae_updated_at)->format('d/m/Y H:i:s') : null,
             ];

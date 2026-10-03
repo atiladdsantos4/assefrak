@@ -7,6 +7,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\PHPMailerController;
 use App\Models\Inscricao;
+use App\Models\SaidaEstoque;
 use Illuminate\Support\Facades\Response;
 
 class ProcessMail implements ShouldQueue
@@ -71,7 +72,15 @@ class ProcessMail implements ShouldQueue
         }
 
         if( $this->compra != null){
-           $mail->envia_compra($request);
+           $resp = $mail->envia_compra($request);
+           if($resp["success"]){
+               $sae = SaidaEstoque::find($request->input('sae_id_sae'));
+               $sae->sae_email_enviado = 'S';
+               $sae->update();
+               $email = $request->input('email');
+               $hash = $request->input('hash');
+               logger()->info("Email para $email, hash: $hash foi enviado com sucesso!");
+           }
         }
         // Write your time-consuming logic here (e.g., API requests, processing files)
         logger()->info('Email esta sendo processado in background!');

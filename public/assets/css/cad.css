@@ -192,6 +192,9 @@
 
 .tabela{
    font-size: 11px !important;
+   .ct{ text-align: center !important;}
+   .lf{ text-align: left !important;}
+   .rt{ text-align: right !important;}
 }
 
  #tratamento-id .form-check-input,.form-select,.form-control {

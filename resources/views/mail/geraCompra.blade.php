@@ -7,7 +7,7 @@
     <table style="width: 500px;font-family: Arial, Helvetica, sans-serif;" cellspacing="0">
 	   <thead>
        <tr>
-        <th style="border-bottom: 3px solid #27b1e3;
+        <th style="border-bottom: 3px solid #1F8BDA;
                    padding:5px;
                    border-radius:5px 5px 0px 0px;
                    background: linear-gradient(90deg, #87aace 14.33%, #6895C1 214.54%);
@@ -29,51 +29,62 @@
 		  </td>
 		</tr>
         <tr style="height:30px;">
-          <td colspan="3" style="border-radius:5px;background-color:#6895C1;color:white;">
+          <td colspan="3" style="border-radius:5px 0px 0px 5px;background-color:#6895C1;color:white;">
               <p style="margin-left: 10px;font-weight:bold;">Livro</p>
           </td>
-		  <td colspan="9" style="border-radius:5px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
+		  <td colspan="9" style="border-radius:0px 5px 5px 0px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
 		    <p style="margin-left: 10px;margin-right:10px;">{{ $mailData['livro'] }}</p>
 		  </td>
 		</tr>
         <tr style="height:30px;">
-          <td colspan="3" style="border-radius:5px;background-color:#6895C1;color:white;">
+          <td colspan="3" style="border-radius:5px 0px 0px 5px;background-color:#6895C1;color:white;">
               <p style="margin-left: 10px;font-weight:bold;">Autor</p>
           </td>
-		  <td colspan="9" style="border-radius:5px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
+		  <td colspan="9" style="border-radius:0px 5px 5px 0px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
 		    <p style="margin-left: 10px;margin-right:10px;">{{ $mailData['autor'] }}</p>
 		  </td>
 		</tr>
         <tr style="height:30px;">
-          <td colspan="3" style="border-radius:5px;background-color:#6895C1;color:white;">
+          <td colspan="3" style="border-radius:5px 0px 0px 5px;background-color:#6895C1;color:white;">
               <p style="margin-left: 10px;font-weight:bold;">Valor</p>
           </td>
-		  <td colspan="9" style="border-radius:5px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
+		  <td colspan="9" style="border-radius:0px 5px 5px 0px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
 		    <p style="margin-left: 10px;margin-right:10px;">{{ 'R$ '.$mailData['valor'] }}</p>
 		  </td>
 		</tr>
         <tr style="height:30px;">
-          <td colspan="3" style="border-radius:5px;background-color:#6895C1;color:white;">
+          <td colspan="3" style="border-radius:5px 0px 0px 5px;background-color:#6895C1;color:white;">
+              <p style="margin-left: 10px;font-weight:bold;">Enviado por</p>
+          </td>
+		  <td colspan="9" style="border-radius:0px 5px 5px 0px;background-color:#b4b9bb;color:white;border-bottom: 1px solid #55595b;">
+		    <p style="margin-left: 10px;margin-right:10px;">{{ $mailData['email'] }}</p>
+		  </td>
+		</tr>
+        <tr style="height:30px;">
+          <td colspan="3" style="border-radius:5px 0px 0px 5px;background-color:#6895C1;color:white;">
               <p style="margin-left: 10px;font-weight:bold;">Pix Copia/Cola</p>
           </td>
-		  <td colspan="9" style="border-radius:5px;background-color:#b4b9bb;color:black;border-bottom: 1px solid #55595b;">
+		  <td colspan="9" style="border-radius:0px 5px 5px 0px;background-color:#b4b9bb;color:black;border-bottom: 1px solid #55595b;">
 		    <p style="margin-left: 10px;margin-right:10px;font-size:11px;">{{ $mailData['copia'] }}</p>
 		  </td>
 		</tr>
        <tr style="max-height:30px;">
-        <td colspan="3">
-            <p style="margin-left: 10px;"><b>Informe este Código:</b></p>
-        </td>
-        <td colspan="9" style="border-radius:5px;background-color:#b4b9bb;color:black;border-bottom: 1px solid #55595b;">
-                <p style="margin-left: 10px;margin-right:10px;">{{ $mailData['hash'] }}</p>
+        <td colspan="3" style="border-radius:5px 0px 0px 5px;background-color:#6895C1;color:white;">
+              <p style="margin-left: 10px;font-weight:bold;">Informe Este Código</p>
+          </td>
+        <td colspan="9" style="border-radius:0px 5px 5px 0px;background-color:#b4b9bb;color:black;border-bottom: 1px solid #55595b;">
+              <p style="margin-left: 10px;margin-right:10px;font-size:22px;font-weight:bold;">{{ $mailData['hash'] }}</p>
         </td>
        </tr>
+       <tr style="height:15px;">
+		  <td colspan="12" style="color:red;">Obs: Segue o Qrcode Anexo a este Email</td>
+		</tr>
 		<tr style="height:30px;">
 		  <td colspan="12"></td>
 		</tr>
       </tbody>
 	  <tr>
-       <td style="border-top: 3px solid  #27b1e3;
+       <td style="border-top: 3px solid  #1F8BDA;
                   height:23px;padding:5px;
                   border-radius:0px 0px 5px 5px;
                   background: linear-gradient(90deg, #87aace 14.33%, #6895C1 214.54%);"
