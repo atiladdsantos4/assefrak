@@ -397,3 +397,13 @@
   max-height: 345px; /* Change this value to fit your design */
   overflow-y: auto;  /* Adds a scroll bar only when content exceeds the max-height */
 }
+
+#form-apresentacao{
+   input[type="radio"]{
+      border: 1px solid gray
+   }
+
+   input[type="radio"]:checked{
+      background: #269fe1;
+   }
+}

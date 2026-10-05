@@ -23,15 +23,17 @@ const ModalOcorrencia = (props) => {
     console.log('acaomodal'+acao)
     console.log('dadosedita')
     console.log(dados)
-    setDataoco(data)  
+    setDataoco(data)
     if(acao === 'edit'){
        console.log('entrei edit')
-       setOcorrencia(dados.ocp_id_top)  
+       setOcorrencia(dados.ocp_id_top)
        setDescricao(dados.ocp_descricao)
+       setDataoco(dados.ocp_created_at)
        setIdocorrenciapasse(idedita)
     } else {
-       setOcorrencia(null)  
+       setOcorrencia(null)
        setDescricao(null)
+       setDataoco(null)
        setIdocorrenciapasse(null)
     }
 
@@ -46,7 +48,7 @@ const ModalOcorrencia = (props) => {
             })
       )
   }
- 
+
   const handleSubmit = (event) => {
         console.log('submit')
         const form = event.currentTarget
@@ -59,7 +61,7 @@ const ModalOcorrencia = (props) => {
         event.preventDefault()
         setValidated(true)
         if(erro == false){
-           event.preventDefault() 
+           event.preventDefault()
            handleSave(erro)
         }
 
@@ -89,7 +91,7 @@ const ModalOcorrencia = (props) => {
                 setLoadsave(false)
                 setTimeout(() => {
                   setExibealerta(false)
-                  setOcorrencia(null)  
+                  setOcorrencia(null)
                   setDescricao(null)
                   setIdocorrenciapasse(null)
                   close()
@@ -105,13 +107,13 @@ const ModalOcorrencia = (props) => {
                 'Content-Type': 'multipart/form-data',
                 Authorization: 'Bearer ' + token,//dentro do env//
                 },
-           }) 
+           })
            .then((result) => {
                 setTextoalert('Occorência alterada com sucesso!!!')
                 setExibealerta(true)
                 setLoadsave(false)
                 setTimeout(() => {
-                   setOcorrencia(null)  
+                   setOcorrencia(null)
                    setDescricao(null)
                    setIdocorrenciapasse(null)
                    setExibealerta(false)
@@ -119,7 +121,7 @@ const ModalOcorrencia = (props) => {
                    funcload()
                 }, 2000)
             })
-        }    
+        }
   }
 
   return (
@@ -153,7 +155,7 @@ const ModalOcorrencia = (props) => {
                                         required>
 
                                     <CompOcorrencia/>
-                                </CFormSelect> 
+                                </CFormSelect>
                             </CCol>
                             <CCol md={4} xs={4} style={{alignItems:'center'}}>
                                 <CFormInput

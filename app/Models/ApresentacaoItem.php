@@ -8,43 +8,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 
-class TipoOcorrencia extends Model
+class ApresentacaoItem extends Model
 {
-    //top_id_top,top_descricao,top_created_at,top_updated_at,top_deleted_at
-    //top_id_top,top_descricao,top_created_at,top_updated_at,top_deleted_at
+    //api_id_api,api_id_pal,api_id_col,api_slide,api_video,api_audio,api_data_exibe,api_ativo,api_created_at,api_updated_at,api_deleted_at
     use HasFactory,SoftDeletes;//preenche deletet_at e nao delete registro //;
     public $timestamps = true; //--> update automarically by laravel <--//
-    protected $table = 'top_tipo_ocorrencia';
-    protected $primaryKey = 'top_id_top';
+    protected $table = 'api_apresentacao_item';
+    protected $primaryKey = 'api_id_api';
     protected $appends = ['acao'];
     protected $fillable = [
-       'top_id_top','top_descricao','top_created_at','top_updated_at','top_deleted_at'
+       'api_id_api','api_id_apr','api_tipo','api_posicao','api_conteudo','api_exibe','api_created_at','api_updated_at','api_deleted_at'
     ];
-    protected $dates = ['top_deleted_at'];//campo obrigatório pra o SoftDeletes
+    protected $dates = ['api_deleted_at'];//campo obrigatório pra o SoftDeletes
 
-    const CREATED_AT  = 'top_created_at';
-    const UPDATED_AT  = 'top_updated_at';
-    const DELETED_AT  = 'top_deleted_at';
+    const CREATED_AT  = 'api_created_at';
+    const UPDATED_AT  = 'api_updated_at';
+    const DELETED_AT  = 'api_deleted_at';
 
     //protected $dateFormat = 'U';
 
     protected $casts = [//output
-        'top_created_at' => 'datetime:Y-m-d H:i:s',
-        'top_updated_at' => 'datetime:Y-m-d H:i:s',
-        'top_deleted_at' => 'datetime:Y-m-d H:i:s',
+        'api_created_at' => 'datetime:Y-m-d H:i:s',
+        'api_updated_at' => 'datetime:Y-m-d H:i:s',
+        'api_deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    public static function getIdTipoOcorrencia($valor){
-       $dados = TipoOcorrencia::where('top_descricao',$valor)->first();
-       return $dados->top_id_top;
+    public function apresentacao(){ //--> especilidade
+      return $this->belongsTo(Apresentacao::class, 'apr_id_apr', 'api_id_apr');
+      //->makeHidden(['dataini', 'datafim']);
     }
 
-    // public function agendamentos(){ //--> especilidade
-    //   return $this->hasMany(ClienteAgendado::class, 'cla_id_top', 'top_id_top');
-    //   //->makeHidden(['dataini', 'datafim']);
 
-    // }
     /*
+
     protected function getPacPlanosaudeAttribute(){ //--> especilidade
        if( isset($this->pac_id_pla) ){
           $esp = PlanoSaude::find($this->pac_id_pla);
@@ -75,12 +71,12 @@ class TipoOcorrencia extends Model
         parent::boot();
 
         self::creating(function($model){//before create
-            $model->top_created_at = date("Y-m-d H:i:s.u");
-            $model->top_updated_at = date("Y-m-d H:i:s.u");
+            $model->api_created_at = date("Y-m-d H:i:s.u");
+            $model->api_updated_at = date("Y-m-d H:i:s.u");
         });
 
         self::updating(function($model){
-            $model->top_updated_at = date("Y-m-d H:i:s.u");
+            $model->api_updated_at = date("Y-m-d H:i:s.u");
         });
         /*
         self::created(function($model){
