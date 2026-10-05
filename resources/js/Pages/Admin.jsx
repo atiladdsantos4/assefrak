@@ -58,6 +58,8 @@ import ListaEntradasEstoque from './listagem/ListaEntradasEstoque';
 import EntradaEstoque from './cadastros/EntradaEstoque';
 import ListaSaidasEstoque from './listagem/ListaSaidasEstoque';
 import SaidaEstoque from './cadastros/SaidaEstoque';
+import Apresentacao from './cadastros/Apresentacao';
+import ListaApresentacao from './listagem/ListaApresentacao';
 // import SectionAbout from './sections/SectionAbout';
 // import SectionServices from './sections/SectionServices';
 // import SectionWhyUs from './sections/SectionWhyUs';
@@ -283,7 +285,11 @@ const Main = ({ appName }) => {
     case "SaidaEstoque":
         return(<SaidaEstoque tela={setTelaatual} param={param}/>)
        break
-
+    case "Apresentacao":
+        return(<Apresentacao tela={setTelaatual} param={param}/>)
+       break
+    case "ListaApresentacao":
+       return(<ListaApresentacao tela={setTelaatual} altera={setParam}/>)
     }
 
   }

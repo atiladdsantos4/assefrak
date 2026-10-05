@@ -8,43 +8,47 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 
-class TipoOcorrencia extends Model
+class Apresentacao extends Model
 {
-    //top_id_top,top_descricao,top_created_at,top_updated_at,top_deleted_at
-    //top_id_top,top_descricao,top_created_at,top_updated_at,top_deleted_at
+    //apr_id_apr,apr_id_pal,apr_id_col,apr_slide,apr_video,apr_audio,apr_data_exibe,apr_ativo,apr_created_at,apr_updated_at,apr_deleted_at
     use HasFactory,SoftDeletes;//preenche deletet_at e nao delete registro //;
     public $timestamps = true; //--> update automarically by laravel <--//
-    protected $table = 'top_tipo_ocorrencia';
-    protected $primaryKey = 'top_id_top';
+    protected $table = 'apr_apresentacao';
+    protected $primaryKey = 'apr_id_apr';
     protected $appends = ['acao'];
     protected $fillable = [
-       'top_id_top','top_descricao','top_created_at','top_updated_at','top_deleted_at'
+       'apr_id_apr','apr_id_pal','apr_id_col','apr_tema','apr_slide','apr_video','apr_audio','apr_data_exibe','apr_ativo','apr_created_at','apr_updated_at','apr_deleted_at'
     ];
-    protected $dates = ['top_deleted_at'];//campo obrigatório pra o SoftDeletes
+    protected $dates = ['apr_deleted_at'];//campo obrigatório pra o SoftDeletes
 
-    const CREATED_AT  = 'top_created_at';
-    const UPDATED_AT  = 'top_updated_at';
-    const DELETED_AT  = 'top_deleted_at';
+    const CREATED_AT  = 'apr_created_at';
+    const UPDATED_AT  = 'apr_updated_at';
+    const DELETED_AT  = 'apr_deleted_at';
 
     //protected $dateFormat = 'U';
 
     protected $casts = [//output
-        'top_created_at' => 'datetime:Y-m-d H:i:s',
-        'top_updated_at' => 'datetime:Y-m-d H:i:s',
-        'top_deleted_at' => 'datetime:Y-m-d H:i:s',
+        'apr_created_at' => 'datetime:Y-m-d H:i:s',
+        'apr_updated_at' => 'datetime:Y-m-d H:i:s',
+        'apr_deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    public static function getIdTipoOcorrencia($valor){
-       $dados = TipoOcorrencia::where('top_descricao',$valor)->first();
-       return $dados->top_id_top;
+    public function palestra(){ //--> especilidade
+      return $this->hasOne(Palestra::class, 'pal_id_pal', 'apr_id_pal');
+      //->makeHidden(['dataini', 'datafim']);
     }
 
-    // public function agendamentos(){ //--> especilidade
-    //   return $this->hasMany(ClienteAgendado::class, 'cla_id_top', 'top_id_top');
-    //   //->makeHidden(['dataini', 'datafim']);
+    public function colaborador(){ //--> especilidade
+      return $this->hasOne(Colaborador::class, 'col_id_col', 'apr_id_col');
+      //->makeHidden(['dataini', 'datafim']);
+    }
 
-    // }
+    public function itens(){ //--> especilidade
+      return $this->hasMany(ApresentacaoItem::class, 'api_id_apr', 'apr_id_apr');
+      //->makeHidden(['dataini', 'datafim']);
+    }
     /*
+
     protected function getPacPlanosaudeAttribute(){ //--> especilidade
        if( isset($this->pac_id_pla) ){
           $esp = PlanoSaude::find($this->pac_id_pla);
@@ -75,12 +79,12 @@ class TipoOcorrencia extends Model
         parent::boot();
 
         self::creating(function($model){//before create
-            $model->top_created_at = date("Y-m-d H:i:s.u");
-            $model->top_updated_at = date("Y-m-d H:i:s.u");
+            $model->apr_created_at = date("Y-m-d H:i:s.u");
+            $model->apr_updated_at = date("Y-m-d H:i:s.u");
         });
 
         self::updating(function($model){
-            $model->top_updated_at = date("Y-m-d H:i:s.u");
+            $model->apr_updated_at = date("Y-m-d H:i:s.u");
         });
         /*
         self::created(function($model){

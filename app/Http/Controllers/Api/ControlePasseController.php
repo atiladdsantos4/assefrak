@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\ControlePasse;
 use App\Models\Tratamento;
 use App\Models\StatusTratamento;
+use App\Models\OcorrenciaPasse;
+use App\Models\TipoOcorrencia;
 use App\Http\Resources\ControlePasseResource;
 use Carbon\Carbon;
 
@@ -153,6 +155,20 @@ class ControlePasseController extends Controller
           $id =  StatusTratamento::getIdStatus('Tratamento Finalizado');
           Tratamento::where('tra_id_tra',$input["cop_id_tra"])->update(['tra_id_stt'=> $id]);
        }
+       //gera ocorrencia de comparecimento ao tratameto
+        $request->merge(['ocp_created_at' => date("Y-m-d H:i:s")]);
+        $request->merge(['ocp_id_tra' => $input["cop_id_tra"]]);
+        $request->merge(['ocp_id_top' => TipoOcorrencia::getIdTipoOcorrencia('Comparecimento')]);
+        $request->merge(['ocp_descricao' => 'O Acolhido compareceu ao tratamento']);
+        $input = $request->all();
+        //$oco = new OcorrenciaPasse();
+        OcorrenciaPasse::create($input);
+       /*
+       formData.append('top_descricao', descricao)
+        formData.append('ocp_id_tra', idtra)
+        formData.append('ocp_id_top', ocorrencia)
+        formData.append('ocp_descricao', descricao)
+       */
 
        $ControlePasse = new ControlePasseResource($ControlePasse);
        $arr_result = [

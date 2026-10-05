@@ -85,6 +85,8 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaOcupacao')}>Lista Ocupações</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Colaborador')}>Novo Colaborador</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaColaboradores')}>Lista Colaboradores</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'Apresentacao')}>Nova Apresentação</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaApresentacao')}>Lista de Apresentações</a></li>
                         </ul>
                     </li>
                     <li class="dropdown"><a href="#"><span className="centralizado">Eventos/Palestras</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
