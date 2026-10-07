@@ -9,10 +9,12 @@ const ModalVideos = (props) => {
   return (
     <>
       <CModal
+        
         size="xl"
         visible={open}
         onClose={() => close()}
         aria-labelledby="LiveDemoExampleLabel"
+        backdrop="static"
       >
         <CModalHeader style={{backgroundColor:'#6895C1'}}>
           <CModalTitle id="LiveDemoExampleLabel" style={{color:'white'}}>Vídeo Preces</CModalTitle>

@@ -403,7 +403,26 @@
       border: 1px solid gray
    }
 
+   input[type="checkbox"]{
+      border: 1px solid gray
+   }
+
    input[type="radio"]:checked{
-      background: #269fe1;
+      background-color: #269fe1;
    }
 }
+
+.collapse{
+   input[type="radio"]{
+      border: 1px solid gray
+   }
+
+   input[type="checkbox"]{
+      border: 1px solid gray
+   }
+
+   input[type="checkbox"]:checked{
+      background-color: #269fe1;
+   }
+}
+

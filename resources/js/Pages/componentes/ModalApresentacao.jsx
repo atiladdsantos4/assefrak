@@ -10,10 +10,12 @@ const ModalApresentacao = (props) => {
   return (
     <>
       <CModal
+        fullscreen
         size="xl"
         visible={open}
         onClose={() => close()}
         aria-labelledby="LiveDemoExampleLabel"
+        backdrop="static"
       >
         <CModalHeader style={{backgroundColor:'#6895C1'}}>
           <CModalTitle id="LiveDemoExampleLabel" style={{color:'white'}}>Slide de Apresentação</CModalTitle>

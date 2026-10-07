@@ -10,6 +10,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
+import AOS from 'aos';
 registerLocale("ptBR", ptBR);
 
 
@@ -87,6 +88,10 @@ const Acolhido = (props) => {
   }
 
   useEffect(()=>{
+    AOS.init({
+          // Força o AOS a ouvir o scroll deste elemento específico em vez da window
+          container: '.scction-title',
+    });
     let data = formatDate(new Date());
     setCadastro(data)
     if( props.param != null){
