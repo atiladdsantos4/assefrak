@@ -44,7 +44,7 @@ class Apresentacao extends Model
     }
 
     public function itens(){ //--> especilidade
-      return $this->hasMany(ApresentacaoItem::class, 'api_id_apr', 'apr_id_apr');
+      return $this->hasMany(ApresentacaoItem::class, 'api_id_apr', 'apr_id_apr')->orderBy('api_posicao','ASC');
       //->makeHidden(['dataini', 'datafim']);
     }
     /*

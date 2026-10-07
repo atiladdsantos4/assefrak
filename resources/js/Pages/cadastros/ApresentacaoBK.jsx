@@ -5,13 +5,16 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CRow,CCollapse,CBadge,CConditionalPortal, CCardImage,CCardText,
   CFormTextarea} from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
+import {  faCirclePlay, faFilePowerpoint, faPerson, faSave, faCircleXmark, faArrowAltCircleDown, faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
-import ModalExibeFoto from '../componentes/ModalExibeFoto';
+import ModalApresentacao from '../componentes/ModalApresentacao';
+import ModalVideos from '../componentes/ModalVideos';
+import ModalConfirma from '../componentes/ModalConfirma';
+import AOS from 'aos';
 registerLocale("ptBR", ptBR);
 
 
@@ -27,7 +30,11 @@ const Apresentacao = (props) => {
   const [validated, setValidated] = useState(false)
   const [loadpage, setLoadpage] = useState(false)
   const [loadsave, setLoadsave] = useState(false)
+  //const [openmodal,setOpenmodal] = useState(false)
   const [idapresentacao, setIdApresentacao] = useState(null)
+  const [iditemexlcusao, setIditemexclusao] = useState(null)
+  const [iditemlista, setIditemlista] = useState(null)
+  const [tipoexclusao, setTipoexclusao] = useState(null)
   const [tema, setTema] = useState('')
   const [descricao, setDescricao] = useState('')
   const [colaborador, setColaborador] = useState('')
@@ -35,6 +42,7 @@ const Apresentacao = (props) => {
   const [slide, setSlide] = useState('')
   const [video, setVideo] = useState('')
   const [audio, setAudio] = useState('')
+  const [efeito, setEfeito] = useState('cube')
   const [ativo, setAtivo] = useState(false)
   const [datapalestra, setDatapalestra] = useState(null)
   const [cadastro, setCadastro ] = useState(false)
@@ -45,6 +53,7 @@ const Apresentacao = (props) => {
   const [listaslide, setListaslide] = useState([])
   const [listaaudio, setListaaudio] = useState([])
   const [saved,setSaved] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
   const [estcard,setEstcard] = useState(false)
   const [toast, addToast] = useState()//toast
   const [param, setParam] = useState(props.param)//toast
@@ -52,10 +61,19 @@ const Apresentacao = (props) => {
   const [listaimagens,setListaimagens] = useState([])
   const [estimg,setEstimg] = useState([])
   const [openmodal,setOpenmodal] = useState(false)
+  const [openmodalvideo,setOpenmodalvideo] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
   const [imagematual,setImagematual] = useState(null)
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
+  const [visiblevideo, setVisiblevideo] = useState(false)
+  const [linkvideo,setLinkvideo] = useState(false)
   const toaster = useRef(null)
   const style_placeholder = {paddingBottom:'15px'}
+  //expandir retrair imagens//
+  const style_imagem_plus = {width:'110%',zIndex:'20'}
+  const style_imagem_minus = {width:'30%',zIndex:'20'}
+  const [tamimagem,setTamimagem] = useState(style_imagem_minus)
+  const [iconimagem,setIconimagem] = useState(faMagnifyingGlassPlus)
   //'apr_id_apr','apr_id_pal','apr_id_col','apr_slide','apr_video','apr_audio','apr_data_exibe','apr_ativo','apr_created_at','apr_updated_at','apr_deleted_at'
 
   const formatDateBanco = (date) => {
@@ -70,7 +88,21 @@ const Apresentacao = (props) => {
         return `${yyyy}-${m}-${d}`;
   }
 
+  const expande = (event) =>{
+      if(iconimagem === faMagnifyingGlassPlus){
+           setTamimagem(style_imagem_plus)
+           setIconimagem(faMagnifyingGlassMinus)
+      } else {
+          setTamimagem(style_imagem_minus)
+          setIconimagem(faMagnifyingGlassPlus)
+      }
+  }
+
   useEffect(()=>{
+    AOS.init({
+      // Força o AOS a ouvir o scroll deste elemento específico em vez da window
+      container: '.meu-container-com-scroll',
+    });
     let data = formatDate(new Date());
     setCadastro(data)
     if( props.param != null){
@@ -124,9 +156,13 @@ const Apresentacao = (props) => {
                 console.log(result_apresentacao.data.data.apr_itens)
                 if( result_apresentacao.data.data.apr_itens.length > 0){
                     console.log(result_apresentacao.data.data.apr_itens)
-                    result_apresentacao.data.data.apr_itens.map((item,index)=>{
+                    result_apresentacao.data.data.apr_itens.filter((item)=>item.api_tipo == 'S').map((item,index)=>{
                         let objmeta = JSON.parse(item.api_conteudo)
                         setListaimagens(prevItems => [...prevItems, objmeta["meta"][0]]);
+                    })
+                    result_apresentacao.data.data.apr_itens.filter((item)=>item.api_tipo == 'V').map((item,index)=>{
+                        let objmeta = JSON.parse(item.api_conteudo)
+                        setListavideo(prevItems => [...prevItems, objmeta["meta"][0]]);
                     })
                     //setListaimagens(result_apresentacao.data.data.apr_itens)
                 }
@@ -368,9 +404,9 @@ const CompPalestra = () =>{
 
     if(valor){
       setVisible(true)
-      setDadozoom('zoom-in')
+      //setDadozoom('zoom-in')
     } else{
-      setDadozoom('zoom-out')
+      //setDadozoom('zoom-out')
       setVisible(false)
     }
 
@@ -378,12 +414,26 @@ const CompPalestra = () =>{
 
  }
 
- const CarroselEvento = () =>{
+ const mudaColapseVideo = (valor) =>{
+
+    if(valor){
+      setVisiblevideo(true)
+      //setDadozoom('zoom-in')
+    } else{
+      //setDadozoom('zoom-out')
+      setVisiblevideo(false)
+    }
+
+    console.log(listavideo)
+
+ }
+
+ const CarroselSlide = () =>{
         return (
            <CCard>
               <CCardHeader className="fundo_head mt-1">
                  <FontAwesomeIcon size="lg" icon={faPerson} />
-                 &nbsp;Imagens do Evento
+                 &nbsp;Imagens do Slide
                  { visible
                     ?
                    (<>&nbsp;<FontAwesomeIcon size="lg" icon={faCircleArrowUp} onClick={(e)=>mudaColapse(false)}/></>)
@@ -391,8 +441,27 @@ const CompPalestra = () =>{
                    (<>&nbsp;<FontAwesomeIcon size="lg" icon={faCircleArrowDown} onClick={(e)=>mudaColapse(true)}/></>)
                  }
               </CCardHeader>
-              <ContainerItemEvento/>
+              <ContainerSlide/>
               <div id="itemapresentacao"></div>
+           </CCard>
+        )
+ }
+
+ const ColapseVideo = () =>{
+        return (
+           <CCard>
+              <CCardHeader className="fundo_head mt-1">
+                 <FontAwesomeIcon size="lg" icon={faPerson} />
+                 &nbsp;Videos da Apresentação
+                 { visiblevideo
+                    ?
+                   (<>&nbsp;<FontAwesomeIcon size="lg" icon={faCircleArrowUp} onClick={(e)=>mudaColapseVideo(false)}/></>)
+                   :
+                   (<>&nbsp;<FontAwesomeIcon size="lg" icon={faCircleArrowDown} onClick={(e)=>mudaColapseVideo(true)}/></>)
+                 }
+              </CCardHeader>
+              <ContainerVideo/>
+              <div id="itemvideo"></div>
            </CCard>
         )
  }
@@ -411,7 +480,8 @@ const CompPalestra = () =>{
          imagesaved:false,
          imageload:false,
          exclui:false,
-         exibe:true
+         exibe:true,
+         loadexclui:false
       }
     } else {
       let idx  = getLastIndex(listaimagens)
@@ -424,7 +494,8 @@ const CompPalestra = () =>{
          imageload:false,
          imagesaved:false,
          exclui:false,
-         exibe:true
+         exibe:true,
+         loadexclui:false
       }
     }
     setListaimagens(prevItems => [...prevItems, obj]);
@@ -434,20 +505,76 @@ const CompPalestra = () =>{
     console.log(listaimagens)
  }
 
- const ContainerItemEvento = () =>{
+
+ const NovoVideo = (event) =>{
+    console.log(listaimagens)
+    let tam =  listavideo.length
+    let obj = null
+    if(tam == 0){
+      obj={
+         id:1,
+         idvideoitem:'',
+         titulo:'',
+         hash:'',
+         exclui:false,
+         exibe:true,
+         load:false,
+         loadexclui:false,
+         saved:false
+      }
+    } else {
+      let idx  = getLastIndex(listavideo)
+      obj={
+         id:idx,
+         idvideoitem:'',
+         titulo:'',
+         hash:'',
+         exclui:false,
+         exibe:true,
+         load:false,
+         loadexclui:false,
+         saved:false
+      }
+    }
+    setListavideo(prevItems => [...prevItems, obj]);
+    //listaimagens.push(obj)
+    //setEstcard(!estcard)
+    //scrollToId('itemapresentacao')
+    console.log(listavideo)
+ }
+
+ const ContainerSlide = () =>{
        return (
-         <div data-aos="zoom-in">
+         <div>
           <CCollapse visible={visible}>
              <CRow className='mt-3 ms-1 mb-3'>
-             <CCol md={3}>
-                 <CButton size="sm" color='primary' onClick={(e)=>NovaImagem(e)}>
-                     Adicionar Imagem&nbsp;<FontAwesomeIcon size="lg" icon={faArrowAltCircleDown}/>
-                 </CButton>
-             </CCol>
-             <CCol md={12} className='mt-2'>
-                 {/* <CardImagem estado={estcard}/> */}
-                 <CardImagem/>
-             </CCol>
+                <CCol md={3}>
+                    <CButton size="sm" color='primary' onClick={(e)=>NovaImagem(e)}>
+                        Adicionar Imagem&nbsp;<FontAwesomeIcon size="lg" icon={faArrowAltCircleDown}/>
+                    </CButton>
+                </CCol>
+             </CRow>
+             <CRow className='mt-3 ms-1 mb-3'>
+                  <CardSlide/>
+             </CRow>
+         </CCollapse>
+         </div>
+       )
+  }
+
+  const ContainerVideo = () =>{
+       return (
+         <div>
+          <CCollapse className="meu-container-com-scroll" visible={visiblevideo}>
+             <CRow className='mt-3 ms-1 mb-3' data-aos="fade-up">
+                <CCol md={3}>
+                    <CButton size="sm" color='primary' onClick={(e)=>NovoVideo(e)}>
+                        Adicionar Video&nbsp;<FontAwesomeIcon size="lg" icon={faArrowAltCircleDown}/>
+                    </CButton>
+                </CCol>
+             </CRow>
+             <CRow className='mt-3 ms-1 mb-3'>
+                 <CardVideo/>
              </CRow>
          </CCollapse>
          </div>
@@ -462,18 +589,100 @@ const CompPalestra = () =>{
       )
   }
 
+  const RemoveItemVideo = (event,id,idexclui,salvo) => {
+    if(salvo){
+        setTextomodal('Este Vídeo já está Salvo no Banco de Dados. Deseja Realmente Excluir?')
+        setTipoexclusao('V')
+        setIditemexclusao(idexclui)
+        setIditemlista(id)
+        setOpenmodalconfirma(true)
+    } else {
+       setListavideo(prevItems =>
+          prevItems.map(item =>
+             item.id === id ? { ...item, exclui: true } : item
+          )
+       )
+    }
+  }
+
+  const RemoveItemSlide = (event,id,idexclui,salvo) => {
+    if(salvo){
+        setTextomodal('Este Slide já está Salvo no Banco de Dados. Deseja Realmente Excluir?')
+        setTipoexclusao('S')
+        setIditemexclusao(idexclui)
+        setIditemlista(id)
+        setOpenmodalconfirma(true)
+    } else {
+       setListaimagens(prevItems =>
+          prevItems.map(item =>
+             item.id === id ? { ...item, exclui: true } : item
+          )
+       )
+    }
+  }
+
+  const excluirItemBanco = (tipo,idlista,idexclusao) =>{
+     setOpenmodalconfirma(false)
+     if(tipo == 'V'){
+        setListavideo(prevItems =>
+            prevItems.map(item =>
+                item.id === idlista ? { ...item, loadexclui: true } : item
+            )
+        )
+     }
+     if(tipo == 'S'){
+        setListaimagens(prevItems =>
+            prevItems.map(item =>
+                item.id === idlista ? { ...item, loadexclui: true } : item
+            )
+        )
+     }
+     axios.delete(`${endpoint}/apresentacaoitem/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,//dentro do env//
+        },
+     })
+     .then((result) => {
+            if(tipo == 'V'){
+                setListavideo(prevItems =>
+                    prevItems.map(item =>
+                        item.id === idlista ? { ...item, loadexclui: false } : item
+                    )
+                )
+                setListavideo(prevItems =>
+                    prevItems.map(item =>
+                        item.id === idlista ? { ...item, exclui: true } : item
+                    )
+                )
+            }
+            if(tipo == 'S'){
+                setListaimagens(prevItems =>
+                    prevItems.map(item =>
+                        item.id === idlista ? { ...item, loadexclui: false } : item
+                    )
+                )
+                setListaimagens(prevItems =>
+                    prevItems.map(item =>
+                        item.id === idlista ? { ...item, exclui: true } : item
+                    )
+                )
+            }
+            addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success')) //--> usa toast
+            setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+                //tela('ListaApresentacao')
+            }, 2000)
+     })
+
+  }
+
   const MontaJsonImagemLista = (dados) =>{
     let arrayitens = []
-    let obj = null
     let objfinal = null
     arrayitens = []
-    obj ={
-        idslideitem:null,
-        posicao:null,
-        imagem:dados.imagem,
-        path:'slide/'+dados.imagem,
-        exibe:true
-    }
     arrayitens.push(dados)
     objfinal = {
         "meta":arrayitens
@@ -481,7 +690,116 @@ const CompPalestra = () =>{
     return JSON.stringify(objfinal)
   }
 
-  const CardImagem = () =>{
+
+  const MontaJsonVideoLista = (dados) =>{
+    let arrayitens = []
+    let objfinal = null
+    arrayitens = []
+    arrayitens.push(dados)
+    objfinal = {
+        "meta":arrayitens
+    }
+    return JSON.stringify(objfinal)
+  }
+
+  const AlteraVideo = (event,id,valor,param) =>{
+    let idx = getIndexVideo(listavideo,id)
+    if(param == 'titulo'){
+       listavideo[idx].titulo = valor
+    }
+    if(param == 'hash'){
+       listavideo[idx].hash = valor
+    }
+    console.log(listavideo[idx].titulo)
+  }
+
+  const getIndexVideo = (lista,id) =>{
+     let indice = 0
+     lista.map((item,index)=>{
+       if(item.id === id){
+          indice = index
+       }
+     })
+    return indice
+  }
+
+  const CardVideo = () =>{
+     return(
+        listavideo.filter((item)=>item.exclui == false).map((item,index)=>{
+            return(
+                <CCol md={12} className='mt-2'>
+                    <CRow>
+                        <CCol className="mb-3" style={{overflow:'auto',marginTop:'15px',width:'60px'}} md={1}>
+                            <div className='mt-4' style={{float:'left'}}>
+                                <FontAwesomeIcon style={{color:'red'}} size="sm"icon={faCircleXmark} onClick={(e)=>RemoveItemVideo(e,item.id,item.idvideoitem,item.saved)}/>{item.loadexclui ? <CSpinner size="sm"/> : <></>}&nbsp;
+                            </div>
+                         </CCol>
+                        <CCol md={8} className='flex'>
+                            <CFormInput defaultValue={item.titulo} onChange={(e)=>AlteraVideo(e,item.id,e.target.value,'titulo')} label="titulo"/>
+                        </CCol>
+                        <CCol md={2}>
+                            <CFormInput defaultValue={item.hash} onChange={(e)=>AlteraVideo(e,item.id,e.target.value,'hash')} label="hash"/>
+                        </CCol>
+                        <CCol style={{marginTop:'32px',overflow:'auto',width:'140px'}} md={1}>
+                            <div style={{float:'left'}}>
+                                <CButton size ="sm" color="primary" onClick={(e)=>SalvarVideo(e,item.id)}>
+                                    Salvar {item.load ? <CSpinner size="sm"/> : <></>}
+                                </CButton>&nbsp;
+                                </div>
+                                { item.saved
+                                ? (<div style={{float:'left'}}>
+                                     <FontAwesomeIcon size="xl" onClick={(e)=>AbreVideo(e,item.hash)} style={{color:'#1c9245',cursor:'pointer'}} icon={faCirclePlay}/>
+                                  </div>)
+                                :(<></>)}
+
+                        </CCol>
+                    </CRow>
+                </CCol>
+            )
+        })
+    )
+  }
+
+  const CardSlide = () =>{
+     return(
+        listaimagens.filter((item)=>item.exclui == false).map((item,index)=>{
+           return(
+              <CCol md={4} className='mt-2'>
+                  <CCard style={{textAlign:'center'}}>
+                      { item.path != null
+                      ? (<CCardImage className="mt-2 mb-1" style={{width:'60%',margin:'auto'}} src={imagem + pathexibicao + item.path} onClick={(e)=>abreModal(e,imagem + item.path)}/>)
+                      : (<></>)}
+                      <CCardText className='mt-2'>
+                         <CRow>
+                            <CCol style={{overflow:'auto',marginTop:'5px',width:'65px'}} md={1}>
+                                <div className="ms-1" style={{float:'left'}}>
+                                     <FontAwesomeIcon style={{color:'red'}} size="sm"icon={faCircleXmark} onClick={(e)=>RemoveItemSlide(e,item.id,item.idslideitem,item.saved)}/>{item.loadexclui ? <CSpinner size="sm"/> : <></>}&nbsp;
+                                </div>
+                            </CCol>
+                            {/* <CCol className="ms-2" md={1}><FontAwesomeIcon style={{color:'red'}} size="sm"icon={faCircleXmark} onClick={(e)=>RemoveItemLista(e,item.id)}/></CCol> */}
+                            <CCol className="mb-2 d-flex flex-column" md={10}>
+                                <CInputGroup size="sm">
+                                    <CFormInput
+                                        type="file"
+                                        id="inputGroupFile02"
+                                        onChange={(e)=>AlteraItemLista(e,item.id,'imagem',null)}
+                                    />
+                                    <CInputGroupText as="label" htmlFor="inputGroupFile02" onClick={(e)=>SalvarImagemLista(e,item.id)}>
+                                    Salvar&nbsp;{item.imageload ? <CSpinner size="sm" /> : ''}
+                                    </CInputGroupText>
+                                </CInputGroup>
+                                {item.saved  ? (<div><CBadge color="secondary">{item.imagem}&nbsp;<FontAwesomeIcon style={{color:'white',cursor:'pointer'}} size="sm"icon={faCircleXmark} onClick={(e)=>RemoveImagem(e,item.id)}/></CBadge></div>) : ''}
+                            </CCol>
+                        </CRow>
+                      </CCardText>
+                  </CCard>
+              </CCol>
+           )
+        })
+     )
+  }
+
+  const CardSlideOld = () =>{
      return(
          listaimagens.filter((item)=>item.exclui == false).map((item,index)=>{
              return(
@@ -515,7 +833,7 @@ const CompPalestra = () =>{
              )
          })
      )
-   }
+  }
 
   const getLastIndex = (lista) =>{
      let maxvalor = 0;
@@ -571,31 +889,13 @@ const CompPalestra = () =>{
         })
         .then((result) => {
             let iditem = result.data.data.api_id_api
-            setListaimagens(prevItems =>
-                prevItems.map(item =>
-                item.id === id ? { ...item, imageload: false } : item
-                )
-            )
-            setImagesaved(true)
-            addToast(CompToast('Imagem Salva com sucesso !!!', 'success')) //--> usa toast
-            setidslideitem(iditem)
             let arq = []
             setListaimagens(prevItems =>
                 prevItems.map(item =>
-                    item.id === id ? { ...item, imagesaved: true, idslideitem: iditem, file: arq } : item
+                    item.id === id ? { ...item,imageload: false, imagesaved: true, idslideitem: iditem, file: arq } : item
                 )
             )
-            // setListaimagens(prevItems =>
-            //     prevItems.map(item =>
-            //         item.id === id ? { ...item, idslideitem: iditem } : item
-            //     )
-            // )
-            // let arq = []
-            // setListaimagens(prevItems =>
-            //     prevItems.map(item =>
-            //         item.id === id ? { ...item, file: arq } : item
-            //     )
-            // )
+            addToast(CompToast('Imagem Salva com sucesso !!!', 'success')) //--> usa toast
             setTimeout(() => {
                 document.getElementById('idtoast').classList.remove('show')
                 document.getElementById('idtoast').remove()
@@ -622,34 +922,19 @@ const CompPalestra = () =>{
         })
         .then((result) => {
             let iditem = result.data.data.apr_id_apr
-            setidslideitem(iditem)
             let arq = []
-            setListaimagens(prevItems =>
-                prevItems.map(item =>
-                item.id === id ? { ...item, imageload: false } : item
-                )
-            )
-            setImagesaved(true)
             addToast(CompToast('Imagem Atualizada com sucesso !!!', 'success')) //--> usa toast
-            // //setidslideitem(iditem)
-            // let arq = []
             setListaimagens(prevItems =>
                 prevItems.map(item =>
                     item.id === id ? { ...item, imageload: false, imagesaved: true, file: arq } : item
                 )
             )
-            // let arq = []
-            // setListaimagens(prevItems =>
-            //     prevItems.map(item =>
-            //         item.id === id ? { ...item, file: arq } : item
-            //     )
-            // )
             setTimeout(() => {
                 document.getElementById('idtoast').classList.remove('show')
                 document.getElementById('idtoast').remove()
                 setEstimg(!estimg)
             }, 2000)
-            //setListacidade(result.data.data)
+
         });
     }
     console.log(listaimagens)
@@ -686,19 +971,165 @@ const CompPalestra = () =>{
         )
   }
 
+  const AbreSlide = () => {
+    let data = listaimagens.filter((item)=> item.exclui == false)
+    console.log(data)
+    if(data.length == 0){
+       addToast(CompToast('Não há imagens pra exibição !!!', 'danger')) //--> usa toast
+       setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+       }, 2000)
+    } else {
+       setOpenmodal(true)
+    }
+  }
+
+const handleChange = (event) => {
+    setEfeito(event.target.value);
+};
+
+const RadioEfeito = () =>{
+   return (
+        <>
+            <CFormCheck inline type="radio" name="inlineRadioOptions" id="inlineCheckbox1"
+                onChange={handleChange}
+                checked={efeito === 'cube'}
+                value="cube"
+                label="Cubo"
+            />
+            <CFormCheck inline type="radio" name="inlineRadioOptions" id="inlineCheckbox2"
+                onChange={handleChange}
+                checked={efeito === 'coverflow'}
+                value="coverflow"
+                label="CoverfLow"
+            />
+            <CFormCheck  inline  type="radio" name="inlineRadioOptions" id="inlineCheckbox3"
+                onChange={handleChange}
+                checked={efeito === 'flip'}
+                value="flip"
+                label="Flip"
+            />
+            <CFormCheck  inline  type="radio" name="inlineRadioOptions" id="inlineCheckbox3"
+                onChange={handleChange}
+                checked={efeito === 'fade'}
+                value="fade"
+                label="Fade"
+            />
+
+        </>
+    )
+}
+const ValidaVideo  = (pos) =>{
+   if((pos.titulo === '') || (pos.hash === '')){
+       addToast(CompToast('Todos dados precisam serpreenchidos', 'danger')) //--> usa toast
+       setTimeout(() => {
+           document.getElementById('idtoast').classList.remove('show')
+           document.getElementById('idtoast').remove()
+       }, 2000)
+       return true
+   }
+   return false
+}
+
+const AbreVideo = (event,hash) =>{
+    setLinkvideo(hash)
+    setOpenmodalvideo(true)
+}
+
+const SalvarVideo  = (event,id) =>{
+    event.preventDefault()
+    let pos = listavideo.filter((item)=>item.id == id);
+
+    if(ValidaVideo(pos[0])){
+       return
+    }
+
+    setListavideo(prevItems =>
+          prevItems.map(item =>
+             item.id === id ? { ...item, load: true } : item
+          )
+     )
+    let api_dados_inf = MontaJsonVideoLista(pos[0]);
+    if( pos[0].idvideoitem == null || pos[0].idvideoitem == '' ){
+        const formData = new FormData()
+        formData.append('api_tipo', 'V')
+        formData.append('api_posicao', 0)
+        formData.append('api_conteudo', api_dados_inf)
+        formData.append('api_exibe', 1)
+        formData.append('api_id_apr', idapresentacao)
+        axios.post(`${endpoint}/apresentacaoitem`, formData, {
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + token,//dentro do env//
+            },
+        })
+        .then((result) => {
+            let iditem = result.data.data.api_id_api
+            setListavideo(prevItems =>
+                prevItems.map(item =>
+                    item.id === id ? { ...item, load: false, idvideoitem: iditem, saved:true  } : item
+                )
+            )
+            addToast(CompToast('Video Salva com sucesso !!!', 'success')) //--> usa toast
+            setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+                setEstimg(!estimg)
+            }, 2000)
+            //setListacidade(result.data.data)
+        });
+    } else {
+        const formData = new FormData()
+        formData.append('api_posicao', 0)
+        formData.append('api_tipo', 'V')
+        formData.append('api_conteudo', api_dados_inf)
+        formData.append('api_exibe', 1)
+        formData.append('api_id_apr', idapresentacao)
+        formData.append('_method', 'put')
+        axios.post(`${endpoint}/apresentacaoitem/${pos[0].idvideoitem}`, formData, {
+            headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + token,//dentro do env//
+            },
+        })
+        .then((result) => {
+            let iditem = result.data.data.apr_id_apr
+            setListavideo(prevItems =>
+                prevItems.map(item =>
+                    item.id === id ? { ...item, load: false } : item
+                )
+            )
+            addToast(CompToast('Video Atualizada com sucesso !!!', 'success')) //--> usa toast
+            setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+                setEstimg(!estimg)
+            }, 2000)
+
+        });
+    }
+    console.log(listaimagens)
+  }
+
   return (
-    <div data-aos="zoom-in">
+    <div>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" style={{minWidth:'400px'}} data-aos="fade-up">
           <h2>Apresentação</h2>
           <p>Cadastro</p>
         </div>
         <div class="container">
+                <ModalConfirma tipo={tipoexclusao} id={iditemexlcusao} funcret={()=>excluirItemBanco(tipoexclusao,iditemlista,iditemexlcusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
+                <ModalApresentacao open={openmodal} close={()=>setOpenmodal(false)} lista={listaimagens} pathexibe={pathexibicao} efeito={efeito}/>
+                <ModalVideos open={openmodalvideo} video={linkvideo} close={(e)=>setOpenmodalvideo(false)}/>
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
                 <CCard className='card_bottom'>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Apresentaões</CCardHeader>
                 <CCardBody>
-                    <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
+                    <CForm className="row g-3 needs-validation" noValidate  id="form-apresentacao" onSubmit={handleSubmit} validated={validated}>
                             <CCol md={8}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
@@ -818,14 +1249,26 @@ const CompPalestra = () =>{
                                 </CButton>
                                 {' '}
                                 <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaApresentacao')}>Listar</CButton>
+                                {' '}
+                                { idapresentacao != null ? (
+                                 <>
+                                 <CButton color="info" type="button" onClick={()=>AbreSlide()}>
+                                  Slide Apresentação&nbsp;<FontAwesomeIcon size="lg" icon={faFilePowerpoint}/>
+                                 </CButton>
+                                 {' '}
+                                 <CBadge color="primary">Efeito Apresentação:</CBadge>&nbsp;<RadioEfeito valor={efeito}/>
+                                 </>
+                                ) : <></>}
                             </CCol>
                         </CForm>
                 </CCardBody>
             </CCard>
-            { idapresentacao != null ? <CarroselEvento/> : <></>}
+            { idapresentacao != null ? <CarroselSlide/> : <></>}
+            { idapresentacao != null ? <ColapseVideo/> : <></>}
         </div>
         </section>
     </div>
+
   )
 }
 export default Apresentacao

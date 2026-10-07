@@ -402,7 +402,7 @@ const CompAutores = () =>{
     return (
         <CRow className='mt-3'>
             <CCol md={8}>
-            <CFormLabel htmlFor="exampleFormControlInput1">Imagem do Colaborador</CFormLabel><br/>
+            <CFormLabel htmlFor="exampleFormControlInput1">Imagem do Livro</CFormLabel><br/>
             <CInputGroup className="mb-3">
                     <CFormInput
                         type="file"

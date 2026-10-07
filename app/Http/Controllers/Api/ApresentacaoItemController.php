@@ -55,6 +55,23 @@ class ApresentacaoItemController extends Controller
         $request->merge(['api_created_at' => date("Y-m-d H:i:s")]);
         $input = $request->all();
 
+        // Reordenar a Apresentação //
+        if(isset($input["ordenacao"])){
+           $cont = 0;
+           $postjson = json_decode($input["api_ordena"], true);
+            for($i = 0; $i < count($postjson["meta"]);$i++){
+                $cont++;
+                ApresentacaoItem::where('api_id_api',$postjson["meta"][$i]["id"])->update(['api_posicao' =>$postjson["meta"][$i]["posicao"]]);
+            }
+            $arr_result = [
+                "status" => true,
+                "mensagem" => "Apresentacao Reordenada com sucesso!!!",
+            ];
+
+            return json_encode($arr_result,JSON_PRETTY_PRINT);
+
+        }
+
 
 
         $validator = Validator::make($input, [
@@ -81,8 +98,10 @@ class ApresentacaoItemController extends Controller
 
             //atualiza o campo meta com o id do item evento para posterior atualizaçao de imagem
             $postjson["meta"][0]["idslideitem"] = $apresentacaoitem->api_id_api;
+            $postjson["meta"][0]["saved"] = true;
             $postjson["meta"][0]["file"] = [];
             $input["api_conteudo"] = json_encode($postjson);
+            $input["api_posicao"] = $postjson["meta"][0]["posicao"];
             $eviItem = ApresentacaoItem::find($apresentacaoitem->api_id_api);
             $eviItem->update($input);
             // fim atualiza //
@@ -91,10 +110,12 @@ class ApresentacaoItemController extends Controller
             if($input["api_tipo"] == 'V'){
                $postjson["meta"][0]["idvideoitem"] = $apresentacaoitem->api_id_api;
                $postjson["meta"][0]["load"] = false;
+               $postjson["meta"][0]["saved"] = true;
             }
             if($input["api_tipo"] == 'A'){
                $postjson["meta"][0]["idaudioitem"] = $apresentacaoitem->api_id_api;
                $postjson["meta"][0]["load"] = false;
+               $postjson["meta"][0]["saved"] = true;
             }
             $input["api_conteudo"] = json_encode($postjson);
             $apr = ApresentacaoItem::find($apresentacaoitem->api_id_api);
@@ -167,9 +188,11 @@ class ApresentacaoItemController extends Controller
             $postjson = json_decode($input["api_conteudo"], true);
             if($input["api_tipo"] == 'V'){
                $postjson["meta"][0]["load"] = false;
+               $postjson["meta"][0]["saved"] = true;
             }
             if($input["api_tipo"] == 'A'){
                $postjson["meta"][0]["load"] = false;
+               $postjson["meta"][0]["saved"] = true;
             }
             $input["api_conteudo"] = json_encode($postjson);
             $apr = ApresentacaoItem::find($apresentacaoitem->api_id_api);
@@ -184,7 +207,7 @@ class ApresentacaoItemController extends Controller
             "status" => true,
             "mensagem" => "ApresentacaoItem Atualizado com Sucesso!!!",
             "data" => $apr
-        ];
+       ];
 
         return json_encode($arr_result,JSON_PRETTY_PRINT);
     }
@@ -194,8 +217,56 @@ class ApresentacaoItemController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $apresentacaoitem = ApresentacaoItem::find($id);
+        $api_id_apr = $apresentacaoitem->api_id_apr;
+        $tipo = $apresentacaoitem->api_tipo;
+        $apresentacaoitem->delete();
+
+        //tipo video
+        if( $tipo == 'V' ){
+            $apresentacaoitem = ApresentacaoItem::where('api_id_apr',$apresentacaoitem->api_id_apr)
+            ->where('api_tipo','V')
+            ->orderBy('api_id_api')
+            ->get();
+            $cont = 0;
+            for($i = 0; $i < count($apresentacaoitem);$i++){
+                $cont++;
+                $dados =  json_decode($apresentacaoitem[$i]["api_conteudo"], true);
+                $dados["meta"][0]["id"] = $cont;
+                $json = json_encode($dados,JSON_UNESCAPED_UNICODE);
+                ApresentacaoItem::where('api_id_api',$dados["meta"][0]["idvideoitem"])->update(['api_conteudo' =>$json]);
+            }
+        }
+
+        //tipo slide
+        if( $tipo == 'S' ){
+            $apresentacaoitem = ApresentacaoItem::where('api_id_apr',$apresentacaoitem->api_id_apr)
+            ->where('api_tipo','S')
+            ->orderBy('api_id_api')
+            ->get();
+            $cont = 0;
+            for($i = 0; $i < count($apresentacaoitem);$i++){
+                $cont++;
+                $dados =  json_decode($apresentacaoitem[$i]["api_conteudo"], true);
+                $dados["meta"][0]["id"] = $cont;
+                $json = json_encode($dados,JSON_UNESCAPED_UNICODE);
+                ApresentacaoItem::where('api_id_api',$dados["meta"][0]["idslideitem"])->update(['api_conteudo' =>$json]);
+            }
+        }
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Exclucão efetuada com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result,JSON_PRETTY_PRINT);
     }
 
 }
+
+/*
+ $input["api_conteudo"] = json_encode($postjson);
+ $apr = ApresentacaoItem::find($apresentacaoitem->api_id_api);
+ $apr->update($input);
+*/
 
