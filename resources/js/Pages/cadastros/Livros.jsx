@@ -247,7 +247,7 @@ const Livros = (props) => {
 
     if( erro == false && idlivro == null) {
         console.log('entre_aqui_post')
-        setLoadsave(false)
+        setLoadsave(true)
         const formData = new FormData()
         //liv_id_liv,liv_id_aut,liv_id_edi,liv_titulo,liv_traducao,liv_sinopse,
   // liv_isbn,liv_paginas,liv_created_at,liv_updated_at,liv_deleted_at
@@ -287,7 +287,7 @@ const Livros = (props) => {
             }, 2000)
         })
     } else {
-        setLoadsave(false)
+        setLoadsave(true)
         const formData = new FormData()
         formData.append('liv_id_aut', autor)
         formData.append('liv_id_edi', editora)

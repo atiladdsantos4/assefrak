@@ -507,7 +507,7 @@ const PrecoLivro = (props) => {
                <CInputGroupText className="clinputtext has-validation">Livros</CInputGroupText>
                <CDropdown variant="btn-group">
                    <CDropdownToggle size="sm" style={{maxHeight:'38px',borderRadius:'0px 0px 0px 0px'}} color={'secondary'}>Escolher</CDropdownToggle>
-                   <CDropdownMenu>
+                   <CDropdownMenu className='dropdown-class'>
                    {
                        //   <option value="">{''}</option>
                        listalivro.map((item,index)=>{
