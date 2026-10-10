@@ -116,7 +116,7 @@ const SectionPalestras = (props) => {
            try {
                 //setLoadpage(true)
                 const requests = [
-                    axios.get(`${endpoint}/palestra?listagem=S`,{
+                    axios.get(`${endpoint}/palestra?listagem=S&exibir=S`,{
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'multipart/form-data',
@@ -153,7 +153,7 @@ const SectionPalestras = (props) => {
                    //lista.push(objmeta["meta"][0])
                 })
                 //setListapalestras(result_palestras.data.data)
-                setListafiltro(result_palestras.data.data)
+                setListafiltro(lista)
                 let array_cat = result_grupo.data.data
                 let obj = {
                     "cae_id_cae": 0,
@@ -172,7 +172,7 @@ const SectionPalestras = (props) => {
                 Listapale(result.data.data.sort((a,b)=>b.pal_datasort - a.pal_datasort ))
                 setListafiltro(result.data.data.sort((a,b)=>b.pal_datasort - a.pal_datasort ))
                 */
-                let tam = result_palestras.data.data.length
+                let tam = lista.length
                 setQtderegistros(tam)
                 let res = tam / qtderegistrospagina
                  if( tam <= qtderegistrospagina){
@@ -194,7 +194,7 @@ const SectionPalestras = (props) => {
                     setRegistroini(1)
                     setRegistrofim(qtderegistrospagina)
                 }
-                setListapalestras(result_palestras.data.data.slice(0,qtderegistrospagina))
+                setListapalestras(lista.slice(0,qtderegistrospagina))
                 setLoadpage(true)
 
             }

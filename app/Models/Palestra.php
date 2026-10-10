@@ -19,7 +19,7 @@ class Palestra extends Model
     protected $appends = ['acao'];
     protected $fillable = [
        'pal_id_pal','pal_id_col','pal_id_cae','pal_estado','pal_folder','pal_cidade','pal_tema','pal_texto','pal_data_inicio',
-       'pal_data_fim','pal_hora_inicio','pal_hora_fim','pal_local','pal_concluido','pal_created_at','pal_updated_at','pal_deleted_at'
+       'pal_data_fim','pal_hora_inicio','pal_hora_fim','pal_local','pal_concluido','pal_exibir','pal_created_at','pal_updated_at','pal_deleted_at'
     ];
     protected $dates = ['pal_deleted_at'];//campo obrigatório pra o SoftDeletes
 

@@ -39,6 +39,7 @@ class PalestraResource extends JsonResource
                 'pal_folder' => $this->pal_folder,
                 'pal_concluido' => $this->pal_concluido,
                 'pal_load' => false,
+                'pal_load_concluida' => false,
                 'pal_image' => null,
                 'pal_datasort' => Carbon::parse($this->pal_data_inicio)->format('Ymd'),
                 'pal_data_inicio' => Carbon::parse($this->pal_data_inicio)->format('d/m/Y'),
@@ -51,6 +52,7 @@ class PalestraResource extends JsonResource
                 'pal_hora_inicio_format' => Carbon::parse($this->pal_hora_inicio)->format('Y/m/d H:i:s'),
                 'pal_hora_fim' => Carbon::parse($this->pal_hora_fim)->format('H:i'),
                 'pal_hora_fim_format' => Carbon::parse($this->pal_hora_fim)->format('Y/m/d H:i:s'),
+                'pal_exibir' => $this->pal_exibir,
                 'pal_created_at' => Carbon::parse($this->pal_created_at)->format('d/m/Y H:i:s'),
                 'pal_updated_at' => $this->pal_updated_at != null ? Carbon::parse($this->pal_updated_at)->format('d/m/Y H:i:s') : null,
             ];
@@ -72,6 +74,7 @@ class PalestraResource extends JsonResource
                 'pal_folder' => $this->pal_folder,
                 'pal_concluido' => $this->pal_concluido,
                 'pal_load' => false,
+                'pal_load_concluida' => false,
                 'pal_data_inicio' => Carbon::parse($this->pal_data_inicio)->format('d/m/Y'),
                 'pal_data_ext_dia' => Carbon::parse($this->pal_data_inicio)->format('d'),
                 'pal_data_ext_mes' => strtoupper(Carbon::parse($this->pal_data_inicio)->translatedFormat('M')),
@@ -82,6 +85,7 @@ class PalestraResource extends JsonResource
                 'pal_hora_inicio_format' => Carbon::parse($this->pal_hora_inicio)->format('Y/m/d H:i:s'),
                 'pal_hora_fim' => Carbon::parse($this->pal_hora_fim)->format('H:i'),
                 'pal_hora_fim_format' => Carbon::parse($this->pal_hora_fim)->format('Y/m/d H:i:s'),
+                'pal_exibir' => $this->pal_exibir,
                 'pal_created_at' => Carbon::parse($this->pal_created_at)->format('d/m/Y H:i:s'),
                 'pal_updated_at' => $this->pal_updated_at != null ? Carbon::parse($this->pal_updated_at)->format('d/m/Y H:i:s') : null,
             ];

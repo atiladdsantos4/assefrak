@@ -26,6 +26,7 @@ return new class extends Migration
             $table->timestamp('pal_hora_fim')->nullable();
             $table->string('pal_local',500);
             $table->char('pal_concluido',1);
+            $table->char('pal_exibir',1);
             $table->timestamp('pal_created_at');
             $table->timestamp('pal_updated_at')->nullable();
             $table->timestamp('pal_deleted_at')->nullable();
