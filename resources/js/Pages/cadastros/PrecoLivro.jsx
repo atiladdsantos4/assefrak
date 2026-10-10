@@ -5,7 +5,7 @@ import { CCard,CRow,CCardBody,CCardHeader,CCol,CButton,CBadge,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder,CFormTextarea,
   CTable,CTableBody,CTableHead,CTableRow,CTableHeaderCell,CTableDataCell,CPagination,CPaginationItem } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faTrash,faEdit,faFile, faF  } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson,faSave,faTrash,faEdit,faFile, faEraser  } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -41,13 +41,16 @@ const PrecoLivro = (props) => {
   const [copia,setCopia] = useState('')
   const [listaprecolivro, setListaprecolivro] = useState([])
   const [listalivro, setListalivro] = useState([])
+  const [listaselectlivro, setListaselectlivro] = useState([])
   const [listafiltro, setListafiltro] = useState([])
+  const [listafiltrolivro, setListafiltrolivro] = useState([])
   const [listaclasse, setListaclasse] = useState([])
   const [saved,setSaved] = useState(false)
   const [est,setEst] = useState(false)
   const [toast, addToast] = useState()//toast
   const [param, setParam] = useState(props.param)//toast
   const toaster = useRef(null)
+  const [mostramenu,setMostramenu] = useState(false)
   const style_placeholder = {paddingBottom:'15px'}
   const largura = {width:'120px',cursor:'pointer'}
 
@@ -60,6 +63,7 @@ const PrecoLivro = (props) => {
   const [registrofim,setRegistrofim] = useState(0)
   const [registrototal,setRegistrototal] = useState(0)
   const [qtderegistros,setQtderegistros] = useState(0)
+  const [qtderegistroslivros,setQtderegistroslivros] = useState(0)
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   //ale_id_aco,ale_name,ale_cpf,ale_email,ale_tipo_telefone,ale_telefone,ale_ativo,ale_created_at,ale_updated_at,ale_deleted_at
@@ -68,6 +72,7 @@ const PrecoLivro = (props) => {
        const element = document.getElementById(id);
        if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          //element.scrollIntoView();
        }
   };
 
@@ -187,6 +192,7 @@ const PrecoLivro = (props) => {
                 let result_livro = responses[0]
                 let result_precolivro = responses[1]
                 setRegistrototal(result_precolivro.data.data.length)
+                setQtderegistroslivros(result_livro.data.data.length)
                 let vet = result_livro.data.data
                 let vet_filtro = []
                 let existe = []
@@ -224,8 +230,23 @@ const PrecoLivro = (props) => {
                     setRegistrofim(qtderegistrospagina)
                 }
                 setListalivro(vet)
+                //let novo = vet.reduce((acc, cur) => ({ ...acc, [cur.color]: cur.id }), {})
+                let vetpesq = []
+                vet.map((item,index)=>{
+                    if(index > 0){
+                        obj = {
+                           id:'drop'+index,
+                           nome:item.liv_titulo
+                        }
+                        vetpesq.push(obj)
+                    }
+                })
+                console.log(vetpesq)
+                setListaselectlivro(vetpesq)
                 setListaprecolivro(result_precolivro.data.data)
+                setListafiltrolivro(vet)
                 setListafiltro(result_precolivro.data.data)
+                setMostramenu(false)
                 setLoadpage(false)
             }
             catch (error) {
@@ -385,7 +406,14 @@ const PrecoLivro = (props) => {
   }
 
   const  handleSave = (erro) =>{
-
+    if(parseInt(valor) == 0){
+          addToast(CompToast('Nenhum Valor Foi informado!!!', 'danger')) //--> usa toast
+          setTimeout(() => {
+              document.getElementById('idtoast').classList.remove('show')
+              document.getElementById('idtoast').remove()
+          }, 2000)
+       return
+    }
     if( erro == false && idprecolivro == null) {
         //console.log('entre_aqui_post')
         setLoadsave(true)
@@ -485,17 +513,143 @@ const PrecoLivro = (props) => {
 
  const AlteraEscolha = (event,id,titulo) =>{
     if(titulo.indexOf('ecione') >= 0){
-        //console.log('titulo:vazio')
         setItematualtexto('')
         return
     }
-    //console.log('titulo:'+titulo)
+    setMostramenu(false)
     setItematualtexto(titulo)
     setLivro(id)
-    //console.log(id)
  }
 
- const SelectLivros = (props) =>{
+ const MostraDrop = () =>{
+   let obj =  document.getElementById('iddrop');
+   let objM =  document.getElementById('iddropM');
+   console.log(obj)
+   if( obj.classList.contains('show')){
+     return
+   }
+   obj.classList.add('show');
+   objM.classList.add('show');
+   objM.classList.add('showdropdown');
+   document.getElementById('drop20').scrollIntoView({behavior: 'smooth',block: 'nearest', inline: 'start'})//scrollToId('drop10')
+ }
+
+ const para = (valor) =>{
+    if( valor.length > 2){
+        let dados = listaselectlivro.filter(
+            (item)=>item.nome.toLowerCase().includes(valor.toLowerCase())
+        )
+        console.log('id:'+dados[0].id)
+        let id = dados[0].id
+        //document.getElementById(id).scrollIntoView({behavior: 'smooth',block: 'nearest', inline: 'end',alignToTop:true})//scrollToId('drop10')
+        document.getElementById(id).scrollIntoView({behavior: 'smooth',block: 'nearest',alignToTop:true,inline: 'end'})//scrollToId('drop10')
+        //document.getElementById(id).offsetTop(0)
+        //document.getElementById(id).scrollHeight='28px'
+        return dados[0].id;
+    } else {
+        document.getElementById('drop1').scrollIntoView({behavior: 'smooth',block: 'nearest', inline: 'start'})//scrollToId('drop10')
+    }
+ }
+
+ const pesquisarLivro = (val) => {
+     console.log('valor'+val)
+     //setPesquisa(event.target.value)
+     setItematualtexto(val)
+     setMostramenu(true)
+     //MostraDrop()
+     let valor =  val
+     if( valor.trim() != ''){
+        let lista = listafiltrolivro.filter(
+            (item)=>item.liv_autor.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.liv_titulo.toLowerCase().includes(valor.toLowerCase())
+        )
+        setListalivro(lista.slice(0,10))
+     } else {
+        setListalivro(listafiltrolivro)
+     }
+}
+
+
+ const SelectLivros = () =>{
+       const [valor,setValor] = useState('')
+       let classedrop  = mostramenu ? 'dropdown-menu show dropdown-class showdropdown' : 'dropdown-class'
+       let array =['badge1','badge2','badge3','badge4','badge5','badge6','badge7','badge8','badge9','badge10']
+       let classe = ''
+       let idxclasse = -1
+       let existe = []
+       let cl = null
+       return(
+           <><CFormLabel htmlFor="exampleFormControlInput1">Listagem de Livros</CFormLabel><br/>
+           <CInputGroup className="mb-3">
+               <CInputGroupText style={{height:'38px'}} className="clinputtext has-validation">Livros</CInputGroupText>
+               <CDropdown autoClose="inside" variant="btn-group">
+                   <CDropdownToggle id="iddrop" size="sm" style={{maxHeight:'37px',borderRadius:'0px 0px 0px 0px'}} color={'secondary'}>Escolher</CDropdownToggle>
+                   <CDropdownMenu id="iddropM" className={classedrop}>
+                   {
+                       //   <option value="">{''}</option>
+                       listalivro.map((item,index)=>{
+                            existe = listaclasse.filter((it)=>it.nome == item.liv_autor)
+                            if(existe.length == 0 ){
+                               cl ={display:'inline'}
+                            } else {
+                               cl =  existe[0].classe
+                            }
+                            if( item.liv_autor != classe){
+                               classe = item.liv_autor
+                               idxclasse++
+                               if( idxclasse > 10){
+                                  idxclasse=0
+                               }
+                            }
+                            return(
+                              <>
+                              <CDropdownItem id={'drop'+index} style={{fontSize:'13px'}} href="#" onClick={(e)=>AlteraEscolha(e,item.liv_id_liv,item.liv_titulo+' - '+item.liv_autor)}>
+                                 {item.liv_titulo}&nbsp;<CBadge className={cl} color="success">{item.liv_autor}</CBadge>
+                              </CDropdownItem>
+                              </>
+                           )
+                       })
+                   }
+
+                   </CDropdownMenu>
+               </CDropdown>
+               &nbsp;<div className='mt-2'><FontAwesomeIcon onClick={()=>LimparFiltro()}style={{top:'2px',color:'red',cursor:'pointer'}} size="lg" icon={faEraser} /></div>
+           </CInputGroup>
+           </>
+       )
+ }
+
+ const FechaMenu = () =>{
+   let obj =  document.getElementById('iddrop');
+   let objM =  document.getElementById('iddropM');
+   console.log(obj)
+   return
+   if( objM.classList.contains('show')){
+     objM.classList.remove('show')
+     return
+   }
+//    obj.classList.add('show');
+//    objM.classList.add('show');
+//    objM.classList.add('showdropdown');
+ }
+
+ const LimparFiltro = () =>{
+    setItematualtexto('')
+    setMostramenu(false)
+    setListalivro(listafiltrolivro)
+    //pesquisarLivro('')
+ }
+
+ const SelectLivrosOficial = () =>{
+       const [valor,setValor] = useState('')
+       let classedrop  = mostramenu ? 'dropdown-menu show dropdown-class showdropdown' : 'dropdown-class'
+       function muda(valor){
+          //MostraDrop()
+          setValor(valor)
+          //setItematualtexto(event.target.value)
+          pesquisarLivro(valor)
+
+       }
        let array =['badge1','badge2','badge3','badge4','badge5','badge6','badge7']
        let classe = ''
        let idxclasse = -1
@@ -504,10 +658,10 @@ const PrecoLivro = (props) => {
        return(
            <><CFormLabel htmlFor="exampleFormControlInput1">Listagem de Livros</CFormLabel><br/>
            <CInputGroup className="mb-3">
-               <CInputGroupText className="clinputtext has-validation">Livros</CInputGroupText>
-               <CDropdown variant="btn-group">
-                   <CDropdownToggle size="sm" style={{maxHeight:'38px',borderRadius:'0px 0px 0px 0px'}} color={'secondary'}>Escolher</CDropdownToggle>
-                   <CDropdownMenu className='dropdown-class'>
+               <CInputGroupText onClick={(e)=>MostraDrop(e)} className="clinputtext has-validation">Livros</CInputGroupText>
+               <CDropdown autoClose="inside" variant="btn-group">
+                   <CDropdownToggle id="iddrop" size="sm" style={{maxHeight:'38px',borderRadius:'0px 0px 0px 0px'}} color={'secondary'}>Escolher</CDropdownToggle>
+                   <CDropdownMenu id="iddropM" className={classedrop}>
                    {
                        //   <option value="">{''}</option>
                        listalivro.map((item,index)=>{
@@ -526,7 +680,7 @@ const PrecoLivro = (props) => {
                             }
                             return(
                               <>
-                              <CDropdownItem style={{fontSize:'13px'}} href="#" onClick={(e)=>AlteraEscolha(e,item.liv_id_liv,item.liv_titulo+' - '+item.liv_autor)}>
+                              <CDropdownItem id={'drop'+index} style={{fontSize:'13px'}} href="#" onClick={(e)=>AlteraEscolha(e,item.liv_id_liv,item.liv_titulo+' - '+item.liv_autor)}>
                                  {item.liv_titulo}&nbsp;<CBadge className={cl} color="success">{item.liv_autor}</CBadge>
                               </CDropdownItem>
                               </>
@@ -536,7 +690,8 @@ const PrecoLivro = (props) => {
 
                    </CDropdownMenu>
                </CDropdown>
-               <CFormInput value={itematualtexto} placeholder='Item selecionado' feedbackInvalid="O Livro deve ser informado" required />
+               {/* <CFormInput onChange={(e)=>muda(e.target.value)} defaultValue={itematualtexto} placeholder='Item selecionado' feedbackInvalid="O Livro deve ser informado" required /> */}
+               <CFormInput onChange={(e)=>muda(e.target.value)} defaultValue={valor} placeholder='Item selecionado' feedbackInvalid="O Livro deve ser informado" required />
            </CInputGroup>
            </>
        )
@@ -814,6 +969,7 @@ const PrecoLivro = (props) => {
         let lista = listafiltro.filter(
             (item)=>item.prl_livro.liv_titulo.toLowerCase().includes(valor.toLowerCase()) ||
             item.prl_livro.editora.edi_descricao.toLowerCase().includes(valor.toLowerCase()) ||
+            item.prl_data_vigor.toLowerCase().includes(valor.toLowerCase()) ||
             item.prl_livro.autor.aut_nome.toLowerCase().includes(valor.toLowerCase())
         )
         //console.log(lista)
@@ -1009,10 +1165,22 @@ const PrecoLivro = (props) => {
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Preços de Livros</CCardHeader>
                 <CCardBody>
                     <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
-                            <CCol md={6}>
+                            <CCol md={2}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (<SelectLivros/>)}
+                            </CCol>
+                            <CCol md={4} style={{left:'-10px'}}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                     style={{height:'38px'}}
+                                     label="Digite a Pesquisa"
+                                     onChange={(e)=>pesquisarLivro(e.target.value)}
+                                     value={itematualtexto}
+                                     placeholder='Item selecionado'
+                                     feedbackInvalid="O Livro deve ser informado" required
+                                   />)}
                             </CCol>
                             <CCol md={2}>
                                 { loadpage

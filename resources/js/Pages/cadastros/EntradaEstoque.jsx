@@ -4,7 +4,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CDropdown, CDropdownHeader, CDropdownToggle, CDropdownMenu, CDropdownItem, CDropdownDivider,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson,faSave,faEraser } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 
@@ -36,6 +36,8 @@ const EntradaEstoque = (props) => {
   const [toast, addToast] = useState()//toast
   const [param, setParam] = useState(props.param)//toast
   const toaster = useRef(null)
+  const [mostramenu,setMostramenu] = useState(false)
+  const [listafiltro, setListafiltro] = useState([])
   const style_placeholder = {paddingBottom:'15px'}
 
   const customVars = {
@@ -116,8 +118,9 @@ const EntradaEstoque = (props) => {
                   let result_entrada = responses[2]
                   console.log(result_entrada)
                   let array_liv = result_livro.data.data.filter((item)=>item.liv_ativo == 1)
-                  array_liv.unshift({liv_id_liv:'',liv_titulo:'Selecione o Livro'})
+                  //array_liv.unshift({liv_id_liv:'',liv_autor:'',liv_titulo:'Selecione o Livro'})
                   setListalivro(array_liv)
+                  setListafiltro(array_liv)
                   let vet_filtro = []
                   let existe = []
                   let obj = null
@@ -173,7 +176,8 @@ const EntradaEstoque = (props) => {
                   let result_livro= responses[0]
                   let result_precolivro = responses[1]
                   let array_liv = result_livro.data.data.filter((item)=>item.liv_ativo == 1)
-                  array_liv.unshift({liv_id_liv:'',liv_titulo:'Selecione o Livro'})
+                  setListafiltro(array_liv)
+                  //array_liv.unshift({liv_id_liv:'',liv_titulo:'Selecione o Livro'})
                   setListalivro(array_liv)
                   let vet_filtro = []
                   let existe = []
@@ -208,14 +212,23 @@ const EntradaEstoque = (props) => {
         return
     }
     //console.log('titulo:'+titulo)
+    setMostramenu(false)
     setItematualtexto(titulo)
     setLivro(id)
     //console.log(id)
   }
 
+  const LimparFiltro = () =>{
+    setItematualtexto('')
+    setMostramenu(false)
+    setListalivro(listafiltro)
+  }
+
+
 
   const SelectLivros = (props) =>{
-         let array =['badge1','badge2','badge3','badge4','badge5','badge6','badge7']
+         let classedrop  = mostramenu ? 'dropdown-menu show dropdown-class showdropdown' : 'dropdown-class'
+         let array =['badge1','badge2','badge3','badge4','badge5','badge6','badge7','badge8','badge9','badge10']
          let classe = ''
          let idxclasse = -1
          let existe = []
@@ -224,9 +237,9 @@ const EntradaEstoque = (props) => {
              <><CFormLabel htmlFor="exampleFormControlInput1">Listagem de Livros</CFormLabel><br/>
              <CInputGroup className="mb-3">
                  <CInputGroupText className="clinputtext has-validation">Livros</CInputGroupText>
-                 <CDropdown id="myDropdown" variant="btn-group">
+                 <CDropdown id="myDropdown" autoClose="inside" variant="btn-group">
                      <CDropdownToggle size="sm" style={{maxHeight:'38px',borderRadius:'0px 0px 0px 0px'}} color={'secondary'}>Escolher</CDropdownToggle>
-                     <CDropdownMenu className='dropdown-class'>
+                     <CDropdownMenu className={classedrop}>
                      {
                          //   <option value="">{''}</option>
                          listalivro.map((item,index)=>{
@@ -239,7 +252,7 @@ const EntradaEstoque = (props) => {
                               if( item.liv_autor != classe){
                                  classe = item.liv_autor
                                  idxclasse++
-                                 if( idxclasse > 7){
+                                 if( idxclasse > 10){
                                     idxclasse=0
                                  }
                               }
@@ -255,7 +268,8 @@ const EntradaEstoque = (props) => {
 
                      </CDropdownMenu>
                  </CDropdown>
-                 <CFormInput value={itematualtexto} placeholder='Item selecionado' feedbackInvalid="O Livro deve ser informado" required />
+                 &nbsp;<div className='mt-2'><FontAwesomeIcon onClick={()=>LimparFiltro()}style={{top:'2px',color:'red',cursor:'pointer'}} size="lg" icon={faEraser} /></div>
+                 {/* <CFormInput value={itematualtexto} placeholder='Item selecionado' feedbackInvalid="O Livro deve ser informado" required /> */}
              </CInputGroup>
              </>
          )
@@ -457,6 +471,23 @@ const EntradaEstoque = (props) => {
    setValortotal(total)
  }
 
+ const pesquisarLivro = (val) => {
+    console.log(listafiltro)
+     console.log('valor'+val)
+     setItematualtexto(val)
+     setMostramenu(true)
+     let valor =  val
+     if( valor.trim() != ''){
+        let lista = listafiltro.filter(
+            (item)=>item.liv_autor.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.liv_titulo.toLowerCase().includes(valor.toLowerCase())
+        )
+        setListalivro(lista.slice(0,10))
+     } else {
+        setListalivro(listafiltro)
+     }
+}
+
   return (
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
@@ -470,10 +501,22 @@ const EntradaEstoque = (props) => {
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Entrada de Estoques de Segurança</CCardHeader>
                 <CCardBody>
                     <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
-                            <CCol md={12}>
+                            <CCol md={2}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (<SelectLivros/>)}
+                            </CCol>
+                            <CCol md={4} style={{left:'-10px'}}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                : (<CFormInput
+                                        style={{height:'38px'}}
+                                        label="Digite a Pesquisa"
+                                        onChange={(e)=>pesquisarLivro(e.target.value)}
+                                        value={itematualtexto}
+                                        placeholder='Item selecionado'
+                                        feedbackInvalid="O Livro deve ser informado" required
+                                    />)}
                             </CCol>
                             <CCol md={3}>
                                 { loadpage

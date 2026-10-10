@@ -139,6 +139,7 @@ const ListaLivros = (props) => {
         let lista = listafiltro.filter(
             (item)=>item.liv_titulo.toLowerCase().includes(valor.toLowerCase()) ||
             item.liv_editora.toLowerCase().includes(valor.toLowerCase()) ||
+            item.liv_created_at.toLowerCase().includes(valor.toLowerCase()) ||
             item.liv_autor.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)

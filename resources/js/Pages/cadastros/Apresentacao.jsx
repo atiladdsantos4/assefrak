@@ -1297,7 +1297,7 @@ const Posicao = (props) => {
                 <ModalVideos open={openmodalvideo} video={linkvideo} close={(e)=>setOpenmodalvideo(false)}/>
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
                 <CCard className='card_bottom'>
-                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Apresentaões</CCardHeader>
+                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Apresentções</CCardHeader>
                 <CCardBody>
                     <CForm className="row g-3 needs-validation" noValidate  id="form-apresentacao" onSubmit={handleSubmit} validated={validated}>
                             <CCol md={8}>

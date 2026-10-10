@@ -369,12 +369,22 @@
 }
 
 .badge7{
-   background-color:#1E6213 !important;
+   background-color:#50d53c !important;
    font-size: 11px;
 }
 
 .badge8{
    background-color: #722E56 !important;
+   font-size: 11px;
+}
+
+.badge9{
+   background-color: #7270cf !important;
+   font-size: 11px;
+}
+
+.badge10{
+   background-color: #d62626 !important;
    font-size: 11px;
 }
 
@@ -430,5 +440,13 @@
    input[type="checkbox"]:checked{
       background-color: #269fe1;
    }
+}
+
+.showdropdown{
+   position: absolute !important;
+   inset: 0px auto auto 0px !important;
+   /* top:40px !important; */
+   margin: 0px !important;
+   transform: translate(0px, 40px) !important;
 }
 
