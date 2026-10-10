@@ -54,6 +54,7 @@ const Palestra = (props) => {
   const [cadastro, setCadastro] = useState('')
   const [local, setLocal] = useState('Rua da Ambrosia, 183, Proximo ao arena 2 deJulho, Bairro 2 de Julho');
   const [finalizado, setFinalizado] = useState(false)
+  const [exibir, setExibir] = useState(false)
   const [saved,setSaved] = useState(false)
   const [toast, addToast] = useState()//toast
   const [param, setParam] = useState(props.param)
@@ -159,14 +160,16 @@ const Palestra = (props) => {
 
 
                 //palestras
-                let concluidock = result_palestra.data.data.pal_concluido == 1 ? true : false
+
                 setidPalestra(result_palestra.data.data.pal_id_pal)
                 setTema(result_palestra.data.data.pal_tema)
                 setTexto(result_palestra.data.data.pal_texto)
                 setCadastro(result_palestra.data.data.pal_created_at)
-                setConcluido(concluidock)
                 setLocal(result_palestra.data.data.pal_local)
-                setConcluido(concluidock)
+                let concluidock = result_palestra.data.data.pal_concluido == 1 ? true : false
+                setFinalizado(concluidock)
+                let exibirck = result_palestra.data.data.pal_exibir == 'S' ? true : false
+                setExibir(exibirck)
                 setColaborador(result_palestra.data.data.pal_id_col)
                 setDatainicio(new Date(result_palestra.data.data.pal_data_inicio_format))
                 setDatafim(new Date(result_palestra.data.data.pal_data_fim_format))
@@ -382,8 +385,10 @@ const Palestra = (props) => {
            formData.append('file', imagefolder)
 
         }
-        let status = concluido ? 1 : 0
+        let status = finalizado ? 1 : 0
         formData.append('pal_concluido', status)
+        let exibirck = exibir ? 'S' : 'N'
+        formData.append('pal_exibir', exibirck)
         axios
         .post(`${endpoint}/palestra`, formData, {
             headers: {
@@ -423,8 +428,10 @@ const Palestra = (props) => {
            formData.append('has_image', true)
            formData.append('file', imagefolder)
         }
-        let status = concluido ? 1 : 0
+        let status = finalizado ? 1 : 0
         formData.append('pal_concluido', status)
+        let exibirck = exibir ? 'S' : 'N'
+        formData.append('pal_exibir', exibirck)
         formData.append('_method', 'put')
         axios
          .post(`${endpoint}/palestra/${idpalestra}`, formData, {
@@ -1247,6 +1254,30 @@ const Palestra = (props) => {
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
+                                <div style={{overflow:'auto'}}>
+                                   <div style={{float:'left',paddingLeft:'3px'}}>
+                                        <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                        <CFormCheck
+                                            type="checkbox"
+                                            id="invalidCheck"
+                                            label="Palestra Finalizada"
+                                            feedbackInvalid="Informe se Palestra foi Ativo"
+                                            checked={finalizado}
+                                            onChange={(e)=>setFinalizado(e.target.checked)}
+                                        />
+                                    </div>
+                                    <div style={{float:'left'}}>
+                                      <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                      &nbsp;&nbsp;{finalizado ? <CBadge color="success">Concluída</CBadge> : <></>}
+                                    </div>
+                                </div>
+                                </>)}
+                            </CCol>
+                            {/* <CCol xs={4}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
+                                : (
+                                <>
                                 <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
@@ -1258,6 +1289,30 @@ const Palestra = (props) => {
 
                                 />
                                 <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </>)}
+                            </CCol> */}
+                            <CCol xs={4}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
+                                : (
+                                <>
+                                <div style={{overflow:'auto'}}>
+                                   <div style={{float:'left',paddingLeft:'3px'}}>
+                                        <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                        <CFormCheck
+                                            type="checkbox"
+                                            id="invalidCheck"
+                                            label="Exibir Palestra"
+                                            feedbackInvalid="Informe se Palestra foi Ativo"
+                                            checked={exibir}
+                                            onChange={(e)=>setExibir(e.target.checked)}
+                                        />
+                                    </div>
+                                    <div style={{float:'left'}}>
+                                      <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                      &nbsp;&nbsp;{exibir ? <></> : <CBadge color="danger">Bloqueada Exibição</CBadge>}
+                                    </div>
+                                </div>
                                 </>)}
                             </CCol>
                             <CCol xs={12}>

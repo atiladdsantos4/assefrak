@@ -51,7 +51,11 @@ class PalestraController extends Controller
         }
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
-           $result_pal = Palestra::orderBy('pal_tema')->get();
+           if(isset($all["exibir"])){
+              $result_pal = Palestra::where('pal_exibir','S')->orderBy('pal_tema')->get();
+           } else {
+              $result_pal = Palestra::orderBy('pal_tema')->get();
+           }
            $result = PalestraResource::collection($result_pal); //only works for colection
 
            $response = [

@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React, useEffect, useState, Suspense, useRef  } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,7 +17,13 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CBadge,
+    CFormCheck,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -33,7 +39,7 @@ const ListaPalestra = (props) => {
   const token  = import.meta.env.VITE_APP_TOKEN
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
-  const [listapale,Listapale] = useState([])
+  const [listapale,setListapale] = useState([])
   const [listafiltro,setListafiltro] = useState([])
   const [est,setEst] = useState(false)
   const [numnpagination,setNumpagination] = useState(null)
@@ -45,6 +51,8 @@ const ListaPalestra = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [toast, addToast] = useState()//toast
+  const toaster = useRef(null)
 
   useEffect(()=>{
     setLoad(false)
@@ -60,7 +68,7 @@ const ListaPalestra = (props) => {
            altera(null)
            alteraestado(null)
            console.log(result)
-           Listapale(result.data.data.sort((a,b)=>b.pal_datasort - a.pal_datasort ))
+           setListapale(result.data.data.sort((a,b)=>b.pal_datasort - a.pal_datasort ))
            setListafiltro(result.data.data.sort((a,b)=>b.pal_datasort - a.pal_datasort ))
            let tam = result.data.data.length
            setQtderegistros(tam)
@@ -115,12 +123,13 @@ const ListaPalestra = (props) => {
                     <CTableDataCell>{item.pal_hora_inicio}</CTableDataCell>
                     <CTableDataCell>{item.pal_hora_fim}</CTableDataCell>
                     <CTableDataCell>{item.pal_local}</CTableDataCell>
-                    <CTableDataCell>{item.pal_concluido}</CTableDataCell>
+                    <CTableDataCell style={{whiteSpace:'nowrap'}}><CompCheckboxConcluida  id={item.pal_id_pal} concluida={item.pal_concluido}/>&nbsp;{item.pal_load_concluida ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.pal_concluido == 1 ? <CBadge color="primary">Concluída</CBadge> : <CBadge color="warning" textColor="dark">Aberta</CBadge>}</CTableDataCell>
                     <CTableDataCell style={{whiteSpace:'nowrap'}}>{item.pal_desc_cidade+'-'+item.pal_uf}</CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}>{item.aco_ativo}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_cidade+'/'+item.aco_uf_sigla}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_desc_faixa}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_nascimento}</CTableDataCell> */}
+                    <CTableDataCell style={{whiteSpace:'nowrap'}}><CompCheckbox id={item.pal_id_pal} exibir={item.pal_exibir}/>&nbsp;{item.pal_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.pal_exibir == 'S' ? <CBadge color="success">Exibir</CBadge> : <CBadge color="danger">Bloqueda</CBadge>}</CTableDataCell>
                     <CTableDataCell>{item.aco_created_at}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.pal_id_pal} estvalor={item.pal_estado}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
@@ -131,6 +140,68 @@ const ListaPalestra = (props) => {
       )
   }
 
+  const CompToast = (texto, color, autohide) => {
+          return (
+            <CToast
+              style={{borderRadius:'5px',color:'white'}}
+              id="idtoast"
+              autohide={autohide}
+              visible={false}
+              color={color}
+              delay="3000"
+              className="text-white align-items-center"
+            >
+              <div className="d-flex">
+                <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+                <CToastClose className="me-2 m-auto" white />
+              </div>
+            </CToast>
+          )
+   }
+
+  const AlteraStatus = (id,valor,tipo) =>{
+
+          const formData = new FormData()
+          if(tipo == 'E'){
+            formData.append('pal_exibir', valor)
+          }
+          if(tipo == 'C'){
+            formData.append('pal_concluido', valor)
+          }
+          formData.append('_method', 'put')
+          axios
+          .post(`${endpoint}/palestra/${id}`, formData, {
+              headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: 'Bearer ' + token,//dentro do env//
+              },
+          })
+          .then((result) => {
+              if(tipo == 'E'){
+                setListapale(prevItems =>
+                    prevItems.map(item =>
+                        item.pal_id_pal === id ? { ...item,pal_exibir: valor, pal_load: false } : item
+                    )
+                )
+              }
+              if(tipo == 'C'){
+                setListapale(prevItems =>
+                    prevItems.map(item =>
+                        item.pal_id_pal === id ? { ...item,pal_concluido: valor, pal_load_concluida: false } : item
+                    )
+                )
+              }
+              addToast(CompToast('Status de exibição alterado com sucesso !!!', 'success')) //--> usa toast
+              setTimeout(() => {
+                  document.getElementById('idtoast').classList.remove('show')
+                  document.getElementById('idtoast').remove()
+                  //tela(valor)
+              }, 2000)
+          })
+  }
+
+
 
   const pesquisarGrid = (palnt) => {
      console.log(listafiltro)
@@ -138,15 +209,15 @@ const ListaPalestra = (props) => {
      let valor =  palnt.target.value
      if( valor.trim() != ''){
         let lista = listafiltro.filter(
-            (item)=>item.pal_titulo.toLowerCase().includes(valor.toLowerCase()) ||
-                    item.pal_foco.toLowerCase().includes(valor.toLowerCase()) ||
-                    item.pal_publico.toLowerCase().includes(valor.toLowerCase())
+            (item)=>item.pal_tema.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.pal_categoria.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.pal_colaborador.toLowerCase().includes(valor.toLowerCase())
         )
         //listafiltro.filter((item)=> item.tes_id_tes == palnt.target.value)
         console.log(lista)
-        Listapale(lista.slice(0,qtderegistrospagina))
+        setListapale(lista.slice(0,qtderegistrospagina))
      } else {
-        Listapale(listafiltro.slice(0,qtderegistrospagina))
+        setListapale(listafiltro.slice(0,qtderegistrospagina))
      }
   }
 
@@ -199,7 +270,7 @@ const ListaPalestra = (props) => {
     } else {
        setRegistrofim(fim)
     }
-    Listapale(lista)
+    setListapale(lista)
   }
 
   const Pagination = (props) => {
@@ -244,6 +315,42 @@ const ListaPalestra = (props) => {
       tela('Palestra')
   }
 
+  const CompCheckbox = (props) => {
+      let valor = props.exibir == 'S' ? true : false
+      const [check,setCheck] = useState(valor)
+      function Mudar(event){
+         setCheck(event.target.checked)
+         let val = event.target.checked ? 'S': 'N'
+         setListapale(prevItems =>
+              prevItems.map(item =>
+                 item.pal_id_pal === props.id ? { ...item, pal_load: true } : item
+              )
+         )
+         AlteraStatus(props.id,val,'E')
+      }
+      return (
+          <CFormCheck className="ckform" id="flexCheckDefault" onChange={(e)=>Mudar(e)} checked={check} label=""/>
+      )
+   }
+
+   const CompCheckboxConcluida = (props) => {
+      let valor = props.concluida == '1' ? true : false
+      const [check,setCheck] = useState(valor)
+      function Mudar(event){
+         setCheck(event.target.checked)
+         let val = event.target.checked ? '1': '0'
+         setListapale(prevItems =>
+              prevItems.map(item =>
+                 item.pal_id_pal === props.id ? { ...item, pal_load_concluida: true } : item
+              )
+         )
+         AlteraStatus(props.id,val,'C')
+      }
+      return (
+          <CFormCheck className="ckform" id="flexCheckDefault" onChange={(e)=>Mudar(e)} checked={check} label=""/>
+      )
+   }
+
 
   return(
     <div data-aos="zoom-in">
@@ -254,6 +361,7 @@ const ListaPalestra = (props) => {
         </div>
         <div class="container">
             <CCard>
+                <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Palestras</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
                     <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
@@ -277,7 +385,7 @@ const ListaPalestra = (props) => {
                             </CInputGroup>
                         </div>
                         <div style={{justifySelf:'end',alignSelf:'end'}}>
-                            <CInputGroup style={{maxWidth:'400px'}} className="mb-2 mt-2">
+                            <CInputGroup style={{minWidth:'500px'}} className="mb-2 mt-2">
                                 <CInputGroupText style={props.estilo} className="clinputtext">Pesquisar</CInputGroupText>
                                 <CFormInput placeholder={'Digite um valor'} value={pesquisar} onChange={(e)=>pesquisarGrid(e)}/>
                             </CInputGroup>
@@ -299,6 +407,7 @@ const ListaPalestra = (props) => {
                                 <CTableHeaderCell className='clthinterno' scope="col">Local</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Concluído</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Cidade/Uf</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col">Exibir</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Criação</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' style={{textAlign:'center',borderRadius:'0px 5px 0px 0px'}} scope="col">Acão</CTableHeaderCell>
                             </CTableRow>
@@ -306,7 +415,7 @@ const ListaPalestra = (props) => {
                         <CTableBody>
                             {load
                             ? (<CorpoTabela lista={listapale} estado={est}/>)
-                            : (<CTableRow><CTableDataCell colspan="12" style={{textAlign:'center'}}><CSpinner color="info"></CSpinner></CTableDataCell></CTableRow>)}
+                            : (<CTableRow><CTableDataCell colspan="13" style={{textAlign:'center'}}><CSpinner color="info"></CSpinner></CTableDataCell></CTableRow>)}
                         </CTableBody>
                     </CTable>
                     <div>
