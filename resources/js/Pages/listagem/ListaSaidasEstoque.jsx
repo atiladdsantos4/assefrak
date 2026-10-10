@@ -213,6 +213,7 @@ const ListaSaidasEstoque = (props) => {
         let lista = listafiltro.filter(
             (item)=>item.sae_livro.toLowerCase().includes(valor.toLowerCase()) ||
                     item.sae_hash.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.sae_autor.toLowerCase().includes(valor.toLowerCase()) ||
                     item.sae_email.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)

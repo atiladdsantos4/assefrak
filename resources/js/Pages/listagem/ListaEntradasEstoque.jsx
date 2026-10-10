@@ -139,9 +139,10 @@ const ListaEntradasEstoque = (props) => {
 
   const pesquisarGrid = (event) => {
      let valor =  event.target.value
+     console.log(listafiltro)
      if( valor.trim() != ''){
         let lista = listafiltro.filter(
-            (item)=>item.ene_descricao.toLowerCase().includes(valor.toLowerCase())
+            (item)=>item.ene_livro.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)
         setListaentrada(lista.slice(0,qtderegistrospagina))
