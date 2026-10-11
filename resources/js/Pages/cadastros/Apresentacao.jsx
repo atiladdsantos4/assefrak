@@ -1284,12 +1284,22 @@ const Posicao = (props) => {
    )
 }
 
+const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheadercadastro.png'}/>
+        <div style={{fontSize:'24px',position:'relative',left:'-56px',top:'-35px',color:'white',fontWeight:'bold'}}>Apresentação</div>
+        </div>
+    )
+}
+
   return (
     <div>
         <section id="hero" class="hero section light-background">
-        <div class="container section-title box-title mb-2" style={{minWidth:'400px'}} data-aos="fade-up">
-          <h2>Apresentação</h2>
-          <p>Cadastro</p>
+        <div class="container section-title box-title mb-2" data-aos="fade-up">
+           <ImageHeader/>
+          {/* <h2>Apresentação</h2>
+          <p>Cadastro</p> */}
         </div>
         <div class="container">
                 <ModalConfirma tipo={tipoexclusao} id={iditemexlcusao} funcret={()=>excluirItemBanco(tipoexclusao,iditemlista,iditemexlcusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>

@@ -253,12 +253,24 @@ const ListaLimpeza = (props) => {
         )
   }
 
+ const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheaderlistagem.png'}/>
+        <div style={{fontSize:'20px',position:'relative',left:'-60px',top:'-40px',color:'white',fontWeight:'bold',lineHeight:'20px'}}>
+            Limpeza /<br/> Desobessesão
+         </div>
+        </div>
+    )
+ }
+
   return(
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
-        <div class="container section-title box-title mb-2" style={{minWidth:'400px'}} data-aos="fade-up">
-          <h2> Limpeza / Desobsessão </h2>
-          <p>Listagem</p>
+        <div class="container section-title box-title mb-2" data-aos="fade-up">
+          <ImageHeader/>
+          {/* <h2> Limpeza / Desobsessão </h2>
+          <p>Listagem</p> */}
         </div>
         <div class="container">
             <CCard>

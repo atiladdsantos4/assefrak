@@ -153,12 +153,17 @@
 
     .box-title{
        border-radius: 5px;
-       max-width: 200px !important;
-       max-height: 95px !important;
+       max-width: 300px !important;
+       max-height: 100px !important;
        box-shadow: 5px 10px 10px #888888;
        h2 {
          font-size: 22px  !important;
        }
+       div{
+         font-size: 17px  !important;
+         /* margin-left: 10px !important; */
+       }
+
 
     }
 }
@@ -332,8 +337,8 @@
 
 .box-title{
    border-radius: 5px;
-   max-width: 300px;
-   max-height: 100px;
+   max-width: 370px;
+   max-height: 125px;
    box-shadow: 5px 10px 10px #888888;
 }
 /* borderRadius:'5px',maxWidth:'400px',maxHeight:'100px',boxShadow: '5px 10px 10px #888888' */
@@ -449,4 +454,6 @@
    margin: 0px !important;
    transform: translate(0px, 40px) !important;
 }
-
+/*
+Criar folder de apresentação de centro espirita Aseefrak, segue logo, devera divular um palestra cujno ttiulo é "Apresentando o Sistema de Infomação" instrutor Átila Santos as coresdevem ser seguindo o padrão hexa    #269fe1; e  #1c059f
+*/

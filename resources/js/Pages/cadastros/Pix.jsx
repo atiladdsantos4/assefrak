@@ -845,12 +845,24 @@ const Pix = (props) => {
         setListapix(listafiltro)
   }
 
+ const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheadercadastro.png'}/>
+        <div style={{fontSize:'18px',position:'relative',left:'-52px',top:'-32px',color:'white',fontWeight:'bold'}}>
+            Gerenciar Chave Pix
+        </div>
+        </div>
+     )
+ }
+
   return (
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
-        <div id="topo" class="container section-title box-title mb-2" style={{minWidth:'400px'}} data-aos="fade-up">
-          <h2>Gerenciar Chave Pix</h2>
-          <p>Cadastro</p>
+        <div id="topo" class="container section-title box-title mb-2"  data-aos="fade-up">
+          <ImageHeader/>
+          {/* <h2>Gerenciar Chave Pix</h2>
+          <p>Cadastro</p> */}
         </div>
         <div class="container">
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />

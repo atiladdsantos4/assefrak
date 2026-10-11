@@ -971,13 +971,22 @@ const Evento = (props) => {
     console.log(listaimagens)
   }
 
+  const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheadercadastro.png'}/>
+        <div style={{fontSize:'24px',position:'relative',left:'-86px',top:'-35px',color:'white',fontWeight:'bold'}}>Eventos</div>
+        </div>
+    )
+  }
 
   return (
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
-          <h2> Eventos </h2>
-          <p>Cadastro</p>
+           <ImageHeader/>
+          {/* <h2> Eventos </h2>
+          <p>Cadastro</p> */}
         </div>
         <div id="idcontainer" class="container">
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />

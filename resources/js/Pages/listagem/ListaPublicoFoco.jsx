@@ -263,12 +263,22 @@ const ListaPublicoFoco = (props) => {
         )
   }
 
+const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheaderlistagem.png'}/>
+        <div style={{fontSize:'24px',position:'relative',left:'-66px',top:'-35px',color:'white',fontWeight:'bold'}}>Público Alvo</div>
+        </div>
+    )
+}
+
   return(
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
-          <h2> Público Alvo </h2>
-          <p>Listagem</p>
+          <ImageHeader/>
+          {/* <h2> Público Alvo </h2>
+          <p>Listagem</p> */}
         </div>
         <div class="container">
             <CCard>
@@ -316,6 +326,10 @@ const ListaPublicoFoco = (props) => {
                     </div>
                 </CCardBody>
             </CCard>
+            {/* testar imagem rounded
+            <CCard style={{backgroundColor:'#8494AE'}}>
+                <div style={{backgroundColor:'#8494AE'}} className='ms-5 mb-5 mt-5'><img style={{width:'20%',borderRadius:'50%',border:'4px solid #04499D'}} src={imagem+'equipe/foto.png'}/></div>
+            </CCard> */}
         </div>
         </section>
     </div>

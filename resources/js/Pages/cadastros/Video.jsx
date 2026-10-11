@@ -344,12 +344,22 @@ const Video = (props) => {
       )
  }
 
+ const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheadercadastro.png'}/>
+        <div style={{fontSize:'24px',position:'relative',left:'-80px',top:'-35px',color:'white',fontWeight:'bold'}}>Vídeos</div>
+        </div>
+     )
+ }
+
   return (
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
-        <div class="container section-title box-title mb-2" style={{minWidth:'600px'}} data-aos="fade-up">
-          <h2> Vídeos</h2>
-          <p>Cadastro</p>
+        <div class="container section-title box-title mb-2" data-aos="fade-up">
+           <ImageHeader/>
+          {/* <h2> Vídeos</h2>
+          <p>Cadastro</p> */}
         </div>
         <div class="container">
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
@@ -363,7 +373,7 @@ const Video = (props) => {
                                 : (<CFormInput
                                     id="idvideo"
                                     label="Descrição Vídeo"
-                                    placeholder="Digite o descricao do Video" 
+                                    placeholder="Digite o descricao do Video"
                                     aria-label="Example text with button addon"
                                     aria-describedby="button-addon1"
                                     defaultValue={descricao}
@@ -393,7 +403,7 @@ const Video = (props) => {
                                 : (<CFormInput
                                     id="idhash"
                                     label="Hash do Vídeo"
-                                    placeholder="Digite o Hash do Video" 
+                                    placeholder="Digite o Hash do Video"
                                     aria-label="Example text with button addon"
                                     aria-describedby="button-addon1"
                                     defaultValue={hashvideo}
