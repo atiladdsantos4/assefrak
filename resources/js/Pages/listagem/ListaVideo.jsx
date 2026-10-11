@@ -88,9 +88,9 @@ const ListaVideo = (props) => {
     setLoad(false)
     let str
      if(categoria == 0){
-        str = `${endpoint}/video?listagem=S` 
+        str = `${endpoint}/video?listagem=S`
      } else {
-        str = `${endpoint}/video?listagem=S&categoria=${categoria}` 
+        str = `${endpoint}/video?listagem=S&categoria=${categoria}`
      }
      axios
        .get(str,{
@@ -253,7 +253,7 @@ const ListaVideo = (props) => {
         </CPagination>
     )
   }
-  
+
   const AbreVideo = (event,hash) =>{
     setLinkvideo(hash)
     setOpenmodal(true)
@@ -310,17 +310,24 @@ const ListaVideo = (props) => {
             })
         }
         </CFormSelect>
-      )  
-      
+      )
+
   }
 
+ const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheaderlistagem.png'}/>
+        <div style={{fontSize:'24px',position:'relative',left:'-80px',top:'-35px',color:'white',fontWeight:'bold'}}>Vídeos</div>
+        </div>
+     )
+ }
 
   return(
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
-        <div class="container section-title box-title mb-2" style={{minWidth:'700px'}} data-aos="fade-up">
-          <h2> Lista de Vídeos </h2>
-          <p>Listagem</p>
+        <div class="container section-title box-title mb-2" data-aos="fade-up">
+          <ImageHeader/>
         </div>
         <div class="container">
             <ModalVideos open={openmodal} video={linkvideo} close={closeModal}/>

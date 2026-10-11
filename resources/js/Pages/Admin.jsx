@@ -1,5 +1,6 @@
 import { React, useEffect, useState, Suspense,lazy } from 'react';
 import Footer from './componentes/Footer';
+import FooterAdmin from './componentes/FooterAdmin';
 import HeaderAdmin from './componentes/HeaderAdmin';
 import Acolhido from './cadastros/Acolhido';
 import Passe from './cadastros/Passe';
@@ -304,7 +305,7 @@ const Main = ({ appName }) => {
                 </Suspense>
                 {/* <Acolhido/> */}
             </main>
-           <Footer/>
+           <FooterAdmin/>
         </>
   )
 }

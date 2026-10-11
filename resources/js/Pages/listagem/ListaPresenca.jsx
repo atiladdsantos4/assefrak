@@ -508,14 +508,24 @@ const AlteraStatus = (id,valor) =>{
         })
 }
 
+const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheaderlistagem.png'}/>
+        <div style={{fontSize:'20px',position:'relative',left:'-54px',top:'-32px',color:'white',fontWeight:'bold'}}>Lista de Presença</div>
+        </div>
+    )
+}
+
   return(
     <>
     <ModalInscricao open={openmodal} close={setOpenmodal} dados={dadosmodal} atualiza={(e)=>setEst(!est)}/>
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
-        <div class="container section-title box-title mb-2" style={{minWidth:'500px'}} data-aos="fade-up">
-          <h2>Lista de  Presenca</h2>
-          <p>Listagem</p>
+        <div class="container section-title box-title mb-2" data-aos="fade-up">
+          <ImageHeader/>
+          {/* <h2>Lista de  Presenca</h2>
+          <p>Listagem</p> */}
         </div>
         <div class="container">
             <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />

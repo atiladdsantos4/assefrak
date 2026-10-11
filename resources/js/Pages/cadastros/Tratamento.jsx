@@ -979,13 +979,25 @@ const Tratamento = (props) => {
         })
     }
 
+ const ImageHeader = () =>{
+     return(
+        <div style={{position:'relative',top:'4px'}}>
+        <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheadercadastro.png'}/>
+        <div style={{fontSize:'24px',position:'relative',left:'-65px',top:'-35px',color:'white',fontWeight:'bold'}}>
+            Tratamentos
+         </div>
+        </div>
+    )
+ }
+
 
     return(
         <div data-aos="zoom-in">
             <section id="tratamento-id" class="hero section light-background">
             <div class="container section-title box-title mb-2" data-aos="fade-up">
-                <h2> Tratamento </h2>
-                <p>Cadastro</p>
+                <ImageHeader/>
+                {/* <h2> Tratamento </h2>
+                <p>Cadastro</p> */}
             </div>
                 <div class="container">
                         {/* <ModalProgramacao open={openmodal} close={closeModal} imagem={imagem}/> */}
