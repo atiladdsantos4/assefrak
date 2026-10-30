@@ -5,7 +5,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CRow,CCollapse,CBadge,CConditionalPortal, CCardImage,CCardText,
   CFormTextarea} from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp,faMagnifyingGlassPlus,faMagnifyingGlassMinus } from '@fortawesome/free-solid-svg-icons';
+import {  faFile,faList,faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp,faMagnifyingGlassPlus,faMagnifyingGlassMinus } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
@@ -1265,7 +1265,7 @@ const Palestra = (props) => {
                                 <>
                                 <div style={{overflow:'auto'}}>
                                    <div style={{float:'left',paddingLeft:'3px'}}>
-                                        <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                        <CFormLabel htmlFor="exampleFormControlInput1">Status</CFormLabel><br/>
                                         <CFormCheck
                                             type="checkbox"
                                             id="invalidCheck"
@@ -1276,7 +1276,7 @@ const Palestra = (props) => {
                                         />
                                     </div>
                                     <div style={{float:'left'}}>
-                                      <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                      <div style={{height:'6px'}}></div><br/>
                                       &nbsp;&nbsp;{finalizado ? <CBadge color="success">Concluída</CBadge> : <></>}
                                     </div>
                                 </div>
@@ -1307,7 +1307,7 @@ const Palestra = (props) => {
                                 <>
                                 <div style={{overflow:'auto'}}>
                                    <div style={{float:'left',paddingLeft:'3px'}}>
-                                        <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                        <CFormLabel htmlFor="exampleFormControlInput1">Status Exibição</CFormLabel><br/>
                                         <CFormCheck
                                             type="checkbox"
                                             id="invalidCheck"
@@ -1318,7 +1318,7 @@ const Palestra = (props) => {
                                         />
                                     </div>
                                     <div style={{float:'left'}}>
-                                      <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                      <div style={{height:'6px'}}></div><br/>
                                       &nbsp;&nbsp;{exibir ? <></> : <CBadge color="danger">Bloqueada Exibição</CBadge>}
                                     </div>
                                 </div>
@@ -1326,14 +1326,18 @@ const Palestra = (props) => {
                             </CCol>
                             <CCol xs={12}>
                                 <CButton color="primary" type="submit">
-                                <FontAwesomeIcon size="lg" icon={faSave} />&nbsp;Salvar
+                                Salvar&nbsp;<FontAwesomeIcon size="lg" icon={faSave} />&nbsp;
                                 {' '}
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaPalestras')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaPalestras')}>
+                                   Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList}/>
+                                </CButton>
                                 {' '}
-                                <CButton color="info" type="button" onClick={(e)=>handleClick(e,'Colaborador')}>Novo Colaborador</CButton>
+                                <CButton color="info" type="button" onClick={(e)=>handleClick(e,'Colaborador')}>
+                                  Novo Colaborador&nbsp;<FontAwesomeIcon size="lg" icon={faFile}/>
+                                </CButton>
                             </CCol>
                     </CForm>
                 </CCardBody>

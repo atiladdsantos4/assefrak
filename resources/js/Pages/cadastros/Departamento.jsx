@@ -3,7 +3,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CForm, CFormCheck,CFormFeedback,CFormInput,CSpinner,CFormLabel,CInputGroup,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson, faSave, faList } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 
@@ -310,7 +310,7 @@ const ImageHeader = () =>{
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormLabel htmlFor="exampleFormControlInput1">Status</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
                                     id="invalidCheck"
@@ -343,7 +343,9 @@ const ImageHeader = () =>{
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaDepartamento')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaDepartamento')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
+                                </CButton>
                             </CCol>
                         </CForm>
                 </CCardBody>

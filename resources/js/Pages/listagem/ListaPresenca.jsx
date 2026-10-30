@@ -619,7 +619,9 @@ const ImageHeader = () =>{
                     {
                   temdados ? (
                         <div style={{display:'flex',justifyContent:'flex-start',top:'-5px'}}>
-                        <CButton as="a" color="danger" role="button" target="_blank" href={endpoint_report+'/relatorio/listapresenca?tipo='+listapesquisa+'&id='+param+'&relatorio=listapresenca'}><FontAwesomeIcon size="lg" icon={faFilePdf} />&nbsp;Imprimir Listagem</CButton>
+                        <CButton as="a" color="danger" role="button" target="_blank" href={endpoint_report+'/relatorio/listapresenca?tipo='+listapesquisa+'&id='+param+'&relatorio=listapresenca'}>
+                           Imprimir Listagem&nbsp;<FontAwesomeIcon size="lg" icon={faFilePdf} />
+                        </CButton>
                         </div>
                         ) : (<></>)
                    }

@@ -43,6 +43,29 @@ use App\Http\Controllers\Api\EntradaEstoqueController;
 use App\Http\Controllers\Api\SaidaEstoqueController;
 use App\Http\Controllers\Api\ApresentacaoController;
 use App\Http\Controllers\Api\ApresentacaoItemController;
+use App\Http\Controllers\Api\CondicoesRelatadaController;
+use App\Http\Controllers\Api\ComportamentoReativoController;
+use App\Http\Controllers\Api\CognicaoSonoController;
+use App\Http\Controllers\Api\GravidadeClinicaController;
+use App\Http\Controllers\Api\CondicaoPercebidaController;
+use App\Http\Controllers\Api\DiaPasseController;
+use App\Http\Controllers\Api\OrientacaoCasaController;
+use App\Http\Controllers\Api\OrientacaoExternaController;
+use App\Http\Controllers\Api\HumorController;
+use App\Http\Controllers\Api\ComportamentoPassivoController;
+use App\Http\Controllers\Api\FichaEntrevistaController;
+use App\Http\Controllers\Api\FichaRetornoController;
+
+/*
+Schema::dropIfExists('cor_condicoes_relatada');
+        Schema::dropIfExists('cpr_comportamento_reativo');
+        Schema::dropIfExists('cos_cognicao_sono');
+		Schema::dropIfExists('gac_gravidade_clinica');
+        Schema::dropIfExists('per_condicao_percebida');
+        Schema::dropIfExists('dip_dia_passe');
+		Schema::dropIfExists('orc_orientacao_casa');
+		Schema::dropIfExists('ori_orientacao_externa');
+*/
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -85,8 +108,27 @@ Route::apiResource('inscricao',InscricaoController::class)->middleware('auth:san
 Route::apiResource('categoriavideo',CategoriaVideoController::class)->middleware('auth:sanctum');
 Route::apiResource('video',VideoController::class)->middleware('auth:sanctum');
 Route::apiResource('departamento',DepartamentoController::class)->middleware('auth:sanctum');
+
+//livros
 Route::apiResource('entradaestoque',EntradaEstoqueController::class)->middleware('auth:sanctum');
 Route::apiResource('saidaestoque',SaidaEstoqueController::class)->middleware('auth:sanctum');
 Route::apiResource('apresentacao',ApresentacaoController::class)->middleware('auth:sanctum');
 Route::apiResource('apresentacaoitem',ApresentacaoItemController::class)->middleware('auth:sanctum');
+
+//ficha entrevista
+Route::apiResource('humor',HumorController::class)->middleware('auth:sanctum');
+Route::apiResource('condicoesrelatada',CondicoesRelatadaController::class)->middleware('auth:sanctum');
+Route::apiResource('comportamentopassivo',ComportamentoPassivoController::class)->middleware('auth:sanctum');
+Route::apiResource('comportamentoreativo',ComportamentoReativoController::class)->middleware('auth:sanctum');
+Route::apiResource('cognicaosono',CognicaoSonoController::class)->middleware('auth:sanctum');
+Route::apiResource('gravidadeclinica',GravidadeClinicaController::class)->middleware('auth:sanctum');
+Route::apiResource('condicaopercebida',CondicaoPercebidaController::class)->middleware('auth:sanctum');
+Route::apiResource('diapasse',DiaPasseController::class)->middleware('auth:sanctum');
+Route::apiResource('orientacaocasa',OrientacaoCasaController::class)->middleware('auth:sanctum');
+Route::apiResource('orientacaoexterna',OrientacaoExternaController::class)->middleware('auth:sanctum');
+Route::apiResource('fichaentrevista',FichaEntrevistaController::class)->middleware('auth:sanctum');
+Route::apiResource('ficharetorno',FichaRetornoController::class)->middleware('auth:sanctum');
+
+
+
 

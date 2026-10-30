@@ -138,6 +138,13 @@
           content: counter(page);
         }
 
+        .rule { border-top: 1px solid #555; margin-top: 5px; }
+
+        .banner-entrevista {
+            height: 75px;
+            width: auto;
+        }
+
           .container {
                width: 100%;
            }

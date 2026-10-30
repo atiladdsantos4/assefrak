@@ -20,6 +20,7 @@ const ModalOcorrencia = (props) => {
   const [idocorrenciapasse,setIdocorrenciapasse] = useState(idedita)
 
   useEffect(()=>{
+    let data = formatDate(new Date());
     console.log('acaomodal'+acao)
     console.log('dadosedita')
     console.log(dados)
@@ -33,11 +34,23 @@ const ModalOcorrencia = (props) => {
     } else {
        setOcorrencia(null)
        setDescricao(null)
-       setDataoco(null)
+       setDataoco(data)
        setIdocorrenciapasse(null)
     }
 
   },[data,acao,dados])
+
+  const formatDate = (date) => {
+        const d = String(date.getDate()).padStart(2, '0');
+        const m = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const yyyy = date.getFullYear();
+
+        const hh = String(date.getHours()).padStart(2, '0');
+        const mi = String(date.getMinutes()).padStart(2, '0');
+        const ss = String(date.getSeconds()).padStart(2, '0');
+
+        return `${d}/${m}/${yyyy} ${hh}:${mi}:${ss}`;
+ };
 
   const CompOcorrencia = () =>{
       return(

@@ -61,19 +61,38 @@ import ListaSaidasEstoque from './listagem/ListaSaidasEstoque';
 import SaidaEstoque from './cadastros/SaidaEstoque';
 import Apresentacao from './cadastros/Apresentacao';
 import ListaApresentacao from './listagem/ListaApresentacao';
-// import SectionAbout from './sections/SectionAbout';
-// import SectionServices from './sections/SectionServices';
-// import SectionWhyUs from './sections/SectionWhyUs';
-// import SectionPortifolio from './sections/SectionPortifolio';
-// import SectionTestimonials from './sections/SectionTestimonials';
-// import SectionTeam from './sections/SectionTeam';
-// import SectionPricing from './sections/SectionPricing';
-// import SectionFaq from './sections/SectionFaq';
-// import SectionContact from './sections/SectionContact';
+import FichaEntrevista from './cadastros/FichaEntrevista';
+import Humor from './cadastros/Humor';
+import ListaHumor from './listagem/ListaHumor';
+import Reativo from './cadastros/Reativo';
+import ListaReativo from './listagem/ListaReativo';
+import ListaPassivos from './listagem/ListaPassivos';
+import Passivo from './cadastros/Passivo';
+import ListaSono from './listagem/ListaSono';
+import Sono from'./cadastros/Sono';
+import ListaGravidade from './listagem/ListaGravidade';
+import Gravidade from './cadastros/Gravidade';
+import ListaRelatadas from './listagem/ListaRelatadas';
+import Relatadas from './cadastros/Relatadas';
+import DiaPasse from './cadastros/DiaPasse';
+import ListaDiaPasse from './listagem/ListaDiaPasse';
+import ListaOrientacaoCasa from './listagem/ListaOrientacaoCasa';
+import OrientacaoCasa from './cadastros/OrientacaoCasa';
+import OrientacaoExterna from './cadastros/OrientacaoExterna';
+import ListaOrientacaoExterna from './listagem/ListaOrientacaoExterna';
+import ListaFichaEntrevista from './listagem/ListaFichaEntrevista';
 
-// import { NavbarComp } from '../layouts/NavbarComp';
-// import { SidebarComp } from '../layouts/SidebarComp';
-
+/*
+Humor
+Reativos
+Passivos
+Sono
+Gravidade
+Relatadas
+DiaPasse
+OrientacaoCasa
+OrientacaoExterna
+*/
 
 
 // The Main component receives props passed from the Laravel controller
@@ -81,7 +100,7 @@ const Main = ({ appName }) => {
   const theme_dark = import.meta.env.VITE_APP_THEME_DARK
   const theme_light = import.meta.env.VITE_APP_THEME_LIGHT
   const [view,setView] = useState(null)
-  const [telaatual,setTelaatual] = useState('ListaAcolhidos');
+  const [telaatual,setTelaatual] = useState('ListaFichaEntrevista');
   const [param,setParam] = useState(null);
   const [paramestado,setParamestado] = useState(null);
   const [paramacolhido,setParamacolhido] = useState(null);
@@ -291,6 +310,67 @@ const Main = ({ appName }) => {
        break
     case "ListaApresentacao":
        return(<ListaApresentacao tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Humor":
+        return(<Humor tela={setTelaatual} param={param}/>)
+       break
+    case "ListaHumor":
+       return(<ListaHumor tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Reativo":
+        return(<Reativo tela={setTelaatual} param={param}/>)
+       break
+    case "ListaReativo":
+       return(<ListaReativo tela={setTelaatual} altera={setParam}/>)
+       break
+    case "ListaPassivo":
+       return(<ListaPassivos tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Passivo":
+       return(<Passivo tela={setTelaatual} param={param}/>)
+       break
+    case "ListaSono":
+       return(<ListaSono tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Sono":
+       return(<Sono tela={setTelaatual} param={param}/>)
+       break
+    case "ListaGravidade":
+       return(<ListaGravidade tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Gravidade":
+       return(<Gravidade tela={setTelaatual} param={param}/>)
+       break
+    case "ListaRelatadas":
+       return(<ListaRelatadas tela={setTelaatual} altera={setParam}/>)
+       break
+    case "Relatadas":
+       return(<Relatadas tela={setTelaatual} param={param}/>)
+       break
+    case "ListaDiaPasse":
+       return(<ListaDiaPasse tela={setTelaatual} altera={setParam}/>)
+       break
+    case "DiaPasse":
+       return(<DiaPasse tela={setTelaatual} param={param}/>)
+       break
+    case "ListaOrientacaoCasa":
+       return(<ListaOrientacaoCasa tela={setTelaatual} altera={setParam}/>)
+       break
+    case "OrientacaoCasa":
+       return(<OrientacaoCasa tela={setTelaatual} param={param}/>)
+       break
+    case "ListaOrientacaoExterna":
+       return(<ListaOrientacaoExterna tela={setTelaatual} altera={setParam}/>)
+       break
+    case "OrientacaoExterna":
+       return(<OrientacaoExterna tela={setTelaatual} param={param}/>)
+       break
+    case "FichaEntrevista":
+       return(<FichaEntrevista tela={setTelaatual} param={param}/>)
+       break
+    case "ListaFichaEntrevista":
+       return(<ListaFichaEntrevista tela={setTelaatual} altera={setParam}/>)
+       break
     }
 
   }

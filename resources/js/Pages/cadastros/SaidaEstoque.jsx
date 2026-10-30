@@ -4,7 +4,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CDropdown, CDropdownHeader, CDropdownToggle, CDropdownMenu, CDropdownItem, CDropdownDivider,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson,faSave,faList, faListSquares} from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 
@@ -602,50 +602,59 @@ const SaidaEstoque = (props) => {
                                     readOnly
                                 />)}
                             </CCol>
-                            <CCol xs={3} className="ms-2" style={{border:'1px solid #6895C1',borderRadius:'5px'}}>
+                            <CCol md={4} xs={4} className="ms-2" style={{border:'1px solid #6895C1',borderRadius:'5px'}}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
-                                <CFormCheck
-                                    type="checkbox"
-                                    id="invalidCheck"
-                                    label="Email Enviado"
-                                    feedbackInvalid="Informe se Acolhido esta Ativo"
-                                    checked={emailenviado}
-                                    onChange={(e)=>setEmailenviado(e.target.checked)}
-                                />
-                                <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                <div style={{display:'flex',gap:'5px'}}>
+                                <div style={{flex:'1'}}>
+                                    <CFormLabel htmlFor="exampleFormControlInput1">Status Envio de Email</CFormLabel><br/>
+                                    <CFormCheck
+                                        type="checkbox"
+                                        id="invalidCheck"
+                                        label="Email Enviado"
+                                        feedbackInvalid="Informe se Acolhido esta Ativo"
+                                        checked={emailenviado}
+                                        onChange={(e)=>setEmailenviado(e.target.checked)}
+                                    />
+                                    <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </div>
+                                <div style={{marginTop:'28px',marginLeft:'5px'}}>{ emailenviado ? <></> : <CBadge textColor="white" color="danger">Não Enviado</CBadge>}</div>
+                                </div>
                                 </>)}
                             </CCol>
 
-                            <CCol xs={2} className="ms-2" style={{border:'1px solid #6895C1',borderRadius:'5px'}}>
+                            <CCol md={4} xs={4} style={{marginLeft:'6px',border:'1px solid #6895C1',borderRadius:'5px'}}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
-                                <CFormCheck
-                                    type="checkbox"
-                                    id="invalidCheck"
-                                    label="Saida Confirmada"
-                                    feedbackInvalid="Informe se Acolhido esta Ativo"
-                                    checked={confirmado}
-                                    onChange={(e)=>setConfirmado(e.target.checked)}
-                                />
-                                <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                <div style={{display:'flex',gap:'5px'}}>
+                                <div style={{flex:'1'}}>
+                                    <CFormLabel htmlFor="exampleFormControlInput1">Status de Saída</CFormLabel><br/>
+                                    <CFormCheck
+                                        type="checkbox"
+                                        id="invalidCheck"
+                                        label="Saida Confirmada"
+                                        feedbackInvalid="Informe se Acolhido esta Ativo"
+                                        checked={confirmado}
+                                        onChange={(e)=>setConfirmado(e.target.checked)}
+                                    />
+                                    <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </div>
+                                <div style={{marginTop:'28px'}}>{ confirmado ? <></> : <CBadge textColor="dark" color="warning">Pendente Confirmação</CBadge>}</div>
+                                </div>
                                 </>)}
                             </CCol>
-                            <CCol xs={3} style={{textAlign:'left'}} className="mt-4">
-                                <div className='mt-4'>{ confirmado ? <></> : <CBadge color="danger">Pendente Confirmação</CBadge>}</div>
-                            </CCol>
-                            <CCol xs={2} style={{marginLeft:'-5px',border:'1px solid #6895C1',borderRadius:'5px'}}>
+                            <CCol md={4} xs={4} style={{maxWidth:'400px',marginLeft:'6px',border:'1px solid #6895C1',borderRadius:'5px'}}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <div style={{display:'flex',gap:'5px'}}>
+                                <div style={{flex:'1'}}>
+                                <CFormLabel htmlFor="exampleFormControlInput1">Status Cancelmento</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
                                     id="invalidCheck"
@@ -655,9 +664,12 @@ const SaidaEstoque = (props) => {
                                     onChange={(e)=>setCancelado(e.target.checked)}
                                 />
                                 <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </div>
+                                <div style={{marginTop:'28px',marginLeft:'5px'}}>{ cancelado ? <CBadge textColor="white" color="danger">Cancelado</CBadge> : <></>}</div>
+                                </div>
                                 </>)}
                             </CCol>
-                            <CCol md={3}>
+                            <CCol md={4}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (
@@ -671,7 +683,7 @@ const SaidaEstoque = (props) => {
                                     required
                                 />)}
                             </CCol>
-                            <CCol md={2}>
+                            <CCol md={4} className='ms-7'>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (
@@ -698,7 +710,9 @@ const SaidaEstoque = (props) => {
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaSaidasEstoque')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaSaidasEstoque')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
+                                </CButton>
                             </CCol>
                         </CForm>
 

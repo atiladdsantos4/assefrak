@@ -30,6 +30,12 @@ class Tratamento extends Model
         'tra_created_at' => 'datetime:Y-m-d H:i:s',
         'tra_updated_at' => 'datetime:Y-m-d H:i:s',
         'tra_deleted_at' => 'datetime:Y-m-d H:i:s',
+        'tra_passe' =>'array',
+        'tra_foco_energetico' =>'array',
+        'tra_cond_energetica' =>'array',
+        'tra_fortalecimento' =>'array',
+        'tra_limpeza' =>'array',
+        'tra_alerta' =>'array',
     ];
 
     public function acolhido(){ //--> especilidade
@@ -90,6 +96,28 @@ class Tratamento extends Model
     public static function boot()
     {
         parent::boot();
+
+        self::saving(function ($model) {
+         $camposJson = [
+                'tra_passe',
+                'tra_foco_energetico',
+                'tra_cond_energetica',
+                'tra_fortalecimento',
+                'tra_limpeza',
+                'tra_alerta',
+        ];
+
+        foreach ($camposJson as $campo) {
+            $valor = $model->getAttribute($campo);
+
+            if (is_string($valor)) {
+                    $model->setAttribute(
+                        $campo,
+                        json_decode($valor, true, 512, JSON_THROW_ON_ERROR)
+                    );
+                }
+            }
+        });
 
         self::creating(function($model){//before create
             $model->tra_created_at = date("Y-m-d H:i:s.u");

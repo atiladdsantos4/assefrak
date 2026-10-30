@@ -5,7 +5,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton, CTable,CTableRow,CTableHeade
   CRow,CFormTextarea,CBadge} from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit, faPlus, faCirclePlus,faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import {  faThumbsUp, faPerson, faSave, faCheck, faFile, faTrash, faEdit, faPlus, faCirclePlus,faFilePdf,faList } from '@fortawesome/free-solid-svg-icons';
 import ListaFocoEnergetico from '../listagem/ListaFocoEnergetico';
 import ModalOcorrencia from '../componentes/ModalOcorrencia';
 
@@ -239,30 +239,30 @@ const Tratamento = (props) => {
                 setPrimeiro(result_showtratamento.tra_pri_impressao)
                 let string  = null
 
-                string = JSON.parse(result_showtratamento.tra_passe)
+                //string = JSON.parse(result_showtratamento.tra_passe)
                 //console.log(string)
-                setListapasse(string.meta)
+                setListapasse(result_showtratamento.tra_passe.meta)
 
-                string = JSON.parse(result_showtratamento.tra_foco_energetico)
+                //string = JSON.parse(result_showtratamento.tra_foco_energetico)
                 console.log(string)
-                setListafoco(string.meta)
+                setListafoco(result_showtratamento.tra_foco_energetico.meta)
 
-                string = JSON.parse(result_showtratamento.tra_cond_energetica)
-                console.log(string)
-                setListacondicao(string.meta)
+                //string = JSON.parse(result_showtratamento.tra_cond_energetica)
+                //console.log(string)
+                setListacondicao(result_showtratamento.tra_cond_energetica.meta)
                 //link = string.meta[0].path
 
-                string = JSON.parse(result_showtratamento.tra_fortalecimento)
-                console.log(string)
-                setListafortalecimento(string.meta)
+                // string = JSON.parse(result_showtratamento.tra_fortalecimento)
+                // console.log(string)
+                setListafortalecimento(result_showtratamento.tra_fortalecimento.meta)
 
-                string = JSON.parse(result_showtratamento.tra_limpeza)
-                console.log(string)
-                setListalimpeza(string.meta)
+                //string = JSON.parse(result_showtratamento.tra_limpeza)
+                //console.log(string)
+                setListalimpeza(result_showtratamento.tra_limpeza.meta)
 
-                string = JSON.parse(result_showtratamento.tra_alerta)
-                console.log(string)
-                setListaalerta(string.meta)
+                //string = JSON.parse(result_showtratamento.tra_alerta)
+                //console.log(string)
+                setListaalerta(result_showtratamento.tra_alerta.meta)
 
                 setIdtratamento(result_showtratamento.tra_id_tra)
 
@@ -1212,13 +1212,19 @@ const Tratamento = (props) => {
                                         {loadsave? <CSpinner size="sm" /> : ''}
                                         </CButton>
                                         {' '}
-                                        {/* <CButton color="danger" type="button" ><FontAwesomeIcon size="lg" icon={faFilePdf} />&nbsp;Imprimir Ficha</CButton> */}
-                                        <CButton as="a" color="danger" role="button" target="_blank" href={endpoint_report+'/relatorio/fichatratamento?id='+param+'&relatorio=tratamento'}><FontAwesomeIcon size="lg" icon={faFilePdf} />&nbsp;Imprimir Ficha</CButton>
+                                        {idtratamento == null
+                                        ? <></>
+                                        : (<CButton as="a" color="danger" role="button" target="_blank" href={endpoint_report+'/relatorio/fichatratamento?id='+param+'&relatorio=tratamento'}>
+                                            Imprimir Ficha&nbsp;<FontAwesomeIcon size="lg" icon={faFilePdf} /></CButton>)}
                                         {' '}
-                                        <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaTratamentos')}>Listar Tratamentos</CButton>
+                                        <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaTratamentos')}>
+                                            Listar Tratamentos&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
+                                        </CButton>
                                         {' '}
                                         {loadtabela == false
-                                          ?(<CButton color="info" type="button" onClick={(e)=>handleClick(e,'ControlePresenca')}>Gerar Presença</CButton>)
+                                          ?(<CButton color="info" type="button" onClick={(e)=>handleClick(e,'ControlePresenca')}>
+                                            Gerar Presença&nbsp;<FontAwesomeIcon size="lg" icon={faThumbsUp} />
+                                            </CButton>)
                                           :(<></>)}
                                     </CCol>
                                 </CForm>

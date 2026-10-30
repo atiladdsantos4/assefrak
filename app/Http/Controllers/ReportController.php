@@ -11,11 +11,13 @@ use App\Models\Service;
 use App\Models\Tratamento;
 use App\Models\Inscricao;
 use App\Models\Curso;
+use App\Models\FichaEntrevista;
 use App\Http\Resources\EmpresaResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filter\FilterException;
 use Illuminate\Support\Str;
 
 
@@ -44,7 +46,7 @@ class ReportController extends Controller
            return $pdf->stream('lista-agendas.pdf');
         }
 
-        if( $all["relatorio"] == 'tratamento' ){
+        if( $all["relatorio"] == 'tratamento_old' ){
             //C:\Apache24\htdocs\projetos\inertia-assefrak\public\assets\vendor\bootstrap\css\bootstrap.min.css
            $bootstrapCss = file_get_contents(public_path('assets/vendor/bootstrap/css/bootstrap.min.css'));
            $tratamento = Tratamento::where('tra_id_tra',$all["id"])
@@ -81,6 +83,55 @@ class ReportController extends Controller
             ]);
            $pdf->setPaper('A4', 'portrait');
            return $pdf->stream('ficha-tratamento.pdf');
+        }
+
+        if( $all["relatorio"] == 'tratamento' ){
+            //C:\Apache24\htdocs\projetos\inertia-assefrak\public\assets\vendor\bootstrap\css\bootstrap.min.css
+           $bootstrapCss = file_get_contents(public_path('assets/vendor/bootstrap/css/bootstrap.min.css'));
+           $tratamento = Tratamento::where('tra_id_tra',$all["id"])
+           ->with('acolhido')
+           ->with('colaborador')
+           ->with('tipotratamento')
+           ->with('status')
+           ->with('ocorrencias.tipoocorrencia')
+           ->first();
+
+           $pdf = Pdf::loadView('relatorios.ficha_passista.ficha_passista', [
+                "textohead"=>"HAIR SALON",
+                "textofooter"=>"Ficha para Passistas - Assefrak",
+                "bootstrap" => $bootstrapCss,
+                "ficha"=>$tratamento
+            ]);
+           $pdf->setPaper('A4', 'portrait');
+           return $pdf->stream('ficha-tratamento.pdf');
+        }
+
+        if( $all["relatorio"] == 'entrevista' ){
+           $bootstrapCss = file_get_contents(public_path('assets/vendor/bootstrap/css/bootstrap.min.css'));
+           $ficha = FichaEntrevista::where('fie_id_fie', $all['id'])
+            ->with(['acolhido', 'colaborador','retorno'])
+            ->firstOrFail();
+            //             dd([
+            //     'id'               => $ficha->fie_id_fie,
+            //     'data'             => $ficha->fie_created_at,
+            //     'acolhido'         => $ficha->acolhido->aco_name ?? null,
+            //     'colaborador'      => $ficha->colaborador->col_name ?? null,
+            // ]);
+
+            // dd([
+            //     'check' => file_exists(public_path('assets/img/check.png')),
+            //     'uncheck' => file_exists(public_path('assets/img/uncheck.png')),
+            //     'caminho' => public_path('assets/img/check.png'),
+            // ]);
+
+           $pdf = Pdf::loadView('relatorios.ficha_entrevista.ficha_entrevista', [
+                "textohead"=>"HAIR SALON",
+                "textofooter"=>"Ficha para Passistas - Assefrak",
+                "bootstrap" => $bootstrapCss,
+                "ficha"=>$ficha
+            ]);
+           $pdf->setPaper('A4', 'portrait');
+           return $pdf->stream('ficha-entrevista.pdf');
         }
 
         if( $all["relatorio"] == 'listapresenca' ){

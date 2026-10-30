@@ -1,7 +1,43 @@
 .fundo_head {
     background-color: #6895C1;
     color:white;
+    text-shadow: -1px 0 #1c059f, 0 1px #1c059f, 1px 0 #1c059f, 0 -1px #1c059f;
+    font-weight: bold;
+    border-bottom: 3px solid #269fe1 !important;
+    height:45px !important;
+    background-position: center !important;
+    background-size: cover !important;
+    background-image: url('../img/telas/AssefrakHeader.png') !important;
 }
+
+
+.fundo_header {
+    .cabecalho{
+       text-shadow: -1px 0 #1c059f, 0 1px #1c059f, 1px 0 #1c059f, 0 -1px #1c059f;
+    }
+    .ul_cab{
+       border-top: 3px solid #269fe1 !important;
+       background-color: rgb(188, 234, 243) !important;
+       a:hover,
+       a:focus {
+          color: #3911ea !important;
+          background: rgba(4, 19, 86, 0.09);
+          border-top: 3px solid #269fe1 !important;
+       }
+    }
+
+
+    /* background-color: #6895C1; */
+    color:white;
+    /* text-shadow: -1px 0 #1c059f, 0 1px #1c059f, 1px 0 #1c059f, 0 -1px #1c059f; */
+    font-weight: bold;
+    border-bottom: 3px solid #269fe1 !important;
+    height:75px !important;
+    background-position: center !important;
+    background-size: cover !important;
+    background-image: url('../img/telas/AssefrakHeader.png') !important;
+}
+
 
 .badgeazul{
    background-color:#6895C1 !important;
@@ -14,10 +50,19 @@
    /* font-size: 11px; */
 }
 
-#form-acolhido{
+input[type="checkbox"]{
+      border: 1px solid gray
+}
 
-    .form-label{
-        color:#6895C1  !important;
+#form-acolhido,#form-apresentacao{
+
+    .form-label:not(:empty){
+        color:white  !important;
+        font-size: 14px;
+        background:linear-gradient(to right, #1c059f , #007bff);
+        border-radius: 5px;
+        padding-left:4px;
+        padding-right:4px;
     }
 
     input:focus {
@@ -153,20 +198,90 @@
 
     .box-title{
        border-radius: 5px;
-       max-width: 300px !important;
-       max-height: 100px !important;
+       max-width: 350px;
+       max-height: 125px;
+       /* max-width: 300px !important;
+       max-height: 100px !important; */
        box-shadow: 5px 10px 10px #888888;
        h2 {
          font-size: 22px  !important;
        }
-       div{
-         font-size: 17px  !important;
-         /* margin-left: 10px !important; */
-       }
-
-
+        /* div{
+         /* font-size: 17px  !important;
+         div{
+           top:-35px !important;
+         }
+         margin-left: 10px !important;
+       } */
     }
 }
+
+.circle_gray {
+            /* Step 1: Create a perfect square */
+            width: 28px !important;
+            height: 28px !important;
+
+            /* Step 2: Turn the square into a circle */
+            border-radius: 50%;
+
+            /* Step 3: Align content perfectly inside */
+            display: flex;
+            justify-content: center; /* Centers horizontally */
+            align-items: center;     /* Centers vertically */
+
+            /* Styling (Optional) */
+            background-color: #d0dbcd;
+            border:2px solid #6895C1;
+            font-family: sans-serif;
+  }
+
+  .circle_ficha {
+            /* Step 1: Create a perfect square */
+            width: 28px !important;
+            height: 28px !important;
+
+            /* Step 2: Turn the square into a circle */
+            border-radius: 50%;
+
+            /* Step 3: Align content perfectly inside */
+            display: flex;
+            justify-content: center; /* Centers horizontally */
+            align-items: center;     /* Centers vertically */
+
+            /* Styling (Optional) */
+            background-color:  #1328BB;
+            border:2px solid white;
+            font-family: sans-serif;
+  }
+
+
+ .text-assefrak{
+    color:#6895C1;
+ }
+
+ .text-ficha{
+    color:white;
+ }
+
+ .circle_blue {
+            /* Step 1: Create a perfect square */
+            width: 22px;
+            height: 22px;
+
+            /* Step 2: Turn the square into a circle */
+            border-radius: 50%;
+
+            /* Step 3: Align content perfectly inside */
+            display: flex;
+            justify-content: center; /* Centers horizontally */
+            align-items: center;     /* Centers vertically */
+
+            /* Styling (Optional) */
+            background-color: blue;
+            /* border:2px solid rgb(90, 39, 185); */
+            font-family: sans-serif;
+ }
+
 
 @media screen and (min-width: 600px) {
    .img_swiper{
@@ -457,3 +572,18 @@
 /*
 Criar folder de apresentação de centro espirita Aseefrak, segue logo, devera divular um palestra cujno ttiulo é "Apresentando o Sistema de Infomação" instrutor Átila Santos as coresdevem ser seguindo o padrão hexa    #269fe1; e  #1c059f
 */
+.card_img_header{
+  border-bottom: 3px solid #269fe1 !important;
+  height:45px !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-image: url('../img/telas/AssefrakHeader.png') !important;
+  /* {borderTop:'3px solid #269fe1',height:'50px',zIndex:'10',backgroundPosition:'center',backgroundSize:'cover',backgroundImage:'url('+imagemfundo+')'}
+  C:\Apache24\htdocs\projetos\inertia-assefrak\public\assets\css\cad.css
+  C:\Apache24\htdocs\projetos\inertia-assefrak\public\assets\img\telas\AssefrakHeader.png
+  */
+}
+
+/* .form-label {
+    color: red; //It will affect to all the label in the page
+} */

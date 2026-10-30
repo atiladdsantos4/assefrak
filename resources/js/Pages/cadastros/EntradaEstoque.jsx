@@ -4,7 +4,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CDropdown, CDropdownHeader, CDropdownToggle, CDropdownMenu, CDropdownItem, CDropdownDivider,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faEraser } from '@fortawesome/free-solid-svg-icons';
+import {  faList,faPerson,faSave,faEraser } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 
@@ -591,7 +591,9 @@ const ImageHeader = () =>{
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaEntradasEstoque')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaEntradasEstoque')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
+                                </CButton>
                             </CCol>
                         </CForm>
 

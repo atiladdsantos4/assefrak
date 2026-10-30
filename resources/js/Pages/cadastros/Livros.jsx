@@ -3,7 +3,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,CRow,
   CForm, CFormCheck,CFormFeedback,CFormInput,CSpinner,CFormLabel,CInputGroup,CFormTextarea,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder,CBadge } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPerson,faSave,faMagnifyingGlassPlus,faMagnifyingGlassMinus,faCircleXmark  } from '@fortawesome/free-solid-svg-icons';
+import { faList,faPerson,faSave,faMagnifyingGlassPlus,faMagnifyingGlassMinus,faCircleXmark  } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 
@@ -624,7 +624,7 @@ const CompAutores = () =>{
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormLabel htmlFor="exampleFormControlInput1">Status</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
                                     id="invalidCheck"
@@ -644,7 +644,9 @@ const CompAutores = () =>{
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaLivros')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaLivros')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
+                                </CButton>
                             </CCol>
                         </CForm>
                 </CCardBody>

@@ -61,7 +61,7 @@ const HeaderAdmin = (props) => {
   }
 
   return (
-    <header id="header" class="header d-flex align-items-center fixed-top">
+    <header id="header" class="header d-flex align-items-center fixed-top fundo_header">
         <div class="container position-relative d-flex align-items-center justify-content-between">
 
             <a href={link} target="_blank" class="logo d-flex align-items-center me-auto me-xl-0">
@@ -74,14 +74,28 @@ const HeaderAdmin = (props) => {
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li class="dropdown"><a href="#"><span className="centralizado">Acolhidos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Acolhidos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
                         <li><a href="#hero" class="active" onClick={(e)=>handleClick(e,'Acolhido')}>Novo Acolhido</a></li>
                         <li><a href="#" onClick={(e)=>handleClick(e,'ListaAcolhidos')}>Lista Acolhidos</a></li>
-                        </ul>
+                        <li class="dropdown"><a href="#"><span>Controles de Ficha</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul className='ul_cab'>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Humor')}>Humor e Energia</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Reativo')}>Comportamentos Reativos</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Passivo')}>Comportamentos Passivos</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Sono')}>Cognição e Sono</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Gravidade')}>Gravidade Clínica</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Relatadas')}>Condições Percebidas / Relatadas</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'DiaPasse')}>Dia do Passe</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'OrientacaoCasa')}>Orientações Dadas na Casa</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'OrientacaoExterna')}>Orientações Para Encaminhamento Externo</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'FichaEntrevista')}>Ficha de Entrevista</a></li>
+                                </ul>
+                        </li>
+                       </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span className="centralizado">Colaboradores</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Colaboradores</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaOcupacao')}>Lista Ocupações</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Colaborador')}>Novo Colaborador</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaColaboradores')}>Lista Colaboradores</a></li>
@@ -89,8 +103,8 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaApresentacao')}>Lista de Apresentações</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span className="centralizado">Eventos/Palestras</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Eventos/Palestras</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul  className="ul_cab">
                             <li><a href="#hero" class="active" onClick={(e)=>handleClick(e,'ListaPublicoFoco')}>Público Alvo</a></li>
                             <li><a href="#hero" class="active" onClick={(e)=>handleClick(e,'ListaCategoriaEvento')}>Categoria de Evento/Palestra</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Evento')}>Novo Evento</a></li>
@@ -102,8 +116,8 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaPresenca')}>Listagem de Presença</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span className="centralizado">Controle Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Controle Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
                         <li><a href="#about" onClick={(e)=>handleClick(e,'ListaPasses')}>Passes</a></li>
                         <li><a href="#services" onClick={(e)=>handleClick(e,'ListaFocoEnergeticos')} className="centralizado">Focos Energéticos</a></li>
                         <li><a href="#services" onClick={(e)=>handleClick(e,'ListaCondicaoEnergeticas')} className="centralizado">Condição Energética</a></li>
@@ -114,10 +128,10 @@ const HeaderAdmin = (props) => {
                         <li><a href="#" onClick={(e)=>handleClick(e,'ListaStatusTratamentos')}>Status do Tratamento</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span>Avaliações</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="cabecalho">Avaliações</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
                         <li class="dropdown"><a href="#"><span>Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul>
+                            <ul className='ul_cab'>
                                 <li><a href="#" onClick={(e)=>handleClick(e,'ListaOcorrencias')}>Ocorrências Passe</a></li>
                                 <li><a href="#" onClick={(e)=>handleClick(e,'Tratamento')}>Novo Tratamento</a></li>
                                 <li><a href="#" onClick={(e)=>handleClick(e,'ListaTratamentos')}>Listar Tratamentos</a></li>
@@ -131,8 +145,8 @@ const HeaderAdmin = (props) => {
                         <li><a href="#">Dropdown 4</a></li> */}
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span className="centralizado">Livraria</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Livraria</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaAutores')}>Lista Autores</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Autor')}>Novo Autor</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaEditoras')}>Lista Editoras</a></li>
@@ -143,8 +157,8 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'PrecoLivro')}>Precificação de Livros</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span className="centralizado">Outros</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Outros</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaCategoriaVideo')}>Lista Categorias Vídeos</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'CategoriaVideo')}>Nova Categoria Vídeos</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaVideos')}>Lista de Vídeos</a></li>
@@ -152,7 +166,7 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaDepartamento')}>Lista Departamentos</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Departamento')}>Novo Departamento</a></li>
                             <li class="dropdown"><a href="#"><span>Estoque</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                <ul>
+                                <ul className='ul_cab'>
                                     <li><a href="#" onClick={(e)=>handleClick(e,'EntradaEstoque')}>Entradas</a></li>
                                     <li><a href="#" onClick={(e)=>handleClick(e,'ListaEntradasEstoque')}>Listagem Entradas</a></li>
                                     <li><a href="#" onClick={(e)=>handleClick(e,'SaidaEstoque')}>Saídas</a></li>

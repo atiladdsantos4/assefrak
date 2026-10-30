@@ -4,14 +4,16 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton, CTable,CTableRow,CTableHeade
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder,
   CBadge} from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faTrash,faEdit } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson, faSave, faTrash, faEdit, faList } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 import AOS from 'aos';
+import imagemfundo from '../../../../public/assets/img/telas/AssefrakHeader.png'
 registerLocale("ptBR", ptBR);
+
 
 
 
@@ -62,6 +64,7 @@ const Acolhido = (props) => {
   const [registrofim,setRegistrofim] = useState(0)
   const [qtderegistros,setQtderegistros] = useState(0)
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
+  const style_card= {borderTop:'3px solid #269fe1',height:'50px',zIndex:'10',backgroundPosition:'center',backgroundSize:'cover',backgroundImage:'url('+imagemfundo+')'}
   //aco_id_aco,aco_name,aco_cpf,aco_email,aco_tipo_telefone,aco_telefone,aco_ativo,aco_created_at,aco_updated_at,aco_deleted_at
 
 
@@ -707,7 +710,7 @@ const Acolhido = (props) => {
         <div class="container">
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
                 <CCard className='card_bottom mb-4'>
-                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Acolhidos</CCardHeader>
+                <CCardHeader className="card_img_header fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Cadastro de Acolhidos</CCardHeader>
                 <CCardBody>
                     <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
                             <CCol md={4}>
@@ -884,7 +887,7 @@ const Acolhido = (props) => {
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormLabel htmlFor="exampleFormControlInput1">Status</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
                                     id="invalidCheck"
@@ -918,7 +921,9 @@ const Acolhido = (props) => {
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaAcolhidos')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaAcolhidos')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList}/>
+                                </CButton>
                             </CCol>
                         </CForm>
                 </CCardBody>
@@ -974,6 +979,12 @@ const Acolhido = (props) => {
               }
         </div>
         </section>
+        {/*
+        <div style={{borderTop:'3px solid #269fe1',height:'50px',zIndex:'10',backgroundPosition:'center',backgroundSize:'cover',backgroundImage:'url('+imagemfundo+')'}}>
+         <div style={{borderTop:'3px solid #269fe1',maxHeight:'50px'}}>
+            <img className='img-fluid' src={imagemfundo}/>
+        </div>
+        */}
     </div>
   )
 }

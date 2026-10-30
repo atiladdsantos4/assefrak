@@ -5,7 +5,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CRow,CCollapse,CBadge,CConditionalPortal, CCardImage,CCardText,
   CFormTextarea} from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
+import {  faList,faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
@@ -1229,7 +1229,7 @@ const Evento = (props) => {
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormLabel htmlFor="exampleFormControlInput1">Status</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
                                     id="invalidCheck"
@@ -1250,7 +1250,9 @@ const Evento = (props) => {
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaEventos')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaEventos')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList}/>
+                                </CButton>
                             </CCol>
                     </CForm>
                 </CCardBody>

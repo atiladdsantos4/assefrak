@@ -4,7 +4,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder,
   CRow,CBadge } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faMagnifyingGlassPlus,faMagnifyingGlassMinus,faCircleXmark  } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson,faSave,faMagnifyingGlassPlus,faMagnifyingGlassMinus,faCircleXmark,faList  } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
@@ -911,7 +911,9 @@ const Colaborador = (props) => {
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaColaboradores')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaColaboradores')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList}/>
+                                </CButton>
                             </CCol>
                         </CForm>
                 </CCardBody>

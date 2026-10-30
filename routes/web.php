@@ -13,7 +13,6 @@ use App\Http\Controllers\ReportController;
 
 /*routes forn end*/
 Route::get('/admin', function () {
-   //return view('welcome');
    return Inertia::render('Admin');
 });
 
@@ -39,6 +38,7 @@ Route::prefix('relatorio')->group(function () {
    Route::get('ficha', [ReportController::class, 'index'])->name('report.index');
    Route::get('fichatratamento', [ReportController::class, 'index'])->name('report.index');
    Route::get('listapresenca', [ReportController::class, 'index'])->name('report.index');
+   Route::get('fichaentrevista', [ReportController::class, 'index'])->name('report.index');
 });
 
 

@@ -5,7 +5,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CRow,CCollapse,CBadge,CConditionalPortal, CCardImage,CCardText,
   CFormTextarea,CContainer} from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
+import {  faFile,faList,faPerson,faSave,faCircleXmark,faArrowAltCircleDown,faArrowAltCircleUp, faCircleArrowDown, faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import DatePicker, { registerLocale } from "react-datepicker";
 import ptBR from "date-fns/locale/pt-BR";
@@ -1681,7 +1681,7 @@ const Cursos = (props) => {
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
+                                <CFormLabel htmlFor="exampleFormControlInput1">Status</CFormLabel><br/>
                                 <CFormCheck
                                     type="checkbox"
                                     id="invalidCheck"
@@ -1718,14 +1718,18 @@ const Cursos = (props) => {
                             </CContainer>
                             <CCol xs={12}>
                                 <CButton color="primary" type="submit">
-                                <FontAwesomeIcon size="lg" icon={faSave} />&nbsp;Salvar
+                                Salvar&nbsp;<FontAwesomeIcon size="lg" icon={faSave} />
                                 {' '}
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaCursos')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaCursos')}>
+                                    Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList}/>
+                                </CButton>
                                 {' '}
-                                <CButton color="info" type="button" onClick={(e)=>handleClick(e,'CategoriaEvento')}>Nova Categoria</CButton>
+                                <CButton color="info" type="button" onClick={(e)=>handleClick(e,'CategoriaEvento')}>
+                                    Nova Categoria&nbsp;<FontAwesomeIcon size="lg" icon={faFile}/>
+                                 </CButton>
                             </CCol>
                     </CForm>
                 </CCardBody>

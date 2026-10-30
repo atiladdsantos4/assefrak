@@ -3,7 +3,7 @@ import { CCard, CCardBody,CCardHeader,CCol,CButton,
   CForm, CFormCheck,CFormFeedback,CFormInput,CSpinner,CFormLabel,CInputGroup,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson,faSave } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson,faSave,faList } from '@fortawesome/free-solid-svg-icons';
 import { IMaskInput,IMaskMixin } from 'react-imask';
 import axios from 'axios';
 
@@ -304,7 +304,9 @@ const OcorrenciaPasse = (props) => {
                                 {loadsave? <CSpinner size="sm" /> : ''}
                                 </CButton>
                                 {' '}
-                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaOcorrencias')}>Listar</CButton>
+                                <CButton color="warning" type="button" onClick={(e)=>handleClick(e,'ListaOcorrencias')}>
+                                   Listar&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
+                                </CButton>
                             </CCol>
                         </CForm>
                 </CCardBody>
