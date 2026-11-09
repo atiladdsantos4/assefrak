@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef  } from 'react';
 import {
     CTable,
     CTableRow,
@@ -18,11 +18,13 @@ import {
     CButton,
     CSpinner,
     CFormSelect,
-    CBadge
+    CBadge,
+    CTooltip, CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -46,6 +48,14 @@ const ListaFichaEntrevista = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(15)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexlcusao, setIditemexclusao] = useState(null)
+  const [loadexclui,setLoadexclui] = useState(false)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()//toast
+
 
 
 
@@ -114,7 +124,7 @@ const ListaFichaEntrevista = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.fie_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -126,10 +136,10 @@ const ListaFichaEntrevista = (props) => {
                     <CTableDataCell>{item.fie_id_fie}</CTableDataCell>
                     <CTableDataCell>{item.fie_acolhido.aco_name}</CTableDataCell>
                     <CTableDataCell>{item.fie_colaborador.col_name}</CTableDataCell>
-                    <CTableDataCell>{item.fie_id_tra != null ? item.fie_id_tra :(<CBadge color="info" textColor='dark'>Não Vinculado</CBadge>)}</CTableDataCell>
+                    <CTableDataCell>{item.fie_id_fie != null ? item.fie_id_fie :(<CBadge color="info" textColor='dark'>Não Vinculado</CBadge>)}</CTableDataCell>
                     <CTableDataCell>{item.fie_ativo == 1 ? (<CBadge color="success" textColor='white'>Ativa</CBadge>) :(<CBadge color="info" textColor='danger'>Suspensa</CBadge>)}</CTableDataCell>
                     <CTableDataCell>{item.fie_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.fie_id_fie}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao load={item.fie_loadexclui} id={item.fie_id_fie}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -204,6 +214,25 @@ const ListaFichaEntrevista = (props) => {
     setListafic(lista)
   }
 
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
+   }
+
   const Pagination = (props) => {
     let elemento = []
 
@@ -232,9 +261,10 @@ const ListaFichaEntrevista = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -272,8 +302,46 @@ const ListaFichaEntrevista = (props) => {
     )
   }
 
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListafic(prevItems =>
+        prevItems.map(item =>
+                item.fie_id_fie === idexclusao ? { ...item, fie_loadexclui: true } : item
+            )
+        )
+    axios.delete(`${endpoint}/fichaentrevista/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,//dentro do env//
+        },
+     })
+     .then((result) => {
+             setListafic(prevItems =>
+                    prevItems.map(item =>
+                        item.fie_id_fie === idexclusao ? { ...item, fie_loadexclui: false, fie_exclui: true } : item
+                    )
+                )
+            addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success')) //--> usa toast
+            setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+            }, 2000)
+     })
+
+}
+
+
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexlcusao} funcret={()=>excluirItemBanco(iditemexlcusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>

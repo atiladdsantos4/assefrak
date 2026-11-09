@@ -25,6 +25,8 @@ class FocoEnergeticoResource extends JsonResource
                 'foc_id_foc' => $this->foc_id_foc,
                 'foc_descricao' => $this->foc_descricao,
                 'foc_ativo' => false,
+                'foc_exclui' => false,
+                'foc_loadexclui' => false,
                 'foc_created_at' => Carbon::parse($this->foc_created_at)->format('d/m/Y H:i:s'),
                 'foc_updated_at' => $this->foc_updated_at != null ? Carbon::parse($this->foc_updated_at)->format('d/m/Y H:i:s') : null,
             ];

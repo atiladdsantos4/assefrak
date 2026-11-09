@@ -25,6 +25,8 @@ class StatusTratamentoResource extends JsonResource
                 'stt_id_stt' => $this->stt_id_stt,
                 'stt_descricao' => $this->stt_descricao,
                 'stt_ativo' => $this->stt_ativo,
+                'stt_exclui' => false,
+                'stt_loadexclui' => false,
                 'stt_created_at' => Carbon::parse($this->stt_created_at)->format('d/m/Y H:i:s'),
                 'stt_updated_at' => $this->stt_updated_at != null ? Carbon::parse($this->stt_updated_at)->format('d/m/Y H:i:s') : null,
             ];

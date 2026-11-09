@@ -25,6 +25,8 @@ class LimpezaResource extends JsonResource
                 'lim_id_lim' => $this->lim_id_lim,
                 'lim_descricao' => $this->lim_descricao,
                 'lim_ativo' => $this->lim_ativo,
+                'lim_exclui' => false,
+                'lim_loadexclui' => false,
                 'lim_created_at' => Carbon::parse($this->lim_created_at)->format('d/m/Y H:i:s'),
                 'lim_updated_at' => $this->lim_updated_at != null ? Carbon::parse($this->lim_updated_at)->format('d/m/Y H:i:s') : null,
             ];

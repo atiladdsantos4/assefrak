@@ -25,6 +25,7 @@ import {
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -50,6 +51,10 @@ const ListaDepartamento = (props) => {
   const [load,setLoad] = useState(false)
   const [toast, addToast] = useState()//toast
   const toaster = useRef(null)
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
   /*
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
@@ -155,7 +160,7 @@ const ListaDepartamento = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.dep_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -168,7 +173,7 @@ const ListaDepartamento = (props) => {
                     <CTableDataCell>{item.dep_email}</CTableDataCell>
                     <CTableDataCell><CompCheckbox id={item.dep_id_dep} ativo={item.dep_ativo}/>&nbsp;{item.dep_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.dep_ativo == 1 ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Suspenso</CBadge>}</CTableDataCell>
                     <CTableDataCell>{item.dep_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.dep_id_dep}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.dep_id_dep} load={item.dep_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -204,9 +209,9 @@ const ListaDepartamento = (props) => {
             (item)=>item.dep_descricao.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)
-        setlistadept(lista.slice(0,qtderegistrospagina))
+        setListadept(lista.slice(0,qtderegistrospagina))
      } else {
-        setlistadept(listafiltro.slice(0,qtderegistrospagina))
+        setListadept(listafiltro.slice(0,qtderegistrospagina))
      }
   }
 
@@ -259,7 +264,7 @@ const ListaDepartamento = (props) => {
     } else {
        setRegistrofim(fim)
     }
-    setlistadept(lista)
+    setListadept(lista)
   }
 
   const Pagination = (props) => {
@@ -290,11 +295,52 @@ const ListaDepartamento = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListadept(prevItems => prevItems.map(item =>
+        item.dep_id_dep === idexclusao ? { ...item, dep_loadexclui: true } : item
+    ))
+    axios.delete(`${endpoint}/departamento/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then((result) => {
+          if(result.data.status === true){
+             setListadept(prevItems => prevItems.map(item =>
+                item.dep_id_dep === idexclusao ? { ...item, dep_loadexclui: false, dep_exclui: true } : item
+             ))
+             setListafiltro(prevItems => prevItems.map(item =>
+                item.dep_id_dep === idexclusao ? { ...item, dep_loadexclui: false, dep_exclui: true } : item
+             ))
+             addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+             setTimeout(() => {
+                const el = document.getElementById('idtoast')
+                if(el){ el.classList.remove('show'); el.remove() }
+             }, 2000)
+          }
+     })
+     .catch(() => {
+        setListadept(prevItems => prevItems.map(item =>
+          item.dep_id_dep === idexclusao ? { ...item, dep_loadexclui: false } : item
+        ))
+     })
   }
 
   const EditaRegistro = (event,valor) =>{
@@ -337,6 +383,7 @@ const ListaDepartamento = (props) => {
         </div>
         <div class="container">
             <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+            <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Departamentos</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>

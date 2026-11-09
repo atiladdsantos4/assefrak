@@ -41,6 +41,8 @@ class PalestraResource extends JsonResource
                 'pal_load' => false,
                 'pal_load_concluida' => false,
                 'pal_image' => null,
+                'pal_exclui' => false,
+                'pal_loadexclui' => false,
                 'pal_datasort' => Carbon::parse($this->pal_data_inicio)->format('Ymd'),
                 'pal_data_inicio' => Carbon::parse($this->pal_data_inicio)->format('d/m/Y'),
                 'pal_data_ext_dia' => Carbon::parse($this->pal_data_inicio)->format('d'),

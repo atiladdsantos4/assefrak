@@ -129,8 +129,16 @@ class PasseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $passe = Passe::findOrFail($id);
+        $passe->delete();
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
     }
 }

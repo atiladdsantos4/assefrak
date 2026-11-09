@@ -1,4 +1,5 @@
-import { React,useEffect,useState,Suspense } from 'react';
+
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,22 +18,24 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
-// import { NavbarComp } from '../layouts/NavbarComp';
-// import { SidebarComp } from '../layouts/SidebarComp';
-
-
+import { faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 
 // The Main component receives props passed from the Laravel controller
 const ListaAutores = (props) => {
-  const { tela, altera }  = props
-  const token  = import.meta.env.VITE_APP_TOKEN
-  const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
+  const { tela, altera } = props
+  const token = import.meta.env.VITE_APP_TOKEN
+  const imagem = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
+
   const [listaautor,setlistaautor] = useState([])
   const [listafiltro,setListafiltro] = useState([])
   const [est,setEst] = useState(false)
@@ -45,15 +48,14 @@ const ListaAutores = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
-  /*
-  const [numnpagination,setNumpagination] = useState(null)
-    const [paginaatual,setPaginaatual] = useState(null)
-    const [ultimapagina,setUltimapagina] = useState(null)
-    const [registroini,setRegistroini] = useState(0)
-    const [registrofim,setRegistrofim] = useState(0)
-    const [qtderegistros,setQtderegistros] = useState(0)
-    const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
-  */
+
+  // Exclusão
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
+
   useEffect(()=>{
      setLoad(false)
      axios
@@ -61,51 +63,68 @@ const ListaAutores = (props) => {
            headers: {
               Accept: 'application/json',
               'Content-Type': 'multipart/form-data',
-              Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
+              Authorization: 'Bearer ' + token,
            },
        })
        .then((result) => {
            altera(null)
-           console.log(result)
-           setlistaautor(result.data.data)
-           setListafiltro(result.data.data)
-           let tam = result.data.data.length
+
+           const lista = result.data.data.map((item)=>({
+               ...item,
+               aut_exclui: item.aut_exclui ?? false,
+               aut_loadexclui: item.aut_loadexclui ?? false,
+           }))
+
+           setlistaautor(lista)
+           setListafiltro(lista)
+
+           let tam = lista.length
            setQtderegistros(tam)
            let res = tam / qtderegistrospagina
            let resposta = res.toString().split('.');
-           if( parseInt(resposta[1]) === 0 || resposta[1] === undefined){
+
+           if(parseInt(resposta[1]) === 0 || resposta[1] === undefined){
                 setNumpagination(res)
            } else {
                 res = parseInt(resposta[0]) + 1
                 let numpag = res.toFixed(0)
                 setNumpagination(numpag)
            }
+
            setUltimapagina(res)
            setPaginaatual(1)
-           if( tam > 0){
+
+           if(tam > 0){
                setRegistroini(1)
                setRegistrofim(qtderegistrospagina)
            }
+
            setLoad(true)
        })
   },[qtderegistrospagina])
 
-  //--> Exibe os dados da Tabela
+  // Exibe os dados da Tabela
   const CorpoTabela = (props) =>{
       let classe = null
       let cont = 0
-      let tam = props.lista.length
-      if( tam == 0){
+
+      const lista = props.lista.filter((item)=>item.aut_exclui == false)
+
+      if(lista.length == 0){
          return(
             <CTableRow color={classe}>
-                <CTableDataCell colspan="4" style={{textAlign:'center'}}>Não há Registros para Listagem</CTableDataCell>
+                <CTableDataCell colspan="4" style={{textAlign:'center'}}>
+                    Não há Registros para Listagem
+                </CTableDataCell>
             </CTableRow>
         )
       }
+
       return(
-         props.lista.map((item,index)=>{
+         lista.map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
+
             if(cont > qtderegistrospagina){
                return
             } else {
@@ -114,34 +133,34 @@ const ListaAutores = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.aut_nome}</CTableDataCell>
                     <CTableDataCell>{item.aut_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.aut_id_aut}/></CTableDataCell>
-                    {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
-                    </CTableRow>
+                    <CTableDataCell style={{textAlign:'center'}}>
+                        <ItensAcao load={item.aut_loadexclui} id={item.aut_id_aut}/>
+                    </CTableDataCell>
+                </CTableRow>
                )
             }
          })
       )
   }
 
-
   const pesquisarGrid = (event) => {
-     let valor =  event.target.value
-     if( valor.trim() != ''){
+     let valor = event.target.value
+     setPesquisar(valor)
+
+     if(valor.trim() != ''){
         let lista = listafiltro.filter(
             (item)=>item.aut_nome.toLowerCase().includes(valor.toLowerCase())
         )
-        console.log(lista)
+        lista = lista.filter((item)=>item.aut_exclui == false)
         setlistaautor(lista.slice(0,qtderegistrospagina))
      } else {
-        setlistaautor(listafiltro.slice(0,qtderegistrospagina))
+        setlistaautor(listafiltro.filter((item)=>item.aut_exclui == false).slice(0,qtderegistrospagina))
      }
   }
 
-
-  //--> Exibe o componente de paginação
-  const PaginationExibe = (props) => {
+  // Exibe o componente de paginação
+  const PaginationExibe = (props) =>{
      return(
-        // <div style={{fontSize:'14px',paddingLeft:'3px',paddingRight:'3px',backgroundColor:'#722E56',color:'white',display:'flex',borderRadius:'5px 5px 5px 5px'}}>
         <div className='exibepagination'>
             <div>Pagina:&nbsp;{props.pagina}&nbsp;</div>
             <div>Regitros:&nbsp;{registroini+'...'+registrofim+' num Total de '+qtderegistros}</div>
@@ -151,49 +170,68 @@ const ListaAutores = (props) => {
 
   const PreviousPage =(event)=>{
     let page = paginaatual
-    console.log('paginaatual:'+paginaatual)
-    console.log('ultimapagina:'+ultimapagina)
+
     if(paginaatual < ultimapagina){
        page = page + 1
-       console.log('ultimapagina-entrei')
        clickPagination(event,page)
     }
   }
 
   const PriousPage =(event)=>{
     let page = paginaatual
-    console.log('paginaatual:'+paginaatual)
-    console.log('ultimapagina:'+ultimapagina)
+
     if(paginaatual > 1){
        page = page - 1
-       console.log('ultimapagina-entrei')
        clickPagination(event,page)
     }
   }
 
-  //--> Efetuar a pesquisa pelo click
+  // Efetuar a pesquisa pelo click
   const clickPagination = (event,idx) =>{
-    //  0,5,5,10
     setPaginaatual(idx)
+
     let ref = idx == 1 ? 0 : idx
     let inicio = ref == 0 ? ref : (ref * qtderegistrospagina) - qtderegistrospagina
     let fim = idx * qtderegistrospagina
-    let lista = null
-    lista = listafiltro.slice(inicio,fim)
+
+    let lista = listafiltro.filter((item)=>item.aut_exclui == false)
+    lista = lista.slice(inicio,fim)
+
     setRegistroini(inicio+1)
+
     if(fim > qtderegistros){
        setRegistrofim(qtderegistros)
     } else {
        setRegistrofim(fim)
     }
+
     setlistaautor(lista)
+  }
+
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
   }
 
   const Pagination = (props) => {
     let elemento = []
 
     for(let i = 1; i <= props.pages; i++ ){
-      if( i == paginaatual){
+      if(i == paginaatual){
          elemento.push(<CPaginationItem active={true} className='cpointer cl_pagination' onClick={(e)=>clickPagination(e,i)}>{i}</CPaginationItem>)
       } else {
          elemento.push(<CPaginationItem active={false} className='cpointer cl_pagination' onClick={(e)=>clickPagination(e,i)}>{i}</CPaginationItem>)
@@ -213,13 +251,14 @@ const ListaAutores = (props) => {
     )
   }
 
-  //--> Display dos Ícones no grid
+  // Display dos Ícones no grid
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -245,29 +284,94 @@ const ListaAutores = (props) => {
           )
   }
 
- const ImageHeader = () =>{
-     return(
+  const ImageHeader = () =>{
+      return(
         <div style={{position:'relative',top:'4px'}}>
         <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheaderlistagem.png'}/>
         <div style={{fontSize:'24px',position:'relative',left:'-80px',top:'-35px',color:'white',fontWeight:'bold'}}>Autores</div>
         </div>
-     )
- }
+      )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+
+    setlistaautor(prevItems =>
+        prevItems.map(item =>
+            item.aut_id_aut === idexclusao ? {...item,aut_loadexclui:true} : item
+        )
+    )
+
+    setListafiltro(prevItems =>
+        prevItems.map(item =>
+            item.aut_id_aut === idexclusao ? {...item,aut_loadexclui:true} : item
+        )
+    )
+
+    axios.delete(`${endpoint}/autor/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then((result) => {
+            if(result.data.status === true){
+                setlistaautor(prevItems =>
+                    prevItems.map(item =>
+                        item.aut_id_aut === idexclusao
+                        ? {...item,aut_loadexclui:false,aut_exclui:true}
+                        : item
+                    )
+                )
+
+                setListafiltro(prevItems =>
+                    prevItems.map(item =>
+                        item.aut_id_aut === idexclusao
+                        ? {...item,aut_loadexclui:false,aut_exclui:true}
+                        : item
+                    )
+                )
+
+                setQtderegistros(prev=>prev-1)
+
+                addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+
+                setTimeout(() => {
+                    document.getElementById('idtoast')?.classList.remove('show')
+                    document.getElementById('idtoast')?.remove()
+                },2000)
+            }
+     })
+  }
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster}/>
+        <ModalDelete
+            id={iditemexclusao}
+            funcret={()=>excluirItemBanco(iditemexclusao)}
+            open={openmodalconfirma}
+            close={(e)=>setOpenmodalconfirma(false)}
+            texto={textomodal}
+        />
+
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>
-          {/* <h2>Autores</h2>
-          <p>Listagem</p> */}
         </div>
         <div class="container">
             <CCard>
-                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Autores</CCardHeader>
+                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson}/>&nbsp;Listagem de Autores</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
                     <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
-                        <CButton color="primary" onClick={(e)=>tela('Autor')}>Novo Autor&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                        <CButton color="primary" onClick={(e)=>tela('Autor')}>Novo Autor&nbsp;<FontAwesomeIcon size="lg" icon={faFile}/></CButton>
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>
@@ -312,7 +416,6 @@ const ListaAutores = (props) => {
         </section>
     </div>
   )
-
 }
 
 export default ListaAutores

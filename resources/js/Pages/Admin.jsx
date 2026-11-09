@@ -81,6 +81,16 @@ import OrientacaoCasa from './cadastros/OrientacaoCasa';
 import OrientacaoExterna from './cadastros/OrientacaoExterna';
 import ListaOrientacaoExterna from './listagem/ListaOrientacaoExterna';
 import ListaFichaEntrevista from './listagem/ListaFichaEntrevista';
+import AssociarEntrevista from './cadastros/AssociarEntrevista';
+import FaixaIdade from './cadastros/FaixaIdade';
+import ListaFaixaIdade from './listagem/ListaFaixaIdade';
+import TipoFuncionalidade from './cadastros/TipoFuncionalidade';
+import ListaTipoFuncionalidade from './listagem/ListaTipoFuncionalidade';
+import Funcionalidade from './cadastros/Funcionalidade';
+import ListaFuncionalidade from './listagem/ListaFuncionalidade';
+import Menu from './cadastros/Menu';
+import ListaMenu from './listagem/ListaMenu';
+
 
 /*
 Humor
@@ -100,7 +110,7 @@ const Main = ({ appName }) => {
   const theme_dark = import.meta.env.VITE_APP_THEME_DARK
   const theme_light = import.meta.env.VITE_APP_THEME_LIGHT
   const [view,setView] = useState(null)
-  const [telaatual,setTelaatual] = useState('ListaFichaEntrevista');
+  const [telaatual,setTelaatual] = useState('ListaHumor');
   const [param,setParam] = useState(null);
   const [paramestado,setParamestado] = useState(null);
   const [paramacolhido,setParamacolhido] = useState(null);
@@ -130,249 +140,282 @@ const Main = ({ appName }) => {
     scrollToId('idmain')
     switch( props.tela) {
 
-      case "Acolhido":
-        return(<Acolhido tela={setTelaatual} param={param} estadovalor={paramestado} altera={setParam} setacolhido={setParamacolhido}/>)
-       break
-      case "ListaAcolhidos":
-        return(<ListaAcolhidos tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
-       break
-      case "Passes":
-        return(<Passe tela={setTelaatual} param={param} altera={setParam}/>)
-       break
-      case "ListaPasses":
-        return(<ListaPasses tela={setTelaatual} altera={setParam}/>)
-       break
-      case "FocoEnergetico":
-        return(<FocoEnergetico tela={setTelaatual} param={param}/>)
-       break
-      case "ListaFocoEnergeticos":
-        return(<ListaFocoEnergetico tela={setTelaatual} altera={setParam}/>)
-       break
-      case "CondicaoEnergetica":
-        return(<CondicaoEnergetica tela={setTelaatual} param={param}/>)
-       break
-      case "ListaCondicaoEnergeticas":
-        return(<ListaCondicaoEnergetica tela={setTelaatual} altera={setParam}/>)
-       break
-      case "Fortalecimento":
-        return(<Fortalecimento tela={setTelaatual} param={param}/>)
-       break
-      case "ListaFortalecimentos":
-        return(<ListaFortalecimento tela={setTelaatual} altera={setParam}/>)
-       break
-      case "Limpeza":
-        return(<Limpeza tela={setTelaatual} param={param}/>)
-       break
-      case "ListaLimpezas":
-        return(<ListaLimpeza tela={setTelaatual} altera={setParam}/>)
-       break
-      case "Alerta":
-        //const Alerta = lazy(() => import('./cadastros/Alerta'))
-        return(<Alerta tela={setTelaatual} param={param}/>)
-       break
-      case "ListaAlertas":
-        //const ListaAlerta = lazy(() => import('./listagem/ListaAlerta'))
-        return(<ListaAlerta tela={setTelaatual} altera={setParam}/>)
-       break
-     case "TipoTratamento":
-        //const Alerta = lazy(() => import('./cadastros/Alerta'))
-        return(<TipoTratamento tela={setTelaatual} param={param}/>)
-       break
-     case "ListaTipoTratamentos":
-        //const ListaAlerta = lazy(() => import('./listagem/ListaAlerta'))
-        return(<ListaTipoTratamento tela={setTelaatual} altera={setParam}/>)
-       break
-     case "Colaborador":
-        return(<Colaborador tela={setTelaatual} param={param} estadovalor={paramestado}/>)
-     break
-     case "ListaColaboradores":
-        return(<ListaColaboradores tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
-       break
-     case "Ficha":
-        return(<Ficha/>)
-       break
-     case "Tratamento":
-        return(<Tratamento tela={setTelaatual} param={param} setacolhido={setParamacolhido} setratamento={setParamtratamento}/>)
-       break
-     case "ListaTratamentos":
-        return(<ListaTratamentos tela={setTelaatual} altera={setParam} setacolhido={setParamacolhido}/>)
-       break
-     case "Ocupacao":
-        return(<Ocupacao tela={setTelaatual} param={param}/>)
-       break
-     case "ListaOcupacao":
-        return(<ListaOcupacao tela={setTelaatual} altera={setParam}/>)
-       break
-     case "ControlePresenca":
-        return(<ControlePresenca tela={setTelaatual} altera={setParam} setacolhido={setParamacolhido} acolhidoparam={paramacolhido} tratamento={paramtratamento}/>)
-       break
-     case "ListaPublicoFoco":
-        return(<ListaPublicoFoco tela={setTelaatual} altera={setParam}/>)
-       break
-     case "PublicoAlvo":
-        return(<PubicoFoco tela={setTelaatual} param={param}/>)
-       break
-    case "Evento":
-        return(<Evento tela={setTelaatual} param={param} estadovalor={paramestado}/>)
-       break
-    case "ListaEventos":
-        return(<ListaEventos tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
-       break
-    case "ListaCategoriaEvento":
-        return(<ListaCategoriaEvento tela={setTelaatual} altera={setParam}/>)
-       break
-    case "CategoriaEvento":
-        return(<CategoriaEvento tela={setTelaatual} param={param}/>)
-       break
-    case "ListaPalestras":
-        return(<ListaPalestra tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
-       break
-    case "Palestra":
-        return(<Palestra tela={setTelaatual} param={param} estadovalor={paramestado}/>)
-       break
-    case "ListaOcorrencias":
-        return(<ListaOcorrenciaPasse tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Ocorrencia":
-        return(<OcorrenciaPasse tela={setTelaatual} param={param}/>)
-       break
-    case "Curso":
-        return(<Cursos tela={setTelaatual} param={param} estadovalor={paramestado}/>)
-       break
-    case "ListaCursos":
-        return(<ListaCursos tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
-       break
-    case "Autor":
-        return(<Autor tela={setTelaatual} param={param}/>)
-       break
-    case "ListaAutores":
-        return(<ListaAutores tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Editora":
-        return(<Editora tela={setTelaatual} param={param}/>)
-       break
-    case "ListaEditoras":
-        return(<ListaEditoras tela={setTelaatual} altera={setParam}/>)
-       break
-    case "ListaLivros":
-        return(<ListaLivros tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Livro":
-        return(<Livros tela={setTelaatual} param={param}/>)
-       break
-    case "PrecoLivro":
-        return(<PrecoLivro tela={setTelaatual} param={param}/>)
-       break
-    case "Pix":
-        return(<Pix tela={setTelaatual} param={param}/>)
-       break
-    case "ListaStatusTratamentos":
-        return(<ListaStatusTratamento tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Status":
-        return(<Status tela={setTelaatual} param={param}/>)
-       break
-    case "ListaPresenca":
-        return(<ListaPresenca tela={setTelaatual} altera={setParam}/>)
-       break
-    case "ListaCategoriaVideo":
-        return(<ListaCategoriaVideo tela={setTelaatual} altera={setParam}/>)
-       break
-    case "CategoriaVideo":
-        return(<CategoriaVideo tela={setTelaatual} param={param}/>)
-       break
-    case "Video":
-        return(<Video tela={setTelaatual} param={param}/>)
-       break
-    case "ListaVideos":
-        return(<ListaVideo tela={setTelaatual} altera={setParam}/>)
-       break
-    case "ListaDepartamento":
-        return(<ListaDepartamento tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Departamento":
-        return(<Departamento tela={setTelaatual} param={param}/>)
-       break
-    case "ListaEntradasEstoque":
-        return(<ListaEntradasEstoque tela={setTelaatual} altera={setParam}/>)
-       break
-    case "EntradaEstoque":
-        return(<EntradaEstoque tela={setTelaatual} param={param}/>)
-       break
-    case "ListaSaidasEstoque":
-        return(<ListaSaidasEstoque tela={setTelaatual} altera={setParam}/>)
-       break
-    case "SaidaEstoque":
-        return(<SaidaEstoque tela={setTelaatual} param={param}/>)
-       break
-    case "Apresentacao":
-        return(<Apresentacao tela={setTelaatual} param={param}/>)
-       break
-    case "ListaApresentacao":
-       return(<ListaApresentacao tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Humor":
-        return(<Humor tela={setTelaatual} param={param}/>)
-       break
-    case "ListaHumor":
-       return(<ListaHumor tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Reativo":
-        return(<Reativo tela={setTelaatual} param={param}/>)
-       break
-    case "ListaReativo":
-       return(<ListaReativo tela={setTelaatual} altera={setParam}/>)
-       break
-    case "ListaPassivo":
-       return(<ListaPassivos tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Passivo":
-       return(<Passivo tela={setTelaatual} param={param}/>)
-       break
-    case "ListaSono":
-       return(<ListaSono tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Sono":
-       return(<Sono tela={setTelaatual} param={param}/>)
-       break
-    case "ListaGravidade":
-       return(<ListaGravidade tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Gravidade":
-       return(<Gravidade tela={setTelaatual} param={param}/>)
-       break
-    case "ListaRelatadas":
-       return(<ListaRelatadas tela={setTelaatual} altera={setParam}/>)
-       break
-    case "Relatadas":
-       return(<Relatadas tela={setTelaatual} param={param}/>)
-       break
-    case "ListaDiaPasse":
-       return(<ListaDiaPasse tela={setTelaatual} altera={setParam}/>)
-       break
-    case "DiaPasse":
-       return(<DiaPasse tela={setTelaatual} param={param}/>)
-       break
-    case "ListaOrientacaoCasa":
-       return(<ListaOrientacaoCasa tela={setTelaatual} altera={setParam}/>)
-       break
-    case "OrientacaoCasa":
-       return(<OrientacaoCasa tela={setTelaatual} param={param}/>)
-       break
-    case "ListaOrientacaoExterna":
-       return(<ListaOrientacaoExterna tela={setTelaatual} altera={setParam}/>)
-       break
-    case "OrientacaoExterna":
-       return(<OrientacaoExterna tela={setTelaatual} param={param}/>)
-       break
-    case "FichaEntrevista":
-       return(<FichaEntrevista tela={setTelaatual} param={param}/>)
-       break
-    case "ListaFichaEntrevista":
-       return(<ListaFichaEntrevista tela={setTelaatual} altera={setParam}/>)
-       break
-    }
+        case "Acolhido":
+            return(<Acolhido tela={setTelaatual} param={param} estadovalor={paramestado} altera={setParam} setacolhido={setParamacolhido}/>)
+        break
+        case "ListaAcolhidos":
+            return(<ListaAcolhidos tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
+        break
+        case "Passes":
+            return(<Passe tela={setTelaatual} param={param} altera={setParam}/>)
+        break
+        case "ListaPasses":
+            return(<ListaPasses tela={setTelaatual} altera={setParam}/>)
+        break
+        case "FocoEnergetico":
+            return(<FocoEnergetico tela={setTelaatual} param={param}/>)
+        break
+        case "ListaFocoEnergeticos":
+            return(<ListaFocoEnergetico tela={setTelaatual} altera={setParam}/>)
+        break
+        case "CondicaoEnergetica":
+            return(<CondicaoEnergetica tela={setTelaatual} param={param}/>)
+        break
+        case "ListaCondicaoEnergeticas":
+            return(<ListaCondicaoEnergetica tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Fortalecimento":
+            return(<Fortalecimento tela={setTelaatual} param={param}/>)
+        break
+        case "ListaFortalecimentos":
+            return(<ListaFortalecimento tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Limpeza":
+            return(<Limpeza tela={setTelaatual} param={param}/>)
+        break
+        case "ListaLimpezas":
+            return(<ListaLimpeza tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Alerta":
+            //const Alerta = lazy(() => import('./cadastros/Alerta'))
+            return(<Alerta tela={setTelaatual} param={param}/>)
+        break
+        case "ListaAlertas":
+            //const ListaAlerta = lazy(() => import('./listagem/ListaAlerta'))
+            return(<ListaAlerta tela={setTelaatual} altera={setParam}/>)
+        break
+        case "TipoTratamento":
+            //const Alerta = lazy(() => import('./cadastros/Alerta'))
+            return(<TipoTratamento tela={setTelaatual} param={param}/>)
+        break
+        case "ListaTipoTratamentos":
+            //const ListaAlerta = lazy(() => import('./listagem/ListaAlerta'))
+            return(<ListaTipoTratamento tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Colaborador":
+            return(<Colaborador tela={setTelaatual} param={param} estadovalor={paramestado}/>)
+        break
+        case "ListaColaboradores":
+            return(<ListaColaboradores tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
+        break
+        case "Ficha":
+            return(<Ficha/>)
+        break
+        case "Tratamento":
+            return(<Tratamento tela={setTelaatual} param={param} setacolhido={setParamacolhido} setratamento={setParamtratamento}/>)
+        break
+        case "ListaTratamentos":
+            return(<ListaTratamentos tela={setTelaatual} altera={setParam} setacolhido={setParamacolhido}/>)
+        break
+        case "Ocupacao":
+            return(<Ocupacao tela={setTelaatual} param={param}/>)
+        break
+        case "ListaOcupacao":
+            return(<ListaOcupacao tela={setTelaatual} altera={setParam}/>)
+        break
+        case "ControlePresenca":
+            return(<ControlePresenca tela={setTelaatual} altera={setParam} setacolhido={setParamacolhido} acolhidoparam={paramacolhido} tratamento={paramtratamento}/>)
+        break
+        case "ListaPublicoFoco":
+            return(<ListaPublicoFoco tela={setTelaatual} altera={setParam}/>)
+        break
+        case "PublicoAlvo":
+            return(<PubicoFoco tela={setTelaatual} param={param}/>)
+        break
+        case "Evento":
+            return(<Evento tela={setTelaatual} param={param} estadovalor={paramestado}/>)
+        break
+        case "ListaEventos":
+            return(<ListaEventos tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
+        break
+        case "ListaCategoriaEvento":
+            return(<ListaCategoriaEvento tela={setTelaatual} altera={setParam}/>)
+        break
+        case "CategoriaEvento":
+            return(<CategoriaEvento tela={setTelaatual} param={param}/>)
+        break
+        case "ListaPalestras":
+            return(<ListaPalestra tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
+        break
+        case "Palestra":
+            return(<Palestra tela={setTelaatual} param={param} estadovalor={paramestado}/>)
+        break
+        case "ListaOcorrencias":
+            return(<ListaOcorrenciaPasse tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Ocorrencia":
+            return(<OcorrenciaPasse tela={setTelaatual} param={param}/>)
+        break
+        case "Curso":
+            return(<Cursos tela={setTelaatual} param={param} estadovalor={paramestado}/>)
+        break
+        case "ListaCursos":
+            return(<ListaCursos tela={setTelaatual} altera={setParam} alteraestado={setParamestado}/>)
+        break
+        case "Autor":
+            return(<Autor tela={setTelaatual} param={param}/>)
+        break
+        case "ListaAutores":
+            return(<ListaAutores tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Editora":
+            return(<Editora tela={setTelaatual} param={param}/>)
+        break
+        case "ListaEditoras":
+            return(<ListaEditoras tela={setTelaatual} altera={setParam}/>)
+        break
+        case "ListaLivros":
+            return(<ListaLivros tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Livro":
+            return(<Livros tela={setTelaatual} param={param}/>)
+        break
+        case "PrecoLivro":
+            return(<PrecoLivro tela={setTelaatual} param={param}/>)
+        break
+        case "Pix":
+            return(<Pix tela={setTelaatual} param={param}/>)
+        break
+        case "ListaStatusTratamentos":
+            return(<ListaStatusTratamento tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Status":
+            return(<Status tela={setTelaatual} param={param}/>)
+        break
+        case "ListaPresenca":
+            return(<ListaPresenca tela={setTelaatual} altera={setParam}/>)
+        break
+        case "ListaCategoriaVideo":
+            return(<ListaCategoriaVideo tela={setTelaatual} altera={setParam}/>)
+        break
+        case "CategoriaVideo":
+            return(<CategoriaVideo tela={setTelaatual} param={param}/>)
+        break
+        case "Video":
+            return(<Video tela={setTelaatual} param={param}/>)
+        break
+        case "ListaVideos":
+            return(<ListaVideo tela={setTelaatual} altera={setParam}/>)
+        break
+        case "ListaDepartamento":
+            return(<ListaDepartamento tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Departamento":
+            return(<Departamento tela={setTelaatual} param={param}/>)
+        break
+        case "ListaEntradasEstoque":
+            return(<ListaEntradasEstoque tela={setTelaatual} altera={setParam}/>)
+        break
+        case "EntradaEstoque":
+            return(<EntradaEstoque tela={setTelaatual} param={param}/>)
+        break
+        case "ListaSaidasEstoque":
+            return(<ListaSaidasEstoque tela={setTelaatual} altera={setParam}/>)
+        break
+        case "SaidaEstoque":
+            return(<SaidaEstoque tela={setTelaatual} param={param}/>)
+        break
+        case "Apresentacao":
+            return(<Apresentacao tela={setTelaatual} param={param}/>)
+        break
+        case "ListaApresentacao":
+        return(<ListaApresentacao tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Humor":
+            return(<Humor tela={setTelaatual} param={param}/>)
+        break
+        case "ListaHumor":
+        return(<ListaHumor tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Reativo":
+            return(<Reativo tela={setTelaatual} param={param}/>)
+        break
+        case "ListaReativo":
+        return(<ListaReativo tela={setTelaatual} altera={setParam}/>)
+        break
+        case "ListaPassivo":
+        return(<ListaPassivos tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Passivo":
+        return(<Passivo tela={setTelaatual} param={param}/>)
+        break
+        case "ListaSono":
+        return(<ListaSono tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Sono":
+        return(<Sono tela={setTelaatual} param={param}/>)
+        break
+        case "ListaGravidade":
+        return(<ListaGravidade tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Gravidade":
+        return(<Gravidade tela={setTelaatual} param={param}/>)
+        break
+        case "ListaRelatadas":
+        return(<ListaRelatadas tela={setTelaatual} altera={setParam}/>)
+        break
+        case "Relatadas":
+        return(<Relatadas tela={setTelaatual} param={param}/>)
+        break
+        case "ListaDiaPasse":
+        return(<ListaDiaPasse tela={setTelaatual} altera={setParam}/>)
+        break
+        case "DiaPasse":
+        return(<DiaPasse tela={setTelaatual} param={param}/>)
+        break
+        case "ListaOrientacaoCasa":
+        return(<ListaOrientacaoCasa tela={setTelaatual} altera={setParam}/>)
+        break
+        case "OrientacaoCasa":
+        return(<OrientacaoCasa tela={setTelaatual} param={param}/>)
+        break
+        case "ListaOrientacaoExterna":
+        return(<ListaOrientacaoExterna tela={setTelaatual} altera={setParam}/>)
+        break
+        case "OrientacaoExterna":
+        return(<OrientacaoExterna tela={setTelaatual} param={param}/>)
+        break
+        case "FichaEntrevista":
+        return(<FichaEntrevista tela={setTelaatual} param={param}/>)
+        break
+        case "ListaFichaEntrevista":
+        return(<ListaFichaEntrevista tela={setTelaatual} altera={setParam}/>)
+        break
+        case 'AssociarEntrevista':
+        return(<AssociarEntrevista tela={setTelaatual} param={param}/>)
+        break
+        case "FaixaIdade":
+        return(<FaixaIdade tela={setTelaatual} param={param}/>)
+        break
 
+        case "ListaFaixaIdade":
+            return(<ListaFaixaIdade tela={setTelaatual} altera={setParam} />)
+        break
+
+        case "TipoFuncionalidade":
+            return(<TipoFuncionalidade tela={setTelaatual} param={param}/>)
+        break
+
+        case "ListaTipoFuncionalidade":
+            return(<ListaTipoFuncionalidade tela={setTelaatual} altera={setParam}/>)
+        break
+
+        case "Funcionalidade":
+            return(<Funcionalidade tela={setTelaatual} param={param}/>)
+        break
+
+        case "ListaFuncionalidade":
+            return(<ListaFuncionalidade tela={setTelaatual} altera={setParam} />)
+        break
+
+        case "Menu":
+            return(<Menu tela={setTelaatual} param={param}/>)
+        break
+
+        case "ListaMenu":
+            return(<ListaMenu tela={setTelaatual} altera={setParam}/>)
+        break
+    }
   }
 
   return (

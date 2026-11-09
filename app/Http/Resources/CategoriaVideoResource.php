@@ -26,6 +26,8 @@ class CategoriaVideoResource extends JsonResource
                 'cav_descricao' => $this->cav_descricao,
                 'cav_ativo' => $this->cav_ativo,
                 'cav_qtde_videos' => count($this->videos),
+                'cav_exclui' => false,
+                'cav_loadexclui' => false,
                 'cav_created_at' => Carbon::parse($this->cav_created_at)->format('d/m/Y H:i:s'),
                 'cav_updated_at' => $this->cav_updated_at != null ? Carbon::parse($this->cav_updated_at)->format('d/m/Y H:i:s') : null,
             ];

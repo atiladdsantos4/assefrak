@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,9 +17,15 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
+//import ModalDelete from '../../components/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 // import { NavbarComp } from '../layouts/NavbarComp';
@@ -45,6 +51,11 @@ const ListaDiaPasse = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(15)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef()
+  const [toast,setToast] = useState()
 
 
 
@@ -113,7 +124,7 @@ const ListaDiaPasse = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.dip_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -124,7 +135,7 @@ const ListaDiaPasse = (props) => {
                     <CTableDataCell>#-{index+1}</CTableDataCell>
                     <CTableDataCell>{item.dip_descricao}</CTableDataCell>
                     <CTableDataCell>{item.dip_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.dip_id_dip}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.dip_id_dip} load={item.dip_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -227,11 +238,59 @@ const ListaDiaPasse = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
-       &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}}  icon={faTrash}  onClick={()=>Delete(props.id)} />
+        &nbsp;
+        <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
+  }
+
+  const Delete=(id)=>{
+    setIditemexclusao(id)
+    setTextomodal('Deseja Realmente excluir o registro?')
+    setOpenmodalconfirma(true)
+  }
+
+  const CompToast=(mensagem,cor)=>{
+    return(
+      <CToast color={cor} className="text-white align-items-center" id="idtoast">
+        <div className="d-flex">
+          <CToastBody>{mensagem}</CToastBody>
+          <CToastClose className="me-2 m-auto" white/>
+        </div>
+      </CToast>
+    )
+  }
+
+  const addToast=(mensagem)=>{
+    setToast(mensagem)
+  }
+
+  const excluirItemBanco=(idexclusao)=>{
+    setOpenmodalconfirma(false)
+    setListarel(prevItems=>prevItems.map(item=>item.dip_id_dip===idexclusao?{...item,dip_loadexclui:true}:item))
+    setListafiltro(prevItems=>prevItems.map(item=>item.dip_id_dip===idexclusao?{...item,dip_loadexclui:true}:item))
+
+    axios.delete(`${endpoint}/diapasse/${idexclusao}`,{
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
+      },
+    }).then(()=>{
+      setListarel(prevItems=>prevItems.map(item=>item.dip_id_dip===idexclusao?{...item,dip_loadexclui:false,dip_exclui:true}:item))
+      setListafiltro(prevItems=>prevItems.map(item=>item.dip_id_dip===idexclusao?{...item,dip_loadexclui:false,dip_exclui:true}:item))
+      addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+      setTimeout(()=>{
+        const elemento=document.getElementById('idtoast')
+        if(elemento){elemento.classList.remove('show');elemento.remove()}
+      },2000)
+    }).catch(()=>{
+      setListarel(prevItems=>prevItems.map(item=>item.dip_id_dip===idexclusao?{...item,dip_loadexclui:false}:item))
+      setListafiltro(prevItems=>prevItems.map(item=>item.dip_id_dip===idexclusao?{...item,dip_loadexclui:false}:item))
+      addToast(CompToast('Erro ao excluir registro !!!','danger'))
+    })
   }
 
   const EditaRegistro = (event,valor) =>{
@@ -268,6 +327,9 @@ const ListaDiaPasse = (props) => {
   }
 
   return(
+    <>
+    <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
+    <CToaster ref={toaster} placement="top-end">{toast}</CToaster>
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
@@ -322,7 +384,7 @@ const ListaDiaPasse = (props) => {
         </div>
         </section>
     </div>
-
+    </>
   )
 
 }

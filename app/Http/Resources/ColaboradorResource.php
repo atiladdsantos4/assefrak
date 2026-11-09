@@ -39,6 +39,8 @@ class ColaboradorResource extends JsonResource
                 'col_imagem' => $this->col_imagem,
                 'col_nascimento' => Carbon::parse($this->col_nascimento)->format('d/m/Y'),
                 'col_load' => false,
+                'col_loadexclui' => false,
+                'col_exclui' => false,
                 'col_created_at' => Carbon::parse($this->col_created_at)->format('d/m/Y H:i:s'),
                 'col_updated_at' => $this->col_updated_at != null ? Carbon::parse($this->col_updated_at)->format('d/m/Y H:i:s') : null,
             ];

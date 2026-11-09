@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,14 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +48,12 @@ const ListaPassivos = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  //--> Exclusão
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
 
   useEffect(()=>{
      setLoad(false)
@@ -111,7 +120,7 @@ const ListaPassivos = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.cpp_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -122,7 +131,7 @@ const ListaPassivos = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.cpp_descricao}</CTableDataCell>
                     <CTableDataCell>{item.cpp_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.cpp_id_cpp}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao load={item.cpp_loadexclui} id={item.cpp_id_cpp}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -197,6 +206,25 @@ const ListaPassivos = (props) => {
     setlistapas(lista)
   }
 
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
+  }
+
   const Pagination = (props) => {
     let elemento = []
 
@@ -225,16 +253,54 @@ const ListaPassivos = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit} size="xl"/>
        </>
     )
   }
 
   const EditaRegistro = (event,valor) =>{
       altera(valor)
-      tela('Reativo')
+      tela('Passivo')
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente excluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setlistapas(prevItems =>
+        prevItems.map(item =>
+            item.cpp_id_cpp === idexclusao ? { ...item, cpp_loadexclui: true } : item
+        )
+    )
+    axios.delete(`${endpoint}/comportamentopassivo/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then(() => {
+        setlistapas(prevItems =>
+            prevItems.map(item =>
+                item.cpp_id_cpp === idexclusao ? { ...item, cpp_loadexclui: false, cpp_exclui: true } : item
+            )
+        )
+        addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+        setTimeout(() => {
+            const elemento = document.getElementById('idtoast')
+            if(elemento){
+                elemento.classList.remove('show')
+                elemento.remove()
+            }
+        }, 2000)
+     })
   }
 
   const QtdeRegistrosPagina = () =>{
@@ -258,7 +324,7 @@ const ListaPassivos = (props) => {
         <div style={{position:'relative',top:'4px'}}>
         <img class="img-fluid" style={{borderRadius:'5px'}} src={imagem+'telas/logoheaderlistagem.png'}/>
         <div style={{fontSize:'20px',position:'relative',left:'-60px',top:'-40px',color:'white',fontWeight:'bold',lineHeight:'20px'}}>
-            Comportamentos /<br/> Passivos
+            Passivo /<br/> Energia
          </div>
         </div>
     )
@@ -266,17 +332,31 @@ const ListaPassivos = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>
         </div>
         <div class="container">
             <CCard>
-                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Comportamentos Passivos</CCardHeader>
+                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Passivo / Enregia</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
-                        <CButton color="primary" onClick={(e)=>tela('Passivo')}>Novo Reativo&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                        <DescricaoComp title="Ficha de Entrevista" text={'Comportamentos Passivos'}/>
+                        <CButton
+                            color="primary"
+                            className="ms-auto flex-shrink-0"
+                            onClick={(e)=>tela('Passivo')}
+                        >
+                            Novo Passivo&nbsp;
+                            <FontAwesomeIcon size="lg" icon={faFile} />
+                        </CButton>
+
                     </div>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                        <CButton color="primary" onClick={(e)=>tela('Passivo')}>Novo Passivo&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>
                             <CInputGroup style={{maxWidth:'400px'}} className="mb-2 mt-2">
@@ -295,7 +375,7 @@ const ListaPassivos = (props) => {
                         <CTableHead style={{fontSize:'11px !important'}}>
                             <CTableRow>
                                 <CTableHeaderCell className='clthinputtext'style={{borderRadius:'5px 0px 0px 0px',fontSize:'11px !important'}} scope="col">#</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Comportamento / Passivo</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col">Passivo / Energia</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Criação</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' style={{textAlign:'center',borderRadius:'0px 5px 0px 0px'}} scope="col">Acão</CTableHeaderCell>
                             </CTableRow>

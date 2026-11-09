@@ -35,14 +35,14 @@ export default defineConfig({
         host: '0.0.0.0', //allow all network interfaces
         //https: true,
         //host: 'untrumpeted-charmingly-freddy.ngrok-free.dev',
-        allowedHosts: ['untrumpeted-charmingly-freddy.ngrok-free.dev','jemosistemas-domain.com'],
+        allowedHosts: ['untrumpeted-charmingly-freddy.ngrok-free.dev','assefrak-domain.com'],
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
         hmr:{
            //port:80,
            //clientPort:80,
-           host: ['jemosistemas-domain.com'], //allow listen by this domains
+           host: ['assefrak-domain.com'], //allow listen by this domains
         }
         // hmr: {
         //      host: ['jemosistemas-domain.com'], //allow listem by this domains

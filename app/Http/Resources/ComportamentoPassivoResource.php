@@ -26,6 +26,8 @@ class ComportamentoPassivoResource extends JsonResource
                 'cpp_descricao' => $this->cpp_descricao,
                 'cpp_local' => $this->cpp_local,
                 'cpp_ativo' => false,
+                'cpp_exclui' => false,
+                'cpp_loadexclui' => false,
                 'cpp_created_at' => Carbon::parse($this->cpp_created_at)->format('d/m/Y H:i:s'),
                 'cpp_updated_at' => $this->cpp_updated_at != null ? Carbon::parse($this->cpp_updated_at)->format('d/m/Y H:i:s') : null,
             ];

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Tratamento;
+use App\Models\FichaEntrevista;
 use App\Http\Resources\TratamentoResource;
 
 class TratamentoController extends Controller
@@ -69,6 +70,11 @@ class TratamentoController extends Controller
         }
 
         $tratamento = Tratamento::create($input);
+        if($input["fie_id_fie"]){
+           $dados = FichaEntrevista::findOrFail($input["fie_id_fie"]);
+           $dados->fie_id_tra = $tratamento->tra_id_tra;
+           $dados->update();
+        }
 
         $tratamento = new TratamentoResource(Tratamento::findOrFail($tratamento->tra_id_tra));
 
@@ -118,6 +124,11 @@ class TratamentoController extends Controller
        $input = $request->all();
        $tratamento = Tratamento::find($id);
        $tratamento->update($input);
+       if($input["fie_id_fie"]){
+           $dados = FichaEntrevista::findOrFail($input["fie_id_fie"]);
+           $dados->fie_id_tra = $tratamento->tra_id_tra;
+           $dados->update();
+       }
 
        $tratamento = new TratamentoResource($tratamento);
        $arr_result = [
@@ -134,6 +145,13 @@ class TratamentoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $tra = Tratamento::find($id);
+        $tra->delete();
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result,JSON_PRETTY_PRINT);
     }
 }

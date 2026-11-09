@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,9 +17,14 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 // import { NavbarComp } from '../layouts/NavbarComp';
@@ -45,6 +50,11 @@ const ListaCursos = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const [textomodal,setTextomodal] = useState('')
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
   /*
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
@@ -98,7 +108,7 @@ const ListaCursos = (props) => {
       let classe = null
       let cont = 0
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.cur_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -126,7 +136,7 @@ const ListaCursos = (props) => {
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_desc_faixa}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_nascimento}</CTableDataCell> */}
                     <CTableDataCell>{item.aco_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.cur_id_cur} estvalor={item.cur_estado}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.cur_id_cur} estvalor={item.cur_estado} load={item.cur_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -230,11 +240,61 @@ const ListaCursos = (props) => {
     )
   }
 
+  const Delete = (id) => {
+      setIditemexclusao(id)
+      setTextomodal('Deseja Realmente excluir o registro?')
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) => {
+      setOpenmodalconfirma(false)
+      setListacursos(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:true} : item))
+      setListafiltro(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:true} : item))
+
+      axios.delete(`${endpoint}/curso/${idexclusao}`,{
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: 'Bearer ' + token,
+          },
+      }).then((result) => {
+          if(result.data.status == true){
+              setListacursos(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:false,cur_exclui:true} : item))
+              setListafiltro(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:false,cur_exclui:true} : item))
+              setQtderegistros(prev => prev - 1)
+              addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+              setTimeout(() => {
+                  document.getElementById('idtoast').classList.remove('show')
+                  document.getElementById('idtoast').remove()
+              }, 2000)
+          } else {
+              setListacursos(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:false} : item))
+              setListafiltro(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:false} : item))
+          }
+      }).catch(() => {
+          setListacursos(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:false} : item))
+          setListafiltro(prev => prev.map(item => item.cur_id_cur == idexclusao ? {...item,cur_loadexclui:false} : item))
+      })
+  }
+
+  const CompToast = (texto, color, autohide) => {
+      return (
+        <CToast style={{borderRadius:'5px',color:'white'}} id="idtoast" autohide={autohide}
+          visible={false} color={color} delay="3000" className="text-white align-items-center">
+          <div className="d-flex">
+            <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+            <CToastClose className="me-2 m-auto" white />
+          </div>
+        </CToast>
+      )
+  }
+
   //--> Display dos Ícones no grid
   const ItensAcao = (props) => {
     return(
        <>
-        <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+        {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+        <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
         &nbsp;
         <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id,props.estvalor)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
@@ -259,6 +319,15 @@ const ListaCursos = (props) => {
 
 
   return(
+    <>
+    <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+    <ModalDelete
+        id={iditemexclusao}
+        funcret={() => excluirItemBanco(iditemexclusao)}
+        open={openmodalconfirma}
+        close={(e) => setOpenmodalconfirma(false)}
+        texto={textomodal}
+    />
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
@@ -337,6 +406,7 @@ const ListaCursos = (props) => {
         </div>
         </section>
     </div>
+    </>
   )
 
 }

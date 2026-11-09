@@ -46,6 +46,8 @@ class CursoResource extends JsonResource
                 'cur_programacao' => $this->cur_programacao,
                 'cur_galeria' => $this->cur_galeria,
                 'cur_load' => false,
+                'cur_exclui' => false,
+                'cur_loadexclui' => false,
                 'cur_imagem' => $this->itens_main,
                 'cur_qtde_inscritos' => $this->qtdeinscritos[0]->total,
                 'cur_data_inicio' => Carbon::parse($this->cur_data_inicio)->format('d/m/Y'),

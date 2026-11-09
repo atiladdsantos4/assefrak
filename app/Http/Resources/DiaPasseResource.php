@@ -26,6 +26,8 @@ class DiaPasseResource extends JsonResource
                 'dip_descricao' => $this->dip_descricao,
                 'dip_local' => $this->dip_local,
                 'dip_ativo' => false,
+                'dip_exclui' => false,
+                'dip_loadexclui' => false,
                 'dip_created_at' => Carbon::parse($this->dip_created_at)->format('d/m/Y H:i:s'),
                 'dip_updated_at' => $this->dip_updated_at != null ? Carbon::parse($this->dip_updated_at)->format('d/m/Y H:i:s') : null,
             ];

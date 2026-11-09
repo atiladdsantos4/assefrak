@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,13 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +47,11 @@ const ListaOcupacao = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(10)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
   /*
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
@@ -119,7 +126,7 @@ const ListaOcupacao = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.ocu_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -130,7 +137,7 @@ const ListaOcupacao = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.ocu_descricao}</CTableDataCell>
                     <CTableDataCell>{item.ocu_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.ocu_id_ocu}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.ocu_id_ocu} load={item.ocu_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -205,6 +212,42 @@ const ListaOcupacao = (props) => {
     setListaocupacao(lista)
   }
 
+  const CompToast = (texto, color) => (
+      <CToast id="idtoast" visible={false} color={color} delay={3000} className="text-white align-items-center">
+        <div className="d-flex"><CToastBody style={{color:'white'}}>{texto}</CToastBody><CToastClose className="me-2 m-auto" white /></div>
+      </CToast>
+  )
+
+  const Delete = (id) => {
+      setIditemexclusao(id)
+      setTextomodal('Deseja realmente excluir este registro?')
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (id) => {
+      setOpenmodalconfirma(false)
+      setListaocupacao(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:true} : item))
+      setListafiltro(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:true} : item))
+      axios.delete(`${endpoint}/ocupacao/${id}`,{
+          headers: { Accept:'application/json', 'Content-Type':'multipart/form-data', Authorization:'Bearer '+token },
+      }).then((result)=>{
+          if(result.data.status){
+              setListaocupacao(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:false, ocu_exclui:true} : item))
+              setListafiltro(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:false, ocu_exclui:true} : item))
+              setQtderegistros(prev => Math.max(0,prev-1))
+              addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+          } else {
+              setListaocupacao(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:false} : item))
+              setListafiltro(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:false} : item))
+              addToast(CompToast(result.data.mensagem || 'Erro ao excluir registro','danger'))
+          }
+      }).catch(()=>{
+          setListaocupacao(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:false} : item))
+          setListafiltro(prev => prev.map(item => item.ocu_id_ocu == id ? {...item, ocu_loadexclui:false} : item))
+          addToast(CompToast('Erro ao excluir registro !!!','danger'))
+      })
+  }
+
   const Pagination = (props) => {
     let elemento = []
 
@@ -233,7 +276,8 @@ const ListaOcupacao = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
        <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
@@ -257,6 +301,8 @@ const ListaOcupacao = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster}/>
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>

@@ -26,6 +26,8 @@ class ComportamentoReativoResource extends JsonResource
                 'cpr_descricao' => $this->cpr_descricao,
                 'cpr_local' => $this->cpr_local,
                 'cpr_ativo' => false,
+                'cpr_exclui' => false,
+                'cpr_loadexclui' => false,
                 'cpr_created_at' => Carbon::parse($this->cpr_created_at)->format('d/m/Y H:i:s'),
                 'cpr_updated_at' => $this->cpr_updated_at != null ? Carbon::parse($this->cpr_updated_at)->format('d/m/Y H:i:s') : null,
             ];

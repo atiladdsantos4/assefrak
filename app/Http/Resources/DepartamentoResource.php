@@ -27,6 +27,8 @@ class DepartamentoResource extends JsonResource
                 'dep_email' => $this->dep_email,
                 'dep_ativo' => $this->dep_ativo,
                 'dep_load' => false,
+                'dep_exclui' => false,
+                'dep_loadexclui' => false,
                 'dep_created_at' => Carbon::parse($this->dep_created_at)->format('d/m/Y H:i:s'),
                 'dep_updated_at' => $this->dep_updated_at != null ? Carbon::parse($this->dep_updated_at)->format('d/m/Y H:i:s') : null,
             ];

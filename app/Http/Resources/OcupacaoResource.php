@@ -24,6 +24,8 @@ class OcupacaoResource extends JsonResource
             $data =  [
                 'ocu_id_ocu' => $this->ocu_id_ocu,
                 'ocu_descricao' => $this->ocu_descricao,
+                'ocu_exclui' => false,
+                'ocu_loadexclui' => false,
                 'ocu_created_at' => Carbon::parse($this->ocu_created_at)->format('d/m/Y H:i:s'),
                 'ocu_updated_at' => $this->ocu_updated_at != null ? Carbon::parse($this->ocu_updated_at)->format('d/m/Y H:i:s') : null,
             ];

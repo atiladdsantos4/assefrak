@@ -37,6 +37,8 @@ class EventoResource extends JsonResource
                 'eve_local' => $this->eve_local,
                 'eve_concluido' => $this->eve_concluido,
                 'eve_load' => false,
+                'eve_exclui' => false,
+                'eve_loadexclui' => false,
                 'eve_data_inicio' => Carbon::parse($this->eve_data_inicio)->format('d/m/Y'),
                 'eve_data_ext_dia' => Carbon::parse($this->eve_data_inicio)->format('d'),
                 'eve_data_ext_mes' => strtoupper(Carbon::parse($this->eve_data_inicio)->translatedFormat('M')),

@@ -25,6 +25,8 @@ class EditoraResource extends JsonResource
                 'edi_id_edi' => $this->edi_id_edi,
                 'edi_descricao' => $this->edi_descricao,
                 'edi_ativo' => $this->edi_ativo,
+                'edi_exclui' => false,
+                'edi_loadexclui' => false,
                 'edi_created_at' => Carbon::parse($this->edi_created_at)->format('d/m/Y H:i:s'),
                 'edi_updated_at' => $this->edi_updated_at != null ? Carbon::parse($this->edi_updated_at)->format('d/m/Y H:i:s') : null,
             ];

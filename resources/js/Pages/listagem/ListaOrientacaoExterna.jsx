@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,useRef,Suspense } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,17 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +51,11 @@ const ListaOrientacaoExterna = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(15)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast,addToast] = useState()
 
 
 
@@ -104,7 +115,7 @@ const ListaOrientacaoExterna = (props) => {
   const CorpoTabela = (props) =>{
       let classe = null
       let cont = 0
-      let tam = props.lista.length
+      let tam = props.lista.filter((item)=>item.ori_exclui == false).length
       if( tam == 0){
          return(
             <CTableRow color={classe}>
@@ -113,7 +124,7 @@ const ListaOrientacaoExterna = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.ori_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -124,7 +135,7 @@ const ListaOrientacaoExterna = (props) => {
                     <CTableDataCell>#-{index+1}</CTableDataCell>
                     <CTableDataCell>{item.ori_descricao}</CTableDataCell>
                     <CTableDataCell>{item.ori_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.ori_id_ori}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.ori_id_ori} load={item.ori_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -223,13 +234,60 @@ const ListaOrientacaoExterna = (props) => {
     )
   }
 
+  const CompToast = (texto,color,autohide) => (
+      <CToast style={{borderRadius:'5px',color:'white'}} autohide={autohide} visible={false} color={color} delay={3000} className="text-white align-items-center">
+          <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+          </div>
+      </CToast>
+  )
+
+  const Delete = (id) => {
+      setIditemexclusao(id)
+      setTextomodal('Deseja Realmente excluir o registro?')
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) => {
+      setOpenmodalconfirma(false)
+      setListaori(prev => prev.map(item => item.ori_id_ori === idexclusao
+          ? {...item,ori_loadexclui:true} : item))
+
+      axios.delete(`${endpoint}/orientacaoexterna/${idexclusao}`,{
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: 'Bearer ' + token,
+          },
+      })
+      .then(() => {
+          const atualizaExcluido = (lista) => lista.map(item =>
+              item.ori_id_ori === idexclusao
+                  ? {...item,ori_loadexclui:false,ori_exclui:true}
+                  : item
+          )
+          setListaori(atualizaExcluido)
+          setListafiltro(atualizaExcluido)
+          addToast(CompToast('Exclusão Realizada com sucesso !!!','success',true))
+      })
+      .catch(() => {
+          setListaori(prev => prev.map(item => item.ori_id_ori === idexclusao
+              ? {...item,ori_loadexclui:false} : item))
+          setListafiltro(prev => prev.map(item => item.ori_id_ori === idexclusao
+              ? {...item,ori_loadexclui:false} : item))
+          addToast(CompToast('Não foi possível excluir o registro.','danger',true))
+      })
+  }
+
   //--> Display dos Ícones no grid
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}}  icon={faTrash}  onClick={()=>Delete(props.id)} />
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -269,6 +327,8 @@ const ListaOrientacaoExterna = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster}/>
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>
@@ -277,8 +337,20 @@ const ListaOrientacaoExterna = (props) => {
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem Orientações Para Encaminhamento Externo</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
                         <CButton color="primary" onClick={(e)=>tela('OrientacaoExterna')}>Nova Orientação&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                        <DescricaoComp title="Ficha de Entrevista" text={'Orientações Para Encaminhamento Externo'}/>
+                        <CButton
+                            color="primary"
+                            className="ms-auto flex-shrink-0"
+                            onClick={(e)=>tela('OrientacaoExterna')}
+                        >
+                            Nova Orientação&nbsp;
+                            <FontAwesomeIcon size="lg" icon={faFile} />
+                        </CButton>
+
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>

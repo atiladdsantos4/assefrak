@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,16 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +50,12 @@ const ListaEntradasEstoque = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  // modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
   /*
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
@@ -105,7 +116,7 @@ const ListaEntradasEstoque = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.ene_exclui == false).map((item,index)=>{
             cont++
             qtde = parseInt(item.ene_saida)
             estoque_atual = parseInt(item.ene_qtde) - parseInt(item.ene_saida)
@@ -127,7 +138,7 @@ const ListaEntradasEstoque = (props) => {
                     <CTableDataCell>{item.ene_valor_total}</CTableDataCell>
                     <CTableDataCell>{item.ene_created_at}</CTableDataCell>
                     <CTableDataCell>{item.ene_updated_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.ene_id_ene}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.ene_id_ene} load={item.ene_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -231,11 +242,96 @@ const ListaEntradasEstoque = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)} />
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
+  }
+
+  const CompToast = (mensagem,cor) =>{
+     return(
+        <CToast id="idtoast" autohide={false} visible={true} color={cor} className="text-white align-items-center">
+            <div className="d-flex">
+                <CToastBody>{mensagem}</CToastBody>
+                <CToastClose className="me-2 m-auto" white/>
+            </div>
+        </CToast>
+     )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListaentrada(prevItems =>
+        prevItems.map(item =>
+            item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: true } : item
+        )
+    )
+    setListafiltro(prevItems =>
+        prevItems.map(item =>
+            item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: true } : item
+        )
+    )
+    axios.delete(`${endpoint}/entradaestoque/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then((result) => {
+        if(result.data.status === true){
+            setListaentrada(prevItems =>
+                prevItems.map(item =>
+                    item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: false, ene_exclui: true } : item
+                )
+            )
+            setListafiltro(prevItems =>
+                prevItems.map(item =>
+                    item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: false, ene_exclui: true } : item
+                )
+            )
+            setQtderegistros(prev=>Math.max(0,prev-1))
+            addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+            setTimeout(() => {
+                const toastElement = document.getElementById('idtoast')
+                if(toastElement){
+                    toastElement.classList.remove('show')
+                    toastElement.remove()
+                }
+            }, 2000)
+        } else {
+            setListaentrada(prevItems =>
+                prevItems.map(item =>
+                    item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: false } : item
+                )
+            )
+            setListafiltro(prevItems =>
+                prevItems.map(item =>
+                    item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: false } : item
+                )
+            )
+        }
+     })
+     .catch(() =>{
+        setListaentrada(prevItems =>
+            prevItems.map(item =>
+                item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: false } : item
+            )
+        )
+        setListafiltro(prevItems =>
+            prevItems.map(item =>
+                item.ene_id_ene === idexclusao ? { ...item, ene_loadexclui: false } : item
+            )
+        )
+     })
   }
 
   const EditaRegistro = (event,valor) =>{
@@ -270,6 +366,8 @@ const ListaEntradasEstoque = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>

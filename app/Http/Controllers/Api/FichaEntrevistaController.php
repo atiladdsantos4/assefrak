@@ -19,7 +19,11 @@ class FichaEntrevistaController extends Controller
         $all = $request->all();
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
-           $result_fie = FichaEntrevista::orderBy('fie_created_at')->get();
+           if( isset($all["acolhido"]) ){
+              $result_fie = FichaEntrevista::where('fie_id_aco',$all["acolhido"])->orderBy('fie_created_at')->get();
+           } else {
+              $result_fie = FichaEntrevista::orderBy('fie_created_at')->get();
+           }
            $result = FichaEntrevistaResource::collection($result_fie); //only works for colection
 
            $response = [
@@ -168,7 +172,14 @@ class FichaEntrevistaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $fie = FichaEntrevista::find($id);
+        $fie->delete();
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result,JSON_PRETTY_PRINT);
     }
 
 }

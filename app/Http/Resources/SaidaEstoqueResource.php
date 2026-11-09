@@ -31,6 +31,8 @@ class SaidaEstoqueResource extends JsonResource
                 'sae_email' => $this->sae_email,
                 'sae_email_enviado' => $this->sae_email_enviado,
                 'sae_load'  => false,
+                'sae_exclui' => false,
+                'sae_loadexclui' => false,
                 'sae_created_at' => Carbon::parse($this->sae_created_at)->format('d/m/Y H:i:s'),
                 'sae_updated_at' => $this->sae_updated_at != null ? Carbon::parse($this->sae_updated_at)->format('d/m/Y H:i:s') : null,
             ];

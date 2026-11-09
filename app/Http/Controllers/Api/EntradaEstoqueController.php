@@ -126,9 +126,20 @@ class EntradaEstoqueController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $model = EntradaEstoque::find($id);
+
+        if ($model) {
+            $model->delete();
+        }
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
     }
 
 }

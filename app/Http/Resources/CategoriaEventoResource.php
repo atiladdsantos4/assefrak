@@ -25,6 +25,8 @@ class CategoriaEventoResource extends JsonResource
                 'cae_id_cae' => $this->cae_id_cae,
                 'cae_descricao' => $this->cae_descricao,
                 'cae_ativo' => $this->cae_ativo,
+                'cae_exclui' => false,
+                'cae_loadexclui' => false,
                 'cae_created_at' => Carbon::parse($this->cae_created_at)->format('d/m/Y H:i:s'),
                 'cae_updated_at' => $this->cae_updated_at != null ? Carbon::parse($this->cae_updated_at)->format('d/m/Y H:i:s') : null,
             ];

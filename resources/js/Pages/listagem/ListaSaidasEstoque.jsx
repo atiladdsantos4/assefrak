@@ -28,6 +28,7 @@ import {
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -51,6 +52,8 @@ const ListaSaidasEstoque = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(10)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [iditemexclusao,setIditemexclusao] = useState(null)
   const [toast, addToast] = useState()//toast
   const toaster = useRef(null)
   /*
@@ -163,6 +166,39 @@ const ListaSaidasEstoque = (props) => {
           })
   }
 
+  const Delete = (id) => {
+      setIditemexclusao(id)
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (id) => {
+      setOpenmodalconfirma(false)
+      setListasaida(prev => prev.map(item => item.sae_id_sae == id ? {...item, sae_loadexclui:true} : item))
+      setListafiltro(prev => prev.map(item => item.sae_id_sae == id ? {...item, sae_loadexclui:true} : item))
+      axios.delete(`${endpoint}/saidaestoque/${id}`,{
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: 'Bearer ' + token,
+          },
+      }).then((result)=>{
+          if(result.data.status){
+              setListasaida(prev => prev.filter(item => item.sae_id_sae != id))
+              setListafiltro(prev => prev.filter(item => item.sae_id_sae != id))
+              setQtderegistros(prev => Math.max(0,prev-1))
+              addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+          } else {
+              setListasaida(prev => prev.map(item => item.sae_id_sae == id ? {...item, sae_loadexclui:false} : item))
+              setListafiltro(prev => prev.map(item => item.sae_id_sae == id ? {...item, sae_loadexclui:false} : item))
+              addToast(CompToast(result.data.mensagem || 'Erro ao excluir registro','danger'))
+          }
+      }).catch(()=>{
+          setListasaida(prev => prev.map(item => item.sae_id_sae == id ? {...item, sae_loadexclui:false} : item))
+          setListafiltro(prev => prev.map(item => item.sae_id_sae == id ? {...item, sae_loadexclui:false} : item))
+          addToast(CompToast('Erro ao excluir registro !!!','danger'))
+      })
+  }
+
   //--> Exibe os dados da Tabela
   const CorpoTabela = (props) =>{
       let classe = null
@@ -176,7 +212,7 @@ const ListaSaidasEstoque = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.sae_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -197,7 +233,7 @@ const ListaSaidasEstoque = (props) => {
                     <CTableDataCell style={{whiteSpace:'nowrap'}}><CompCheckbox id={item.sae_id_sae} cancelado={item.sae_cancelado}/>&nbsp;{item.sae_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.sae_cancelado == 'N' ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Suspenso</CBadge>}</CTableDataCell>
                     <CTableDataCell>{item.sae_created_at}</CTableDataCell>
                     <CTableDataCell>{item.sae_updated_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.sae_id_sae}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.sae_id_sae} load={item.sae_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -303,9 +339,10 @@ const ListaSaidasEstoque = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -352,6 +389,7 @@ const ListaSaidasEstoque = (props) => {
         <div class="container">
             <CCard>
                 <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+                <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={'Deseja realmente excluir este registro?'}/>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Saídas do Estoque</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
                     <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>

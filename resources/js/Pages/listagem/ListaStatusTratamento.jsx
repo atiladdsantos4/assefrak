@@ -1,4 +1,5 @@
-import { React,useEffect,useState,Suspense } from 'react';
+
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -18,22 +19,22 @@ import {
     CButton,
     CSpinner,
     CFormSelect,
-    CBadge
+    CBadge,
+    CTooltip, CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
-// import { NavbarComp } from '../layouts/NavbarComp';
-// import { SidebarComp } from '../layouts/SidebarComp';
-
-
+import { faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
+import DescricaoComp from '../componentes/DescricaoComp';
 
 // The Main component receives props passed from the Laravel controller
 const ListaStatusTratamento = (props) => {
-  const { tela, altera }  = props
-  const token  = import.meta.env.VITE_APP_TOKEN
-  const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
+  const { tela, altera } = props
+  const token = import.meta.env.VITE_APP_TOKEN
+  const imagem = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
+
   const [listastatus,setListastatus] = useState([])
   const [listafiltro,setListafiltro] = useState([])
   const [est,setEst] = useState(false)
@@ -46,15 +47,15 @@ const ListaStatusTratamento = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
-  /*
-  const [numnpagination,setNumpagination] = useState(null)
-    const [paginaatual,setPaginaatual] = useState(null)
-    const [ultimapagina,setUltimapagina] = useState(null)
-    const [registroini,setRegistroini] = useState(0)
-    const [registrofim,setRegistrofim] = useState(0)
-    const [qtderegistros,setQtderegistros] = useState(0)
-    const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
-  */
+
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const [loadexclui,setLoadexclui] = useState(false)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
+
   useEffect(()=>{
      setLoad(false)
      axios
@@ -62,7 +63,7 @@ const ListaStatusTratamento = (props) => {
            headers: {
               Accept: 'application/json',
               'Content-Type': 'multipart/form-data',
-              Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
+              Authorization: 'Bearer ' + token,
            },
        })
        .then((result) => {
@@ -74,7 +75,7 @@ const ListaStatusTratamento = (props) => {
            setQtderegistros(tam)
            let res = tam / qtderegistrospagina
            let resposta = res.toString().split('.');
-           if( parseInt(resposta[1]) === 0 || resposta[1] === undefined){
+           if(parseInt(resposta[1]) === 0 || resposta[1] === undefined){
                 setNumpagination(res)
            } else {
                 res = parseInt(resposta[0]) + 1
@@ -83,7 +84,7 @@ const ListaStatusTratamento = (props) => {
            }
            setUltimapagina(res)
            setPaginaatual(1)
-           if( tam > 0){
+           if(tam > 0){
                setRegistroini(1)
                setRegistrofim(qtderegistrospagina)
            }
@@ -96,17 +97,22 @@ const ListaStatusTratamento = (props) => {
       let classe = null
       let cont = 0
       let tam = props.lista.length
-      if( tam == 0){
+
+      if(tam == 0){
          return(
             <CTableRow color={classe}>
-                <CTableDataCell colspan="4" style={{textAlign:'center'}}>Não há Registros para Listagem</CTableDataCell>
+                <CTableDataCell colspan="4" style={{textAlign:'center'}}>
+                    Não há Registros para Listagem
+                </CTableDataCell>
             </CTableRow>
         )
       }
+
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.stt_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
+
             if(cont > qtderegistrospagina){
                return
             } else {
@@ -115,19 +121,20 @@ const ListaStatusTratamento = (props) => {
                     <CTableDataCell>#-{cont}</CTableDataCell>
                     <CTableDataCell>{item.stt_descricao}</CTableDataCell>
                     <CTableDataCell>{item.stt_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.stt_id_stt}/></CTableDataCell>
-                    {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
-                    </CTableRow>
+                    <CTableDataCell style={{textAlign:'center'}}>
+                        <ItensAcao load={item.stt_loadexclui} id={item.stt_id_stt}/>
+                    </CTableDataCell>
+                </CTableRow>
                )
             }
          })
       )
   }
 
-
   const pesquisarGrid = (event) => {
-     let valor =  event.target.value
-     if( valor.trim() != ''){
+     let valor = event.target.value
+
+     if(valor.trim() != ''){
         let lista = listafiltro.filter(
             (item)=>item.stt_titulo.toLowerCase().includes(valor.toLowerCase()) ||
             item.stt_editora.toLowerCase().includes(valor.toLowerCase()) ||
@@ -140,11 +147,9 @@ const ListaStatusTratamento = (props) => {
      }
   }
 
-
   //--> Exibe o componente de paginação
-  const PaginationExibe = (props) => {
+  const PaginationExibe = (props) =>{
      return(
-        // <div style={{fontSize:'14px',paddingLeft:'3px',paddingRight:'3px',backgroundColor:'#722E56',color:'white',display:'flex',borderRadius:'5px 5px 5px 5px'}}>
         <div className='exibepagination'>
             <div>Pagina:&nbsp;{props.pagina}&nbsp;</div>
             <div>Regitros:&nbsp;{registroini+'...'+registrofim+' num Total de '+qtderegistros}</div>
@@ -152,77 +157,73 @@ const ListaStatusTratamento = (props) => {
      )
   }
 
-  const PreviousPage =(event)=>{
+  const PreviousPage = (event) =>{
     let page = paginaatual
-    console.log('paginaatual:'+paginaatual)
-    console.log('ultimapagina:'+ultimapagina)
     if(paginaatual < ultimapagina){
        page = page + 1
-       console.log('ultimapagina-entrei')
        clickPagination(event,page)
     }
   }
 
-  const PriousPage =(event)=>{
+  const PriousPage = (event) =>{
     let page = paginaatual
-    console.log('paginaatual:'+paginaatual)
-    console.log('ultimapagina:'+ultimapagina)
     if(paginaatual > 1){
        page = page - 1
-       console.log('ultimapagina-entrei')
        clickPagination(event,page)
     }
   }
 
   //--> Efetuar a pesquisa pelo click
   const clickPagination = (event,idx) =>{
-    //  0,5,5,10
     setPaginaatual(idx)
     let ref = idx == 1 ? 0 : idx
     let inicio = ref == 0 ? ref : (ref * qtderegistrospagina) - qtderegistrospagina
     let fim = idx * qtderegistrospagina
-    let lista = null
-    lista = listafiltro.slice(inicio,fim)
+    let lista = listafiltro.slice(inicio,fim)
+
     setRegistroini(inicio+1)
+
     if(fim > qtderegistros){
        setRegistrofim(qtderegistros)
     } else {
        setRegistrofim(fim)
     }
+
     setListastatus(lista)
   }
 
-  const Pagination = (props) => {
+  const Pagination = (props) =>{
     let elemento = []
 
-    for(let i = 1; i <= props.pages; i++ ){
-      if( i == paginaatual){
+    for(let i = 1; i <= props.pages; i++){
+      if(i == paginaatual){
          elemento.push(<CPaginationItem active={true} className='cpointer cl_pagination' onClick={(e)=>clickPagination(e,i)}>{i}</CPaginationItem>)
       } else {
          elemento.push(<CPaginationItem active={false} className='cpointer cl_pagination' onClick={(e)=>clickPagination(e,i)}>{i}</CPaginationItem>)
       }
     }
 
-    return (
+    return(
         <CPagination aria-label="Page navigation example">
             <CPaginationItem className='cpointer' aria-label="Previous" onClick={(e)=>PriousPage(e)}>
                 <span aria-hidden="true">&laquo;</span>
             </CPaginationItem>
-            { elemento }
+            {elemento}
             <CPaginationItem className='cpointer' aria-label="Next" onClick={(e)=>PreviousPage(e)}>
-                <span aria-hidden="true">&raquo;</span>
+               <span aria-hidden="true">&raquo;</span>
             </CPaginationItem>
         </CPagination>
     )
   }
 
   //--> Display dos Ícones no grid
-  const ItensAcao = (props) => {
+  const ItensAcao = (props) =>{
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -233,19 +234,81 @@ const ListaStatusTratamento = (props) => {
   }
 
   const QtdeRegistrosPagina = () =>{
-          return(
-              <CFormSelect
-                  value={qtderegistrospagina}
-                  onChange={(e)=>setQtderegistrospagina(e.target.value)}
-                  >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="15">15</option>
-                  <option value="20">20</option>
-                  <option value="25">25</option>
-                  <option value="30">30</option>
-              </CFormSelect>
-          )
+      return(
+          <CFormSelect
+              value={qtderegistrospagina}
+              onChange={(e)=>setQtderegistrospagina(e.target.value)}
+          >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+          </CFormSelect>
+      )
+  }
+
+  const CompToast = (texto,color,autohide) =>{
+        return(
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white/>
+            </div>
+          </CToast>
+        )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+
+    setListastatus(prevItems => prevItems.map(item =>
+      item.stt_id_stt === idexclusao ? {...item,stt_loadexclui:true} : item
+    ))
+
+    setListafiltro(prevItems => prevItems.map(item =>
+      item.stt_id_stt === idexclusao ? {...item,stt_loadexclui:true} : item
+    ))
+
+    axios.delete(`${endpoint}/status/${idexclusao}`,{
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
+      },
+    }).then((result)=>{
+      setListastatus(prevItems => prevItems.map(item =>
+        item.stt_id_stt === idexclusao ? {...item,stt_loadexclui:false,stt_exclui:true} : item
+      ))
+
+      setListafiltro(prevItems => prevItems.map(item =>
+        item.stt_id_stt === idexclusao ? {...item,stt_loadexclui:false,stt_exclui:true} : item
+      ))
+
+      setQtderegistros(prev=>Math.max(0,prev-1))
+
+      addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+
+      setTimeout(()=>{
+        document.getElementById('idtoast').classList.remove('show')
+        document.getElementById('idtoast').remove()
+      },2000)
+    })
   }
 
   const ImageHeader = () =>{
@@ -261,18 +324,30 @@ const ListaStatusTratamento = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster}/>
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
+
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
            <ImageHeader/>
-          {/* <h2>Status de Tratamentos</h2>
-          <p>Listagem</p> */}
         </div>
         <div class="container">
             <CCard>
-                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Status de Tratamentos</CCardHeader>
+                <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson}/>&nbsp;Listagem de Status de Tratamentos</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
-                        <CButton color="primary" onClick={(e)=>tela('Status')}>Novo Status&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                        <CButton color="primary" onClick={(e)=>tela('Status')}>Novo Status&nbsp;<FontAwesomeIcon size="lg" icon={faFile}/></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                            <DescricaoComp title="Novo Tratamento" text={'Status do Tratamento'}/>
+                            <CButton
+                                color="primary"
+                                className="ms-auto flex-shrink-0"
+                                onClick={(e)=>tela('Status')}
+                            >
+                                Nova Status&nbsp;
+                                <FontAwesomeIcon size="lg" icon={faFile} />
+                            </CButton>
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>
@@ -288,21 +363,24 @@ const ListaStatusTratamento = (props) => {
                             </CInputGroup>
                         </div>
                     </div>
+
                     <CTable className='tabela'>
                         <CTableHead style={{fontSize:'11px !important'}}>
                             <CTableRow>
-                                <CTableHeaderCell className='clthinputtext'style={{borderRadius:'5px 0px 0px 0px',fontSize:'11px !important'}} scope="col">#</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinputtext' style={{borderRadius:'5px 0px 0px 0px',fontSize:'11px !important'}} scope="col">#</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Descriçao</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Criação</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' style={{textAlign:'center',borderRadius:'0px 5px 0px 0px'}} scope="col">Acão</CTableHeaderCell>
                             </CTableRow>
                         </CTableHead>
+
                         <CTableBody>
                             {load
                             ? (<CorpoTabela lista={listastatus} estado={est}/>)
-                            : (<CTableRow><CTableDataCell colspan="9" style={{textAlign:'center'}}><CSpinner color="info"></CSpinner></CTableDataCell></CTableRow>)}
+                            : (<CTableRow><CTableDataCell colspan="9" style={{textAlign:'center'}}><CSpinner color="info"/></CTableDataCell></CTableRow>)}
                         </CTableBody>
                     </CTable>
+
                     <div>
                         <div style={{display:'flex',justifyContent:'flex-start'}}>
                             <PaginationExibe pagina={paginaatual}/>
@@ -317,7 +395,6 @@ const ListaStatusTratamento = (props) => {
         </section>
     </div>
   )
-
 }
 
 export default ListaStatusTratamento

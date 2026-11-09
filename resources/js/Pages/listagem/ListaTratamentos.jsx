@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React, useEffect, useState, Suspense, useRef  } from 'react';
 import {
     CTable,
     CTableRow,
@@ -18,11 +18,18 @@ import {
     CButton,
     CSpinner,
     CFormSelect,
-    CFormCheck
+    CFormCheck,
+    CBadge,
+    CTooltip,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit,faClipboard } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -43,10 +50,38 @@ const ListaTratamentos = (props) => {
   const [registroini,setRegistroini] = useState(0)
   const [registrofim,setRegistrofim] = useState(0)
   const [qtderegistros,setQtderegistros] = useState(0)
-  const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
+  const [qtderegistrospagina,setQtderegistrospagina] = useState(15)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
   const [filtroradio,setFiltroradio] = useState(false)
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexlcusao, setIditemexclusao] = useState(null)
+  const [loadexclui,setLoadexclui] = useState(false)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()//toast
+
+
+  const CompToast = (texto, color, autohide) => {
+      return (
+        <CToast
+          style={{borderRadius:'5px',color:'white'}}
+          id="idtoast"
+          autohide={autohide}
+          visible={false}
+          color={color}
+          delay="3000"
+          className="text-white align-items-center"
+        >
+          <div className="d-flex">
+            <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+            <CToastClose className="me-2 m-auto" white />
+          </div>
+        </CToast>
+      )
+ }
+
 
   useEffect(()=>{
      setLoad(false)
@@ -89,7 +124,7 @@ const ListaTratamentos = (props) => {
       let classe = null
       let cont = 0
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.tra_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -97,13 +132,14 @@ const ListaTratamentos = (props) => {
             } else {
                return(
                 <CTableRow color={classe}>
-                    <CTableDataCell>#</CTableDataCell>
+                    <CTableDataCell>#{'-'+item.tra_id_tra}</CTableDataCell>
                     <CTableDataCell>{item.tra_acolhido}</CTableDataCell>
                     <CTableDataCell>{item.tra_tipo}</CTableDataCell>
                     <CTableDataCell>{item.tra_colaborador}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.tra_status}</CTableDataCell>
+                    <CTableDataCell style={{textAlign:'left'}}>{item.tra_ficha != null ? <CBadge className="font-label" color="primary">{'Ficha Nº '+item.tra_ficha}</CBadge> : <CBadge className="font-label" color="danger">Sem Entrevista</CBadge> }</CTableDataCell>
                     <CTableDataCell>{item.tra_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.tra_id_tra} acolhido={item.tra_id_aco}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.tra_id_tra} ficha={item.tra_ficha} acolhido={item.tra_id_aco} load={item.tra_loadexclui}/></CTableDataCell>
                 </CTableRow>
                )
             }
@@ -207,13 +243,59 @@ const ListaTratamentos = (props) => {
     )
   }
 
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListatratamento(prevItems =>
+        prevItems.map(item =>
+                item.tra_id_tra === idexclusao ? { ...item, tra_loadexclui: true } : item
+            )
+        )
+    axios.delete(`${endpoint}/tratamento/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,//dentro do env//
+        },
+     })
+     .then((result) => {
+             setListatratamento(prevItems =>
+                    prevItems.map(item =>
+                        item.tra_id_tra === idexclusao ? { ...item, tra_loadexclui: false, tra_exclui: true } : item
+                    )
+                )
+            addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success')) //--> usa toast
+            setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+            }, 2000)
+     })
+
+  }
+
+
   //--> Display dos Ícones no grid
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id,props.acolhido)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <CTooltip content="Editar Tratamento" placement="top">
+          <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id,props.acolhido)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       </CTooltip>
+       { props.ficha != null ?
+       <>
+       &nbsp;
+       <CTooltip content="Exibir Entrevista" placement="top">
+          <FontAwesomeIcon size="xl" onClick={(e)=>ExibirFicha(e,props.ficha)} style={{color:'gray',cursor:'pointer'}} icon={faClipboard}/>
+       </CTooltip>
+       </> : <></>}
        </>
     )
   }
@@ -222,6 +304,11 @@ const ListaTratamentos = (props) => {
       altera(valor)
       setacolhido(acolhido)
       tela('Tratamento')
+  }
+
+  const ExibirFicha = (event,ficha) =>{
+      altera(ficha)
+      tela('FichaEntrevista')
   }
 
   const handleClick = (event,valor) =>{
@@ -364,6 +451,8 @@ const ListaTratamentos = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexlcusao} funcret={()=>excluirItemBanco(iditemexlcusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
            <ImageHeader/>
@@ -400,6 +489,7 @@ const ListaTratamentos = (props) => {
                                 <CTableHeaderCell className='clthinterno' scope="col">Tipo</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Colaborador</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Status</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col">Entrevista</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Criação</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' style={{textAlign:'center',borderRadius:'0px 5px 0px 0px'}} scope="col">Acão</CTableHeaderCell>
                             </CTableRow>

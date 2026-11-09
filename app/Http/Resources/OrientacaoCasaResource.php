@@ -26,6 +26,8 @@ class OrientacaoCasaResource extends JsonResource
                 'orc_descricao' => $this->orc_descricao,
                 'orc_local' => $this->orc_local,
                 'orc_ativo' => false,
+                'orc_exclui' => false,
+                'orc_loadexclui' => false,
                 'orc_created_at' => Carbon::parse($this->orc_created_at)->format('d/m/Y H:i:s'),
                 'orc_updated_at' => $this->orc_updated_at != null ? Carbon::parse($this->orc_updated_at)->format('d/m/Y H:i:s') : null,
             ];

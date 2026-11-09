@@ -32,6 +32,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit, faFilePdf  } from '@fortawesome/free-solid-svg-icons';
 import ModalInscricao from '../componentes/ModalInscricao';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -74,6 +75,10 @@ const ListaPresenca = (props) => {
   //modal
   const [openmodal,setOpenmodal] = useState(null)
   const [dadosmodal,setDadosmodal] = useState(null)
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
   /*
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
@@ -266,7 +271,7 @@ const ListaPresenca = (props) => {
         setTemdados(true)
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.ins_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -282,7 +287,7 @@ const ListaPresenca = (props) => {
                     <CTableDataCell>{item.ins_envio_email === 'S' ? <CBadge color="info">Enviado</CBadge> : <CBadge color="warning">Falha</CBadge>}</CTableDataCell>
                     <CTableDataCell><CompCheckbox id={item.ins_id_ins} ativo={item.ins_ativo}/>&nbsp;{item.ins_load ? (<CSpinner color="info" size="sm"/>):(<></>)}&nbsp;&nbsp;{item.ins_ativo == 1 ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Suspenso</CBadge>}</CTableDataCell>
                     <CTableDataCell>{item.ins_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao modal={item.ins_modal_load} id={item.ins_id_ins}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao modal={item.ins_modal_load} load={item.ins_loadexclui} id={item.ins_id_ins}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -388,15 +393,67 @@ const ListaPresenca = (props) => {
     console.log(props.modal)
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id,props.modal)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id,props.modal)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
         &nbsp;
        {
          props.modal ? (<CSpinner color="info" size="sm"/>) : (<></>)
        }
        </>
     )
+  }
+
+  //--> Confirma a exclusão do registro
+  const Delete = (id) =>{
+      setIditemexclusao(id)
+      setTextomodal('Deseja Realmente excluir o registro?')
+      setOpenmodalconfirma(true)
+  }
+
+  //--> Exclui registro no banco (SoftDeletes)
+  const excluirItemBanco = (idexclusao) =>{
+      setOpenmodalconfirma(false)
+      setListageral(prevItems =>
+          prevItems.map(item =>
+              item.ins_id_ins === idexclusao ? { ...item, ins_loadexclui: true } : item
+          )
+      )
+      setListafiltro(prevItems =>
+          prevItems.map(item =>
+              item.ins_id_ins === idexclusao ? { ...item, ins_loadexclui: true } : item
+          )
+      )
+      axios.delete(`${endpoint}/inscricao/${idexclusao}`,{
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: 'Bearer ' + token,
+          },
+      })
+      .then((result) => {
+          setListageral(prevItems =>
+              prevItems.map(item =>
+                  item.ins_id_ins === idexclusao ? { ...item, ins_loadexclui: false, ins_exclui: true } : item
+              )
+          )
+          setListafiltro(prevItems =>
+              prevItems.map(item =>
+                  item.ins_id_ins === idexclusao ? { ...item, ins_loadexclui: false, ins_exclui: true } : item
+              )
+          )
+          addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+          setTimeout(() => {
+              document.getElementById('idtoast')?.classList.remove('show')
+              document.getElementById('idtoast')?.remove()
+          }, 2000)
+      })
+      .catch((error) => {
+          setListageral(prevItems => prevItems.map(item => item.ins_id_ins === idexclusao ? { ...item, ins_loadexclui: false } : item))
+          setListafiltro(prevItems => prevItems.map(item => item.ins_id_ins === idexclusao ? { ...item, ins_loadexclui: false } : item))
+          addToast(CompToast('Erro ao excluir registro !!!', 'danger'))
+      })
   }
 
   const EditaRegistro = (event,id) =>{
@@ -519,6 +576,7 @@ const ImageHeader = () =>{
 
   return(
     <>
+    <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
     <ModalInscricao open={openmodal} close={setOpenmodal} dados={dadosmodal} atualiza={(e)=>setEst(!est)}/>
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">

@@ -40,7 +40,10 @@ class TratamentoResource extends JsonResource
                 'tra_pri_impressao' => $this->tra_pri_impressao,
                 'tra_id_stt' => $this->tra_id_stt,
                 'tra_status' => $this->status->stt_descricao,
+                'tra_ficha' => $this->entrevista != null ? $this->entrevista->fie_id_fie : null,
                 'tra_controle' => $this->controle,
+                'tra_exclui' => false,
+                'tra_loadexclui' => false,
                 'tra_created_at' => Carbon::parse($this->tra_created_at)->format('d/m/Y H:i:s'),
                 'tra_updated_at' => $this->tra_updated_at != null ? Carbon::parse($this->tra_updated_at)->format('d/m/Y H:i:s') : null,
             ];
@@ -59,6 +62,7 @@ class TratamentoResource extends JsonResource
                 'tra_alerta' => $this->tra_alerta,
                 'tra_pri_impressao' => $this->tra_pri_impressao,
                 'tra_id_stt' => $this->tra_id_stt,
+                'tra_ficha' => $this->entrevista != null ? $this->entrevista->fie_id_fie : null,
                 'tra_created_at' => Carbon::parse($this->tra_created_at)->format('d/m/Y H:i:s'),
                 'tra_updated_at' => $this->tra_updated_at != null ? Carbon::parse($this->tra_updated_at)->format('d/m/Y H:i:s') : null,
             ];

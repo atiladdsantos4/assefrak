@@ -38,6 +38,8 @@ class AcolhidoResource extends JsonResource
                 'aco_nascimento' => Carbon::parse($this->aco_nascimento)->format('d/m/Y'),
                 'aco_idade' => Carbon::parse($this->aco_nascimento)->age,
                 'aco_load' => false,
+                'aco_exclui' => false,
+                'aco_loadexclui' => false,
                 'aco_created_at' => Carbon::parse($this->aco_created_at)->format('d/m/Y H:i:s'),
                 'aco_updated_at' => $this->aco_updated_at != null ? Carbon::parse($this->aco_updated_at)->format('d/m/Y H:i:s') : null,
             ];

@@ -29,6 +29,8 @@ class VideoResource extends JsonResource
                 'vid_categoria' => $this->categoria->cav_descricao,
                 'vid_hash_link' => $this->vid_hash_link,
                 'vid_ativo' => $this->vid_ativo,
+                'vid_exclui' => false,
+                'vid_loadexclui' => false,
                 'vid_created_at' => Carbon::parse($this->vid_created_at)->format('d/m/Y H:i:s'),
                 'vid_updated_at' => $this->vid_updated_at != null ? Carbon::parse($this->vid_updated_at)->format('d/m/Y H:i:s') : null,
             ];

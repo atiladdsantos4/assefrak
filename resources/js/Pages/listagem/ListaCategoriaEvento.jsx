@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,9 +17,11 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 // import { NavbarComp } from '../layouts/NavbarComp';
@@ -45,6 +47,10 @@ const ListaCategoriaEvento = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
 
   useEffect(()=>{
     setLoad(false)
@@ -95,7 +101,7 @@ const ListaCategoriaEvento = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.cae_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -106,7 +112,7 @@ const ListaCategoriaEvento = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.cae_descricao}</CTableDataCell>
                     <CTableDataCell>{item.cae_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.cae_id_cae}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.cae_id_cae} load={item.cae_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -209,11 +215,48 @@ const ListaCategoriaEvento = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
        <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
+  }
+
+
+  const CompToast = (texto, color) => (
+      <CToast id="idtoast" visible={false} color={color} delay={3000} className="text-white align-items-center">
+        <div className="d-flex"><CToastBody style={{color:'white'}}>{texto}</CToastBody><CToastClose className="me-2 m-auto" white /></div>
+      </CToast>
+  )
+
+  const Delete = (id) => {
+      setIditemexclusao(id)
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (id) => {
+      setOpenmodalconfirma(false)
+      setListacategoria(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:true} : item))
+      setListafiltro(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:true} : item))
+      axios.delete(`${endpoint}/categoriaevento/${id}`,{
+          headers: { Accept:'application/json', 'Content-Type':'multipart/form-data', Authorization:'Bearer '+token },
+      }).then((result)=>{
+          if(result.data.status){
+              setListacategoria(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:false, cae_exclui:true} : item))
+              setListafiltro(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:false, cae_exclui:true} : item))
+              setQtderegistros(prev => Math.max(0,prev-1))
+              addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+          } else {
+              setListacategoria(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:false} : item))
+              setListafiltro(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:false} : item))
+              addToast(CompToast(result.data.mensagem || 'Erro ao excluir registro','danger'))
+          }
+      }).catch(()=>{
+          setListacategoria(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:false} : item))
+          setListafiltro(prev => prev.map(item => item.cae_id_cae == id ? {...item, cae_loadexclui:false} : item))
+          addToast(CompToast('Erro ao excluir registro !!!','danger'))
+      })
   }
 
   const EditaRegistro = (event,valor) =>{
@@ -250,6 +293,8 @@ const ImageHeader = () =>{
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster}/>
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={'Deseja realmente excluir este registro?'}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
            <ImageHeader/>

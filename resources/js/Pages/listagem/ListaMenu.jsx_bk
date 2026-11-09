@@ -1,0 +1,431 @@
+
+import { React, useEffect, useState } from 'react';
+import {
+    CTable,
+    CTableRow,
+    CTableHeaderCell,
+    CTableBody,
+    CTableDataCell,
+    CTableHead,
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CInputGroup,
+    CInputGroupText,
+    CFormInput,
+    CPagination,
+    CPaginationItem,
+    CButton,
+    CSpinner,
+    CFormSelect
+} from '@coreui/react';
+
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faList, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+
+const ListaMenu = (props) => {
+
+    const { tela, altera } = props;
+
+    const token = import.meta.env.VITE_APP_TOKEN;
+    const imagem = import.meta.env.VITE_APP_ENDPOINT_IMG;
+    const endpoint = import.meta.env.VITE_APP_ENDPOINT_API;
+
+    const [listmenu, setListmenu] = useState([]);
+    const [listafiltro, setListafiltro] = useState([]);
+    const [numnpagination, setNumpagination] = useState(null);
+    const [paginaatual, setPaginaatual] = useState(null);
+    const [ultimapagina, setUltimapagina] = useState(null);
+    const [registroini, setRegistroini] = useState(0);
+    const [registrofim, setRegistrofim] = useState(0);
+    const [qtderegistros, setQtderegistros] = useState(0);
+    const [qtderegistrospagina, setQtderegistrospagina] = useState(10);
+    const [pesquisar, setPesquisar] = useState('');
+    const [load, setLoad] = useState(false);
+
+    const config = {
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + token,
+        },
+    };
+
+    //--> Carrega os menus
+    useEffect(() => {
+
+        setLoad(false);
+
+        axios
+            .get(`${endpoint}/menu?listagem=S`, config)
+            .then((result) => {
+
+                altera(null);
+
+                const vetor = result.data.data;
+
+                setListafiltro(vetor);
+
+                setQtderegistros(vetor.length);
+
+                const lista = vetor.slice(0, qtderegistrospagina);
+                setListmenu(lista);
+
+                const res = vetor.length / qtderegistrospagina;
+                const paginas = Math.ceil(res);
+
+                setNumpagination(paginas);
+                setUltimapagina(paginas);
+                setPaginaatual(1);
+
+                if (vetor.length > 0) {
+                    setRegistroini(1);
+                    setRegistrofim(Math.min(qtderegistrospagina, vetor.length));
+                } else {
+                    setRegistroini(0);
+                    setRegistrofim(0);
+                }
+
+                setLoad(true);
+            })
+            .catch((error) => {
+                console.error(error);
+                setLoad(true);
+            });
+
+    }, [qtderegistrospagina]);
+
+    //--> Exibe os dados da tabela
+    const CorpoTabela = (props) => {
+
+        let classe = null;
+
+        if (props.lista.length === 0) {
+            return (
+                <CTableRow>
+                    <CTableDataCell colSpan="8" style={{ textAlign: 'center' }}>
+                        Não há Registros para Listagem
+                    </CTableDataCell>
+                </CTableRow>
+            );
+        }
+
+        return props.lista.map((item, index) => {
+
+            classe = index % 2 === 0 ? 'primary' : 'secondary';
+
+            return (
+                <CTableRow key={item.men_id_men} color={classe}>
+
+                    <CTableDataCell className="sticky-col">
+                        {item.men_id_men}
+                    </CTableDataCell>
+
+                    <CTableDataCell className="sticky-col">
+                        {item.menupai?.men_name ?? 'Sem Menu Pai'}
+                    </CTableDataCell>
+
+                    <CTableDataCell>
+                        {item.men_name}
+                    </CTableDataCell>
+
+                    <CTableDataCell>
+                        {item.men_classe}
+                    </CTableDataCell>
+
+                    <CTableDataCell>
+                        {item.men_click}
+                    </CTableDataCell>
+
+                    <CTableDataCell style={{ textAlign: 'center' }}>
+                        {item.men_nivel}
+                    </CTableDataCell>
+
+                    <CTableDataCell>
+                        {item.men_created_at}
+                    </CTableDataCell>
+
+                    <CTableDataCell style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                        <ItensAcao id={item.men_id_men} />
+                    </CTableDataCell>
+
+                </CTableRow>
+            );
+        });
+    };
+
+    //--> Pesquisa
+    const pesquisarGrid = (event) => {
+
+        const valor = event.target.value;
+
+        setPesquisar(valor);
+
+        let lista = listafiltro;
+
+        if (valor.trim() !== '') {
+            lista = listafiltro.filter((item) =>
+                String(item.men_id_men).includes(valor) ||
+                item.men_name?.toLowerCase().includes(valor.toLowerCase()) ||
+                item.men_classe?.toLowerCase().includes(valor.toLowerCase()) ||
+                item.men_click?.toLowerCase().includes(valor.toLowerCase()) ||
+                item.men_nivel?.toString().includes(valor) ||
+                item.menupai?.men_name?.toLowerCase().includes(valor.toLowerCase())
+            );
+        }
+
+        setListmenu(lista.slice(0, qtderegistrospagina));
+
+        const paginas = Math.ceil(lista.length / qtderegistrospagina);
+
+        setQtderegistros(lista.length);
+        setNumpagination(paginas);
+        setUltimapagina(paginas);
+        setPaginaatual(1);
+        setRegistroini(lista.length > 0 ? 1 : 0);
+        setRegistrofim(Math.min(qtderegistrospagina, lista.length));
+    };
+
+    //--> Exibe informações da paginação
+    const PaginationExibe = (props) => {
+        return (
+            <div className="exibepagination">
+                <div>Pagina:&nbsp;{props.pagina}&nbsp;</div>
+                <div>Registros:&nbsp;{registroini + '...' + registrofim + ' num Total de ' + qtderegistros}</div>
+            </div>
+        );
+    };
+
+    //--> Próxima página
+    const PreviousPage = (event) => {
+        if (paginaatual < ultimapagina) {
+            clickPagination(event, paginaatual + 1);
+        }
+    };
+
+    //--> Página anterior
+    const PriousPage = (event) => {
+        if (paginaatual > 1) {
+            clickPagination(event, paginaatual - 1);
+        }
+    };
+
+    //--> Click da paginação
+    const clickPagination = (event, idx) => {
+
+        setPaginaatual(idx);
+
+        const inicio = (idx - 1) * qtderegistrospagina;
+        const fim = idx * qtderegistrospagina;
+
+        const lista = listafiltro.slice(inicio, fim);
+
+        setRegistroini(inicio + 1);
+        setRegistrofim(Math.min(fim, qtderegistros));
+
+        setListmenu(lista);
+    };
+
+    //--> Paginação
+    const Pagination = (props) => {
+
+        const elemento = [];
+
+        for (let i = 1; i <= props.pages; i++) {
+            elemento.push(
+                <CPaginationItem
+                    key={i}
+                    active={i === paginaatual}
+                    className="cpointer cl_pagination"
+                    onClick={(e) => clickPagination(e, i)}
+                >
+                    {i}
+                </CPaginationItem>
+            );
+        }
+
+        return (
+            <CPagination aria-label="Page navigation example">
+
+                <CPaginationItem
+                    className="cpointer"
+                    aria-label="Previous"
+                    onClick={(e) => PriousPage(e)}
+                >
+                    <span aria-hidden="true">&laquo;</span>
+                </CPaginationItem>
+
+                {elemento}
+
+                <CPaginationItem
+                    className="cpointer"
+                    aria-label="Next"
+                    onClick={(e) => PreviousPage(e)}
+                >
+                    <span aria-hidden="true">&raquo;</span>
+                </CPaginationItem>
+
+            </CPagination>
+        );
+    };
+
+    //--> Ícones do grid
+    const ItensAcao = (props) => {
+        return (
+            <>
+                <FontAwesomeIcon
+                    size="xl"
+                    style={{ color: 'red', cursor: 'pointer' }}
+                    icon={faTrash}
+                />
+                &nbsp;
+                <FontAwesomeIcon
+                    size="xl"
+                    onClick={(e) => EditaRegistro(e, props.id)}
+                    style={{ color: 'blue', cursor: 'pointer' }}
+                    icon={faEdit}
+                />
+            </>
+        );
+    };
+
+    //--> Editar registro
+    const EditaRegistro = (event, valor) => {
+        event.preventDefault();
+        altera(valor);
+        tela('Menu');
+    };
+
+    //--> Cabeçalho
+    const ImageHeader = () => {
+        return (
+            <div style={{ position: 'relative', top: '4px' }}>
+                <img
+                    className="img-fluid"
+                    style={{ borderRadius: '5px' }}
+                    src={imagem + 'telas/logoheaderlistagem.png'}
+                />
+                <div style={{
+                    fontSize: '24px',
+                    position: 'relative',
+                    left: '-56px',
+                    top: '-35px',
+                    color: 'white',
+                    fontWeight: 'bold'
+                }}>
+                    Menu
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div data-aos="zoom-in">
+
+            <section id="hero" className="hero section light-background">
+
+                <div className="container section-title box-title mb-2" data-aos="fade-up">
+                    <ImageHeader />
+                </div>
+
+                <div className="container">
+
+                    <CCard>
+
+                        <CCardHeader className="fundo_head">
+                            <FontAwesomeIcon size="lg" icon={faList} />
+                            &nbsp;Listagem de Menus
+                        </CCardHeader>
+
+                        <CCardBody className="mt-1 mb-4">
+
+                            <div className="mb-4" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <CButton color="primary" onClick={() => tela('Menu')}>
+                                    Novo Menu&nbsp;
+                                    <FontAwesomeIcon size="lg" icon={faFile} />
+                                </CButton>
+                            </div>
+
+                            <div style={{ display: 'flex' }}>
+
+                                <div style={{ flex: '1' }}>
+                                    <CInputGroup style={{ maxWidth: '200px', right: '0px', top: '0px' }} className="mb-2 mt-2">
+                                        <CInputGroupText className="clinputtext">Qtde Registros</CInputGroupText>
+                                        <CFormSelect
+                                            value={qtderegistrospagina}
+                                            onChange={(e) => setQtderegistrospagina(Number(e.target.value))}
+                                        >
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="15">15</option>
+                                            <option value="20">20</option>
+                                            <option value="25">25</option>
+                                            <option value="30">30</option>
+                                        </CFormSelect>
+                                    </CInputGroup>
+                                </div>
+
+                                <div style={{ justifySelf: 'end', alignSelf: 'end' }}>
+                                    <CInputGroup style={{ maxWidth: '400px' }} className="mb-2 mt-2">
+                                        <CInputGroupText className="clinputtext">Pesquisar</CInputGroupText>
+                                        <CFormInput
+                                            placeholder="Digite um valor"
+                                            value={pesquisar}
+                                            onChange={pesquisarGrid}
+                                        />
+                                    </CInputGroup>
+                                </div>
+
+                            </div>
+
+                            <CTable className="tabela" responsive>
+
+                                <CTableHead>
+                                    <CTableRow>
+                                        <CTableHeaderCell className="clthinputtext sticky-col" style={{ borderRadius: '5px 0px 0px 0px' }} scope="col">ID</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno sticky-col" scope="col">Menu Pai</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno" scope="col">Nome</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno" scope="col">Classe CSS</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno" scope="col">Tela / Click</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno" scope="col">Nível</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno" scope="col">Cadastro</CTableHeaderCell>
+                                        <CTableHeaderCell className="clthinterno" style={{ textAlign: 'center', borderRadius: '0px 5px 0px 0px' }} scope="col">Ação</CTableHeaderCell>
+                                    </CTableRow>
+                                </CTableHead>
+
+                                <CTableBody>
+                                    {load
+                                        ? <CorpoTabela lista={listmenu} />
+                                        : <CTableRow>
+                                            <CTableDataCell colSpan="8" style={{ textAlign: 'center' }}>
+                                                <CSpinner color="info" />
+                                            </CTableDataCell>
+                                          </CTableRow>
+                                    }
+                                </CTableBody>
+
+                            </CTable>
+
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                    <PaginationExibe pagina={paginaatual} />
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', top: '-5px' }}>
+                                    <Pagination pages={numnpagination} />
+                                </div>
+                            </div>
+
+                        </CCardBody>
+
+                    </CCard>
+
+                </div>
+
+            </section>
+
+        </div>
+    );
+};
+
+export default ListaMenu;

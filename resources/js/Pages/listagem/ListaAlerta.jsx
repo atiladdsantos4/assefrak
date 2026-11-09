@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,15 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CBadge,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,7 +49,14 @@ const ListaAlerta = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  // Exclusão
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
   /*
+
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
     const [ultimapagina,setUltimapagina] = useState(null)
@@ -103,7 +114,7 @@ const ListaAlerta = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.ale_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -114,7 +125,7 @@ const ListaAlerta = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.ale_descricao}</CTableDataCell>
                     <CTableDataCell>{item.ale_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.ale_id_ale}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao load={item.ale_loadexclui} id={item.ale_id_ale}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -131,9 +142,9 @@ const ListaAlerta = (props) => {
             (item)=>item.ale_descricao.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)
-        setlistaalerta(lista.slice(0,qtderegistrospagina))
+        setListaalerta(lista.slice(0,qtderegistrospagina))
      } else {
-        setlistaalerta(listafiltro.slice(0,qtderegistrospagina))
+        setListaalerta(listafiltro.slice(0,qtderegistrospagina))
      }
   }
 
@@ -186,7 +197,7 @@ const ListaAlerta = (props) => {
     } else {
        setRegistrofim(fim)
     }
-    setlistaalerta(lista)
+    setListaalerta(lista)
   }
 
   const Pagination = (props) => {
@@ -217,9 +228,10 @@ const ListaAlerta = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -256,8 +268,78 @@ const ListaAlerta = (props) => {
     )
  }
 
+
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente excluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListaalerta(prevItems =>
+        prevItems.map(item =>
+            item.ale_id_ale === idexclusao ? { ...item, ale_loadexclui: true } : item
+        )
+    )
+    axios.delete(`${endpoint}/alerta/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then((result) => {
+        if(result.data.status === true){
+            setListaalerta(prevItems =>
+                prevItems.map(item =>
+                    item.ale_id_ale === idexclusao
+                    ? { ...item, ale_loadexclui: false, ale_exclui: true }
+                    : item
+                )
+            )
+            setListafiltro(prevItems =>
+                prevItems.map(item =>
+                    item.ale_id_ale === idexclusao
+                    ? { ...item, ale_loadexclui: false, ale_exclui: true }
+                    : item
+                )
+            )
+            addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+            setTimeout(() => {
+                const toastElement = document.getElementById('idtoast')
+                if(toastElement){
+                    toastElement.classList.remove('show')
+                    toastElement.remove()
+                }
+            }, 2000)
+        }
+     })
+  }
+
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2"  data-aos="fade-up">
           <ImageHeader/>
@@ -268,8 +350,19 @@ const ListaAlerta = (props) => {
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Alertas de Segurança</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
                         <CButton color="primary" onClick={(e)=>tela('Alerta')}>Novo Alerta&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                          <DescricaoComp title="Novo Tratamento" text={'Alertas Segurança'}/>
+                         <CButton
+                                color="primary"
+                                className="ms-auto flex-shrink-0"
+                                onClick={(e)=>tela('Alerta')}
+                         >
+                            Nova Alerta&nbsp;
+                            <FontAwesomeIcon size="lg" icon={faFile} />
+                         </CButton>
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>

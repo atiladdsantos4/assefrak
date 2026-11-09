@@ -151,10 +151,25 @@ class ApresentacaoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+
+
+
+
+
+    public function destroy($id)
     {
-        //
+        $registro = Apresentacao::findOrFail($id);
+        $registro->delete();
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
     }
+
+
 
 }
 

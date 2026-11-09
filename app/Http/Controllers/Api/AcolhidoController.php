@@ -46,7 +46,7 @@ class AcolhidoController extends Controller
                 // ->where('hoa_emp',$empresa)
                 // ->orderBy('ano','asc')
                 // ->orderBy('mes','asc')
-           } else { 
+           } else {
                $result_cliente = Acolhido::orderBy('aco_name')->get();
            }
         //    $cliente = cliente::orderBy('pro_nome')
@@ -241,7 +241,14 @@ class AcolhidoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $aco = Acolhido::find($id);
+        $aco->delete();
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result,JSON_PRETTY_PRINT);
     }
 
 }

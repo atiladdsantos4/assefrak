@@ -25,6 +25,8 @@ class TipoTratamentoResource extends JsonResource
                 'tit_id_tit' => $this->tit_id_tit,
                 'tit_descricao' => $this->tit_descricao,
                 'tit_qtde_semana' => $this->tit_qtde_semana,
+                'tit_exclui' => false,
+                'tit_loadexclui' => false,
                 'tit_created_at' => Carbon::parse($this->tit_created_at)->format('d/m/Y H:i:s'),
                 'tit_updated_at' => $this->tit_updated_at != null ? Carbon::parse($this->tit_updated_at)->format('d/m/Y H:i:s') : null,
             ];

@@ -26,6 +26,8 @@ class CognicaoSonoResource extends JsonResource
                 'cos_descricao' => $this->cos_descricao,
                 'cos_local' => $this->cos_local,
                 'cos_ativo' => false,
+                'cos_exclui' => false,
+                'cos_loadexclui' => false,
                 'cos_created_at' => Carbon::parse($this->cos_created_at)->format('d/m/Y H:i:s'),
                 'cos_updated_at' => $this->cos_updated_at != null ? Carbon::parse($this->cos_updated_at)->format('d/m/Y H:i:s') : null,
             ];

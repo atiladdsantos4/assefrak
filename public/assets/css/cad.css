@@ -1,3 +1,19 @@
+#idnavmenu{
+    nav li.dropdown {
+      position: relative;
+    }
+
+    nav li.dropdown > ul.ul_cab {
+        left: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    nav li.dropdown > ul.ul_cab > li.dropdown > ul.ul_cab {
+        left: 100% !important;
+        top: 0 !important;
+    }
+}
+
 .fundo_head {
     background-color: #6895C1;
     color:white;
@@ -54,7 +70,30 @@ input[type="checkbox"]{
       border: 1px solid gray
 }
 
-#form-acolhido,#form-apresentacao{
+#form-acolhido,
+#form-apresentacao,
+#form-menu,
+#form-funcionalidade {
+
+    .form-label:not(:empty) {
+        color: white !important;
+        font-size: 14px;
+        background: linear-gradient(to right, #1c059f, #007bff);
+        border-radius: 5px;
+        padding: 2px 6px;
+        margin-bottom: 8px;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: #007bff;
+        background-color: #e5f6b7;
+        outline: 2px solid #007bff;
+        outline-offset: 1px;
+    }
+
+}
+/* #form-acolhido,#form-apresentacao,#form-funcionalidade{
 
     .form-label:not(:empty){
         color:white  !important;
@@ -79,7 +118,7 @@ input[type="checkbox"]{
         outline-offset: 1px;
     }
 
-}
+} */
 
 .clthinputtext {
   background: linear-gradient(90deg,#6895C1 14.33%,#6895C1 214.54%);
@@ -305,19 +344,20 @@ input[type="checkbox"]{
      border-color: color-mix(in srgb, #3d3d3d, transparent 80%);
 }
 
+.font-label{
+   font-size: 11px;
+}
+
+.spinner_div{
+  position:relative;top:3px;
+}
+
 .react-datepicker-wrapper{
     width: 100% !important;
     min-height: 35px !important;
 }
 
-.tabela{
-   font-size: 11px !important;
-   .ct{ text-align: center !important;}
-   .lf{ text-align: left !important;}
-   .rt{ text-align: right !important;}
-}
-
- #tratamento-id .form-check-input,.form-select,.form-control {
+#tratamento-id .form-check-input,.form-select,.form-control {
    border: 1px solid  #6895C1 !important; /*Red square line */
   /* border-radius: 3px;         Sharp square corners */
   /* background-color: #fff; */
@@ -458,58 +498,121 @@ input[type="checkbox"]{
 }
 /* borderRadius:'5px',maxWidth:'400px',maxHeight:'100px',boxShadow: '5px 10px 10px #888888' */
 /* colors badge */
-.badge1{
-   background-color:#F5276C !important;
-   font-size: 11px;
-}
 
-.badge2{
-   background-color:#3B6DE3 !important;
-   font-size: 11px;
-}
-
-.badge3{
-   background-color:#095f40 !important;
-   font-size: 11px;
-}
-
-.badge4{
-   background-color:#a41187 !important;
-   font-size: 11px;
-}
-
-.badge5{
-   background-color:#D97445 !important;
-   font-size: 11px;
-}
-
-.badge6{
-   background-color:#DAC644 !important;
-   font-size: 11px;
-}
-
-.badge7{
-   background-color:#50d53c !important;
-   font-size: 11px;
-}
-
-.badge8{
-   background-color: #722E56 !important;
-   font-size: 11px;
-}
-
-.badge9{
-   background-color: #7270cf !important;
-   font-size: 11px;
-}
-
-.badge10{
-   background-color: #d62626 !important;
-   font-size: 11px;
-}
+.badge1{background-color:#F5276C !important;font-size:11px;}
+.badge2{background-color:#3B6DE3 !important;font-size:11px;}
+.badge3{background-color:#095f40 !important;font-size:11px;}
+.badge4{background-color:#a41187 !important;font-size:11px;}
+.badge5{background-color:#D97445 !important;font-size:11px;}
+.badge6{background-color:#DAC644 !important;font-size:11px;}
+.badge7{background-color:#50d53c !important;font-size:11px;}
+.badge8{background-color:#722E56 !important;font-size:11px;}
+.badge9{background-color:#7270cf !important;font-size:11px;}
+.badge10{background-color:#d62626 !important;font-size:11px;}
+.badge11{background-color:#8E44AD !important;font-size:11px;}
+.badge12{background-color:#16A085 !important;font-size:11px;}
+.badge13{background-color:#E67E22 !important;font-size:11px;}
+.badge14{background-color:#2980B9 !important;font-size:11px;}
+.badge15{background-color:#C0392B !important;font-size:11px;}
+.badge16{background-color:#27AE60 !important;font-size:11px;}
+.badge17{background-color:#8E5A2B !important;font-size:11px;}
+.badge18{background-color:#D35400 !important;font-size:11px;}
+.badge19{background-color:#6C3483 !important;font-size:11px;}
+.badge20{background-color:#117864 !important;font-size:11px;}
+.badge21{background-color:#2E86C1 !important;font-size:11px;}
+.badge22{background-color:#AF601A !important;font-size:11px;}
+.badge23{background-color:#A93226 !important;font-size:11px;}
+.badge24{background-color:#229954 !important;font-size:11px;}
+.badge25{background-color:#7D3C98 !important;font-size:11px;}
+.badge26{background-color:#1F618D !important;font-size:11px;}
+.badge27{background-color:#B03A2E !important;font-size:11px;}
+.badge28{background-color:#148F77 !important;font-size:11px;}
+.badge29{background-color:#CA6F1E !important;font-size:11px;}
+.badge30{background-color:#884EA0 !important;font-size:11px;}
+.badge31{background-color:#2874A6 !important;font-size:11px;}
+.badge32{background-color:#D68910 !important;font-size:11px;}
+.badge33{background-color:#117A65 !important;font-size:11px;}
+.badge34{background-color:#922B21 !important;font-size:11px;}
+.badge35{background-color:#239B56 !important;font-size:11px;}
+.badge36{background-color:#5B2C6F !important;font-size:11px;}
+.badge37{background-color:#1A5276 !important;font-size:11px;}
+.badge38{background-color:#A04000 !important;font-size:11px;}
+.badge39{background-color:#196F3D !important;font-size:11px;}
+.badge40{background-color:#7B241C !important;font-size:11px;}
+.badge41{background-color:#512E5F !important;font-size:11px;}
+.badge42{background-color:#154360 !important;font-size:11px;}
+.badge43{background-color:#784212 !important;font-size:11px;}
+.badge44{background-color:#0E6655 !important;font-size:11px;}
+.badge45{background-color:#78281F !important;font-size:11px;}
+.badge46{background-color:#4A235A !important;font-size:11px;}
+.badge47{background-color:#1B4F72 !important;font-size:11px;}
+.badge48{background-color:#935116 !important;font-size:11px;}
+.badge49{background-color:#186A3B !important;font-size:11px;}
+.badge50{background-color:#641E16 !important;font-size:11px;}
+.badge51{background-color:#008B8B !important;font-size:11px;}
+.badge52{background-color:#B22222 !important;font-size:11px;}
+.badge53{background-color:#6A5ACD !important;font-size:11px;}
+.badge54{background-color:#2E8B57 !important;font-size:11px;}
+.badge55{background-color:#FF8C00 !important;font-size:11px;}
+.badge56{background-color:#8B008B !important;font-size:11px;}
+.badge57{background-color:#4682B4 !important;font-size:11px;}
+.badge58{background-color:#A0522D !important;font-size:11px;}
+.badge59{background-color:#556B2F !important;font-size:11px;}
+.badge60{background-color:#C71585 !important;font-size:11px;}
+.badge61{background-color:#008000 !important;font-size:11px;}
+.badge62{background-color:#483D8B !important;font-size:11px;}
+.badge63{background-color:#CD5C5C !important;font-size:11px;}
+.badge64{background-color:#006400 !important;font-size:11px;}
+.badge65{background-color:#B8860B !important;font-size:11px;}
+.badge66{background-color:#4169E1 !important;font-size:11px;}
+.badge67{background-color:#8B4513 !important;font-size:11px;}
+.badge68{background-color:#9932CC !important;font-size:11px;}
+.badge69{background-color:#20B2AA !important;font-size:11px;}
+.badge70{background-color:#DC143C !important;font-size:11px;}
+.badge71{background-color:#228B22 !important;font-size:11px;}
+.badge72{background-color:#7B68EE !important;font-size:11px;}
+.badge73{background-color:#D2691E !important;font-size:11px;}
+.badge74{background-color:#008080 !important;font-size:11px;}
+.badge75{background-color:#9400D3 !important;font-size:11px;}
+.badge76{background-color:#3CB371 !important;font-size:11px;}
+.badge77{background-color:#FF4500 !important;font-size:11px;}
+.badge78{background-color:#191970 !important;font-size:11px;}
+.badge79{background-color:#8FBC8F !important;font-size:11px;}
+.badge80{background-color:#B03060 !important;font-size:11px;}
+.badge81{background-color:#00CED1 !important;font-size:11px;}
+.badge82{background-color:#9ACD32 !important;font-size:11px;}
+.badge83{background-color:#FF1493 !important;font-size:11px;}
+.badge84{background-color:#5F9EA0 !important;font-size:11px;}
+.badge85{background-color:#8B0000 !important;font-size:11px;}
+.badge86{background-color:#6495ED !important;font-size:11px;}
+.badge87{background-color:#BDB76B !important;font-size:11px;}
+.badge88{background-color:#BA55D3 !important;font-size:11px;}
+.badge89{background-color:#2F4F4F !important;font-size:11px;}
+.badge90{background-color:#FF6347 !important;font-size:11px;}
+.badge91{background-color:#7CFC00 !important;font-size:11px;}
+.badge92{background-color:#4169E1 !important;font-size:11px;}
+.badge93{background-color:#C04000 !important;font-size:11px;}
+.badge94{background-color:#00BFFF !important;font-size:11px;}
+.badge95{background-color:#8A2BE2 !important;font-size:11px;}
+.badge96{background-color:#32CD32 !important;font-size:11px;}
+.badge97{background-color:#E9967A !important;font-size:11px;}
+.badge98{background-color:#4682B4 !important;font-size:11px;}
+.badge99{background-color:#D02090 !important;font-size:11px;}
+.badge100{background-color:#2E8B57 !important;font-size:11px;}
 
 .badge_header{
    font-size: 16px !important;;
+}
+
+.tabela{
+   font-size: 12px !important;
+   .ct{ text-align: center !important;}
+   .lf{ text-align: left !important;}
+   .rt{ text-align: right !important;}
+}
+
+.popover{
+      min-width: 570px !important;
 }
 
 .tabela{
