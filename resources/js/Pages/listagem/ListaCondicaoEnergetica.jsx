@@ -22,6 +22,7 @@ import {
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -269,7 +270,7 @@ const ListaCondicaoEnergetica = (props) => {
         </div>
     )
   }
-  
+
   return(
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
@@ -280,8 +281,20 @@ const ListaCondicaoEnergetica = (props) => {
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Condiçao Energética</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
                         <CButton color="primary" onClick={(e)=>tela('CondicaoEnergetica')}>Nova Condição&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                            <DescricaoComp title="Novo Tratamento" text={'Condição Energética'}/>
+                            <CButton
+                                color="primary"
+                                className="ms-auto flex-shrink-0"
+                                onClick={(e)=>tela('CondicaoEnergetica')}
+                            >
+                                Nova Condição&nbsp;
+                                <FontAwesomeIcon size="lg" icon={faFile} />
+                            </CButton>
+
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>

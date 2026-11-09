@@ -55,6 +55,16 @@ use App\Http\Controllers\Api\HumorController;
 use App\Http\Controllers\Api\ComportamentoPassivoController;
 use App\Http\Controllers\Api\FichaEntrevistaController;
 use App\Http\Controllers\Api\FichaRetornoController;
+use App\Http\Controllers\Api\FaixaIdadeController;
+use App\Http\Controllers\Api\TipoFuncionalidadeController;
+use App\Http\Controllers\Api\FuncionalidadeController;
+use App\Http\Controllers\Api\MenuController;
+
+
+
+
+
+
 
 /*
 Schema::dropIfExists('cor_condicoes_relatada');
@@ -108,6 +118,12 @@ Route::apiResource('inscricao',InscricaoController::class)->middleware('auth:san
 Route::apiResource('categoriavideo',CategoriaVideoController::class)->middleware('auth:sanctum');
 Route::apiResource('video',VideoController::class)->middleware('auth:sanctum');
 Route::apiResource('departamento',DepartamentoController::class)->middleware('auth:sanctum');
+Route::apiResource('faixaidade',FaixaIdadeController::class)->middleware('auth:sanctum');
+Route::apiResource('tipofuncionalidade', TipoFuncionalidadeController::class)->middleware('auth:sanctum');
+Route::apiResource('funcionalidade', FuncionalidadeController::class)->middleware('auth:sanctum');
+Route::apiResource('menu',MenuController::class)->middleware('auth:sanctum');
+
+
 
 //livros
 Route::apiResource('entradaestoque',EntradaEstoqueController::class)->middleware('auth:sanctum');

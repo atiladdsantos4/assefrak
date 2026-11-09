@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,12 +17,14 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit, faCirclePlay } from '@fortawesome/free-solid-svg-icons';
 import ModalVideos from '../componentes/ModalVideos';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -50,6 +52,11 @@ const ListaVideo = (props) => {
   const [load,setLoad] = useState(false)
   const [openmodal,setOpenmodal] = useState(false)
   const [linkvideo,setLinkvideo] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
 
   const closeModal = () =>{
      setOpenmodal(false)
@@ -139,7 +146,7 @@ const ListaVideo = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.vid_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -154,7 +161,7 @@ const ListaVideo = (props) => {
                     <CTableDataCell>{item.vid_hash_link}</CTableDataCell>
                     <CTableDataCell>{item.vid_ativo}</CTableDataCell>
                     <CTableDataCell>{item.vid_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.vid_id_vid} hashvideo={item.vid_hash_link}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.vid_id_vid} hashvideo={item.vid_hash_link} load={item.vid_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -262,7 +269,8 @@ const ListaVideo = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
        <FontAwesomeIcon size="xl" onClick={(e)=>AbreVideo(e,props.hashvideo)} style={{color:'#1c9245',cursor:'pointer'}} icon={faCirclePlay}/>
        &nbsp;
@@ -323,6 +331,55 @@ const ListaVideo = (props) => {
      )
  }
 
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast style={{borderRadius:'5px',color:'white'}} id="idtoast" autohide={autohide}
+            visible={false} color={color} delay="3000" className="text-white align-items-center">
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente excluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListavideo(prevItems => prevItems.map(item =>
+      item.vid_id_vid === idexclusao ? { ...item, vid_loadexclui: true } : item
+    ))
+    axios.delete(`${endpoint}/video/${idexclusao}`,{
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    .then((result) => {
+      if(result.data.status === true){
+        setListavideo(prevItems => prevItems.map(item =>
+          item.vid_id_vid === idexclusao ? { ...item, vid_loadexclui: false, vid_exclui: true } : item
+        ))
+        setListafiltro(prevItems => prevItems.map(item =>
+          item.vid_id_vid === idexclusao ? { ...item, vid_loadexclui: false, vid_exclui: true } : item
+        ))
+        setQtderegistros(prev => Math.max(0,prev-1))
+        addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+        setTimeout(() => {
+          const el = document.getElementById('idtoast')
+          if(el){el.classList.remove('show');el.remove()}
+        }, 2000)
+      }
+    })
+    .catch((error)=>console.error(error))
+  }
+
   return(
     <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
@@ -330,6 +387,8 @@ const ListaVideo = (props) => {
           <ImageHeader/>
         </div>
         <div class="container">
+            <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+            <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
             <ModalVideos open={openmodal} video={linkvideo} close={closeModal}/>
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Vídeos</CCardHeader>

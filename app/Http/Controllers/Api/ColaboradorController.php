@@ -168,8 +168,17 @@ class ColaboradorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $registro = Colaborador::find($id);
+
+        if($registro){
+            $registro->delete();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Registro excluído com sucesso'
+        ], 200, [], JSON_PRETTY_PRINT);
     }
 }

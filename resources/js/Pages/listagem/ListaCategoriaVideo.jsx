@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,9 +17,11 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 // import { NavbarComp } from '../layouts/NavbarComp';
@@ -45,6 +47,12 @@ const ListaCategoriaVideo = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  // modal exclusao
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
 
   useEffect(()=>{
     setLoad(false)
@@ -95,7 +103,7 @@ const ListaCategoriaVideo = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.cav_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -106,7 +114,7 @@ const ListaCategoriaVideo = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.cav_descricao}</CTableDataCell>
                     <CTableDataCell>{item.cav_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.cav_id_cav}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.cav_id_cav} load={item.cav_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -209,11 +217,62 @@ const ListaCategoriaVideo = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
        <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
+  }
+
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast style={{borderRadius:'5px',color:'white'}} id="idtoast" autohide={autohide} visible={false} color={color} delay="3000" className="text-white align-items-center">
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListacategoria(prevItems => prevItems.map(item =>
+      item.cav_id_cav === idexclusao ? { ...item, cav_loadexclui: true } : item
+    ))
+    setListafiltro(prevItems => prevItems.map(item =>
+      item.cav_id_cav === idexclusao ? { ...item, cav_loadexclui: true } : item
+    ))
+    axios.delete(`${endpoint}/categoriavideo/${idexclusao}`,{
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    .then((result) => {
+      if(result.data.status === true){
+        setListacategoria(prevItems => prevItems.map(item =>
+          item.cav_id_cav === idexclusao ? { ...item, cav_loadexclui: false, cav_exclui: true } : item
+        ))
+        setListafiltro(prevItems => prevItems.map(item =>
+          item.cav_id_cav === idexclusao ? { ...item, cav_loadexclui: false, cav_exclui: true } : item
+        ))
+        setQtderegistros(prev=>prev-1)
+        addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+        setTimeout(() => {
+          const el=document.getElementById('idtoast')
+          if(el){el.classList.remove('show');el.remove()}
+        }, 2000)
+      }
+    })
   }
 
   const EditaRegistro = (event,valor) =>{
@@ -251,6 +310,8 @@ const ListaCategoriaVideo = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2"  data-aos="fade-up">
            <ImageHeader/>

@@ -26,6 +26,8 @@ class PasseResource extends JsonResource
                 'pas_descricao' => $this->pas_descricao,
                 'pas_local' => $this->pas_local,
                 'pas_ativo' => false,
+                'pas_exclui' => false,
+                'pas_loadexclui' => false,
                 'pas_created_at' => Carbon::parse($this->pas_created_at)->format('d/m/Y H:i:s'),
                 'pas_updated_at' => $this->pas_updated_at != null ? Carbon::parse($this->pas_updated_at)->format('d/m/Y H:i:s') : null,
             ];

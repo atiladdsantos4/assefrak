@@ -26,6 +26,8 @@ class GravidadeClinicaResource extends JsonResource
                 'gac_descricao' => $this->gac_descricao,
                 'gac_local' => $this->gac_local,
                 'gac_ativo' => false,
+                'gac_exclui' => false,
+                'gac_loadexclui' => false,
                 'gac_created_at' => Carbon::parse($this->gac_created_at)->format('d/m/Y H:i:s'),
                 'gac_updated_at' => $this->gac_updated_at != null ? Carbon::parse($this->gac_updated_at)->format('d/m/Y H:i:s') : null,
             ];

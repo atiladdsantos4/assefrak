@@ -130,6 +130,14 @@ class ComportamentoPassivoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $cpp = ComportamentoPassivo::find($id);
+        $cpp->delete();
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
     }
 }

@@ -33,6 +33,8 @@ class InscricaoResource extends JsonResource
                 'ins_ativo'=> $this->ins_ativo,
                 'ins_envio_email'=> $this->ins_envio_email,
                 'ins_load'=> false,
+                'ins_exclui' => false,
+                'ins_loadexclui' => false,
                 'ins_modal_load'=> false,
                 'ins_created_at'=> Carbon::parse($this->ins_created_at)->format('d/m/Y H:i:s'),
                 'ins_updated_at'=> $this->ins_updated_at != null ? Carbon::parse($this->ins_updated_at)->format('d/m/Y H:i:s') : null,

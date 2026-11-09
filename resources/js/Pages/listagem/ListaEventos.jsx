@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,9 +17,11 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 // import { NavbarComp } from '../layouts/NavbarComp';
@@ -45,6 +47,10 @@ const ListaEventos = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
   /*
   const [numnpagination,setNumpagination] = useState(null)
     const [paginaatual,setPaginaatual] = useState(null)
@@ -98,7 +104,7 @@ const ListaEventos = (props) => {
       let classe = null
       let cont = 0
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.eve_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -125,7 +131,7 @@ const ListaEventos = (props) => {
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_desc_faixa}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.aco_nascimento}</CTableDataCell> */}
                     <CTableDataCell>{item.aco_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.eve_id_eve} estvalor={item.eve_estado}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.eve_id_eve} estvalor={item.eve_estado} load={item.eve_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -233,11 +239,48 @@ const ListaEventos = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-        <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+        {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+        <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
         &nbsp;
         <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id,props.estvalor)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
+  }
+
+
+  const CompToast = (texto, color) => (
+      <CToast id="idtoast" visible={false} color={color} delay={3000} className="text-white align-items-center">
+        <div className="d-flex"><CToastBody style={{color:'white'}}>{texto}</CToastBody><CToastClose className="me-2 m-auto" white /></div>
+      </CToast>
+  )
+
+  const Delete = (id) => {
+      setIditemexclusao(id)
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (id) => {
+      setOpenmodalconfirma(false)
+      setListaevento(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:true} : item))
+      setListafiltro(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:true} : item))
+      axios.delete(`${endpoint}/evento/${id}`,{
+          headers: { Accept:'application/json', 'Content-Type':'multipart/form-data', Authorization:'Bearer '+token },
+      }).then((result)=>{
+          if(result.data.status){
+              setListaevento(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:false, eve_exclui:true} : item))
+              setListafiltro(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:false, eve_exclui:true} : item))
+              setQtderegistros(prev => Math.max(0,prev-1))
+              addToast(CompToast('Exclusão Realizada com sucesso !!!','success'))
+          } else {
+              setListaevento(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:false} : item))
+              setListafiltro(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:false} : item))
+              addToast(CompToast(result.data.mensagem || 'Erro ao excluir registro','danger'))
+          }
+      }).catch(()=>{
+          setListaevento(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:false} : item))
+          setListafiltro(prev => prev.map(item => item.eve_id_eve == id ? {...item, eve_loadexclui:false} : item))
+          addToast(CompToast('Erro ao excluir registro !!!','danger'))
+      })
   }
 
   const EditaRegistro = (event,valor,estvalor) =>{
@@ -259,6 +302,8 @@ const ListaEventos = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster}/>
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={'Deseja realmente excluir este registro?'}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title  box-title mb-2" data-aos="fade-up">
           <ImageHeader/>

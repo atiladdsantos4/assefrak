@@ -181,8 +181,26 @@ class InscricaoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+
+    public function destroy($id)
     {
-        //
-    }
+        $model = Inscricao::find($id);
+
+        if (!$model) {
+            return response()->json([
+                'status' => false,
+                'mensagem' => 'Registro não encontrado!!!',
+            ], 404);
+        }
+
+        $model->delete();
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
+}
+
 }

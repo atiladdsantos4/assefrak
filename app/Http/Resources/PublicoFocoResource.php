@@ -24,6 +24,8 @@ class PublicoFocoResource extends JsonResource
             $data =  [
                 'puf_id_puf' => $this->puf_id_puf,
                 'puf_descricao' => $this->puf_descricao,
+                'puf_exclui' => false,
+                'puf_loadexclui' => false,
                 'puf_created_at' => Carbon::parse($this->puf_created_at)->format('d/m/Y H:i:s'),
                 'puf_updated_at' => $this->puf_updated_at != null ? Carbon::parse($this->puf_updated_at)->format('d/m/Y H:i:s') : null,
             ];

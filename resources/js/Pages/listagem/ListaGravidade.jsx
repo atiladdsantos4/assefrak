@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,15 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CBadge,
+    CTooltip, CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +49,13 @@ const ListaGravidade = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexlcusao, setIditemexclusao] = useState(null)
+  const [loadexclui,setLoadexclui] = useState(false)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()//toast
 
   useEffect(()=>{
      setLoad(false)
@@ -111,7 +122,7 @@ const ListaGravidade = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.gac_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -122,7 +133,7 @@ const ListaGravidade = (props) => {
                     <CTableDataCell>#-{index+1}</CTableDataCell>
                     <CTableDataCell>{item.gac_descricao}</CTableDataCell>
                     <CTableDataCell>{item.gac_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.gac_id_gac}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao load={item.gac_loadexclui} id={item.gac_id_gac}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -225,9 +236,10 @@ const ListaGravidade = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}}  icon={faTrash}  onClick={()=>Delete(props.id)} />
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
     )
   }
@@ -236,6 +248,46 @@ const ListaGravidade = (props) => {
       console.log('valor:'+valor)
       altera(valor)
       tela('Gravidade')
+  }
+
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente exlcluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setlistagra(prevItems =>
+        prevItems.map(item =>
+                item.gac_id_gac === idexclusao ? { ...item, gac_loadexclui: true } : item
+            )
+        )
+    axios.delete(`${endpoint}/gravidadeclinica/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then((result) => {
+             setlistagra(prevItems =>
+                    prevItems.map(item =>
+                        item.gac_id_gac === idexclusao ? { ...item, gac_loadexclui: false, gac_exclui: true } : item
+                    )
+                )
+             setListafiltro(prevItems =>
+                    prevItems.map(item =>
+                        item.gac_id_gac === idexclusao ? { ...item, gac_loadexclui: false, gac_exclui: true } : item
+                    )
+                )
+            addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+            setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+            }, 2000)
+     })
   }
 
   const QtdeRegistrosPagina = () =>{
@@ -267,6 +319,8 @@ const ListaGravidade = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexlcusao} funcret={()=>excluirItemBanco(iditemexlcusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>
@@ -275,8 +329,20 @@ const ListaGravidade = (props) => {
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Gravidade Clínica</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
                         <CButton color="primary" onClick={(e)=>tela('Gravidade')}>Nova Gravidade&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                        <DescricaoComp title="Ficha de Entrevista" text={'Gravidade Clínica'}/>
+                        <CButton
+                            color="primary"
+                            className="ms-auto flex-shrink-0"
+                            onClick={(e)=>tela('Gravidade')}
+                        >
+                            Nova Gravidade&nbsp;
+                            <FontAwesomeIcon size="lg" icon={faFile} />
+                        </CButton>
+
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>

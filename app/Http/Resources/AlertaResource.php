@@ -25,6 +25,8 @@ class AlertaResource extends JsonResource
                 'ale_id_ale' => $this->ale_id_ale,
                 'ale_descricao' => $this->ale_descricao,
                 'ale_ativo' => $this->ale_ativo,
+                'ale_exclui' => false,
+                'ale_loadexclui' => false,
                 'ale_created_at' => Carbon::parse($this->ale_created_at)->format('d/m/Y H:i:s'),
                 'ale_updated_at' => $this->ale_updated_at != null ? Carbon::parse($this->ale_updated_at)->format('d/m/Y H:i:s') : null,
             ];

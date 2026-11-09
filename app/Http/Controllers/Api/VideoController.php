@@ -20,7 +20,7 @@ class VideoController extends Controller
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
            if( isset($all["categoria"]) ){
-              $result_vid = Video::where('vid_id_cav',$all["categoria"])->orderBy('vid_descricao')->get(); 
+              $result_vid = Video::where('vid_id_cav',$all["categoria"])->orderBy('vid_descricao')->get();
            } else {
               $result_vid = Video::orderBy('vid_descricao')->get();
            }
@@ -50,7 +50,7 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $input = null;
         //criar a data de criação
         $request->merge(['vid_created_at' => date("Y-m-d H:i:s")]);
@@ -133,9 +133,22 @@ class VideoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+
+    public function destroy($id)
     {
-        //
+        $model = Video::find($id);
+
+        if ($model) {
+            $model->delete();
+        }
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
     }
+
 
 }

@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,17 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster,
+    CToast,
+    CToastBody,
+    CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +51,13 @@ const ListaLimpeza = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+
+  //modal exclui//
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
 
   useEffect(()=>{
      setLoad(false)
@@ -111,7 +124,7 @@ const ListaLimpeza = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.lim_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -122,7 +135,7 @@ const ListaLimpeza = (props) => {
                     <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.lim_descricao}</CTableDataCell>
                     <CTableDataCell>{item.lim_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.lim_id_lim}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.lim_id_lim} load={item.lim_loadexclui}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -222,13 +235,86 @@ const ListaLimpeza = (props) => {
   }
 
   //--> Display dos Ícones no grid
-  const ItensAcao = (props) => {
+  const ItensAcao = (props) =>{
     return(
-       <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
-       &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
-       </>
+      <>
+        {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+        <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)} />
+        &nbsp;
+        <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+      </>
+    )
+  }
+
+  const Delete = (id) =>{
+    setIditemexclusao(id)
+    setTextomodal('Deseja Realmente exlcluir o registro?')
+    setOpenmodalconfirma(true)
+  }
+
+  //--> Exclusão lógica
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+
+    setListaLimpeza(prevItems =>
+      prevItems.map(item =>
+        item.lim_id_lim === idexclusao
+          ? {...item,lim_loadexclui:true}
+          : item
+      )
+    )
+
+    axios.delete(`${endpoint}/limpeza/${idexclusao}`,{
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    .then((result)=>{
+      if(result.data.status === true){
+        setListaLimpeza(prevItems =>
+          prevItems.map(item =>
+            item.lim_id_lim === idexclusao
+              ? {...item,lim_loadexclui:false,lim_exclui:true}
+              : item
+          )
+        )
+
+        setListafiltro(prevItems =>
+          prevItems.map(item =>
+            item.lim_id_lim === idexclusao
+              ? {...item,lim_loadexclui:false,lim_exclui:true}
+              : item
+          )
+        )
+
+        addToast(CompToast('Registro excluido com Sucesso!!!','success'))
+
+        setTimeout(()=>{
+          document.getElementById('idtoast')?.classList.remove('show')
+          document.getElementById('idtoast')?.remove()
+        },2000)
+      }
+    })
+  }
+
+  const CompToast = (texto,color,autohide) =>{
+    return(
+      <CToast
+        style={{borderRadius:'5px',color:'white'}}
+        id="idtoast"
+        autohide={autohide}
+        visible={false}
+        color={color}
+        delay="3000"
+        className="text-white align-items-center"
+      >
+        <div className="d-flex">
+          <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+          <CToastClose className="me-2 m-auto" white/>
+        </div>
+      </CToast>
     )
   }
 
@@ -265,7 +351,10 @@ const ListaLimpeza = (props) => {
  }
 
   return(
-    <div data-aos="zoom-in">
+    <>
+      <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={(e)=>setOpenmodalconfirma(false)} texto={textomodal}/>
+      <CToaster ref={toaster} placement="top-end">{toast}</CToaster>
+      <div data-aos="zoom-in">
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>
@@ -276,8 +365,20 @@ const ListaLimpeza = (props) => {
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Limpeza / Desobsessão</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
                         <CButton color="primary" onClick={(e)=>tela('Limpeza')}>Nova Limpeza&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                            <DescricaoComp title="Novo Tratamento" text={'Limpeza Desobsessão'}/>
+                            <CButton
+                                color="primary"
+                                className="ms-auto flex-shrink-0"
+                                onClick={(e)=>tela('Limpeza')}
+                            >
+                                Nova Limpeza&nbsp;
+                                <FontAwesomeIcon size="lg" icon={faFile} />
+                            </CButton>
+
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>
@@ -321,6 +422,7 @@ const ListaLimpeza = (props) => {
         </div>
         </section>
     </div>
+    </>
   )
 
 }

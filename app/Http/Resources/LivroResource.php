@@ -39,6 +39,8 @@ class LivroResource extends JsonResource
                 'liv_ativo' => $this->liv_ativo,
                 'liv_preco' => $this->precoatual != null ? $this->precoatual->prl_valor_desconto : 0,
                 'liv_estoque' => (int) $this->estoque,
+                'liv_exclui' => false,
+                'liv_loadexclui' => false,
                 'liv_qrcode' => $this->qrcode != null ? $this->qrcode->lip_id_lip : 0,
                 'liv_created_at' => Carbon::parse($this->liv_created_at)->format('d/m/Y H:i:s'),
                 'liv_updated_at' => $this->liv_updated_at != null ? Carbon::parse($this->liv_updated_at)->format('d/m/Y H:i:s') : null,

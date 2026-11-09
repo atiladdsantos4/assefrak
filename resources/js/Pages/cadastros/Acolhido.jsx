@@ -39,6 +39,7 @@ const Acolhido = (props) => {
   const [ativo, setAtivo] = useState(false)
   const [listaestado, setListaestado] = useState([])
   const [listacidade, setListacidade] = useState([])
+  const [listafaixa, setListafaixa] = useState([])
   const [estado, setEstado] = useState(21)
   const [cidade, setCidade] = useState(null)
   const [nascimento, setNascimento] = useState(null)
@@ -129,6 +130,13 @@ const Acolhido = (props) => {
                                 'Content-Type': 'multipart/form-data',
                                 Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
                             },
+                    }),
+                    axios.get(`${endpoint}/faixaidade?listagem=S`,{
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'multipart/form-data',
+                                Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
+                            },
                     })
                 ]
 
@@ -137,6 +145,7 @@ const Acolhido = (props) => {
             let result_acolhido = responses[1]
             let result_cidade = responses[2]
             let result_tratamento = responses[3]
+            let result_faixa = responses[4]
             if(result_tratamento.data.data.length > 0){
               console.log('tem tratamento')
               setListatratamento(result_tratamento.data.data.sort((a,b)=>b.tra_id_tra - a.tra_id_tra))
@@ -148,6 +157,7 @@ const Acolhido = (props) => {
             //lista estados
             setListaestado(result_estado.data.data)
             setListacidade(result_cidade.data.data)
+            setListafaixa(result_faixa.data.data)
 
 
             //acolhidos
@@ -193,6 +203,13 @@ const Acolhido = (props) => {
                                 'Content-Type': 'multipart/form-data',
                                 Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
                             },
+                    }),
+                    axios.get(`${endpoint}/faixaidade?listagem=S`,{
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'multipart/form-data',
+                                Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
+                            },
                     })
                     //,
                     //    axios.get(`${endpoint}/pacote?listagem=S`,{
@@ -207,8 +224,10 @@ const Acolhido = (props) => {
 
                 let result_estado = responses[0]
                 let result_cidade = responses[1]
+                let result_faixa = responses[2]
                 setListaestado(result_estado.data.data)
                 setListacidade(result_cidade.data.data)
+                setListafaixa(result_faixa.data.data)
                 setLoadpage(false)
             }
             catch (error) {
@@ -219,12 +238,12 @@ const Acolhido = (props) => {
     }
   },[])
 
-  const listafaixas = [
-    { faixa: '', descricao: 'Selecione a Faixa' },
-    { faixa: '1', descricao: '0 à 19 Anos' },
-    { faixa: '2', descricao: '20 à 59 Anos' },
-    { faixa: '3', descricao: '60 ou mais' },
-  ]
+//   const listafaixas = [
+//     { faixa: '', descricao: 'Selecione a Faixa' },
+//     { faixa: '1', descricao: '0 à 19 Anos' },
+//     { faixa: '2', descricao: '20 à 59 Anos' },
+//     { faixa: '3', descricao: '60 ou mais' },
+//   ]
 
   const lista_estados = [
     { uf: 'AC', nome: 'Acre' },
@@ -505,10 +524,19 @@ const Acolhido = (props) => {
 
  const CompFaixas = () =>{
     return(
-        listafaixas.map((item,index)=>{
-        return(
-            <option key={index} value={item.faixa}>{item.descricao}</option>
+        listafaixa.map((item,index)=>{
+        if(index == 0){
+           return(
+            <>
+                <option key={index} value=''>{'Selecione a Faixa'}</option>
+                <option key={index} value={item.fai_id_fai}>{item.fai_descricao}</option>
+            </>
             )
+        } else {
+            return(
+                <option key={index} value={item.fai_id_fai}>{item.fai_descricao}</option>
+                )
+            }
         })
     )
  }

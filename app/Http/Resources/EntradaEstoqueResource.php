@@ -30,6 +30,8 @@ class EntradaEstoqueResource extends JsonResource
                 'ene_valor_unit' => $this->ene_valor_unit,
                 'ene_valor_total' => $this->ene_valor_total,
                 'ene_saida' => $this->ene_saida == null ? 0 :$this->ene_saida,
+                'ene_exclui' => false,
+                'ene_loadexclui' => false,
                 'ene_created_at' => Carbon::parse($this->ene_created_at)->format('d/m/Y H:i:s'),
                 'ene_updated_at' => $this->ene_updated_at != null ? Carbon::parse($this->ene_updated_at)->format('d/m/Y H:i:s') : null,
             ];

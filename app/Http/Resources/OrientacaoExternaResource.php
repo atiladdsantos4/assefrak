@@ -26,6 +26,8 @@ class OrientacaoExternaResource extends JsonResource
                 'ori_descricao' => $this->ori_descricao,
                 'ori_local' => $this->ori_local,
                 'ori_ativo' => false,
+                'ori_exclui' => false,
+                'ori_loadexclui' => false,
                 'ori_created_at' => Carbon::parse($this->ori_created_at)->format('d/m/Y H:i:s'),
                 'ori_updated_at' => $this->ori_updated_at != null ? Carbon::parse($this->ori_updated_at)->format('d/m/Y H:i:s') : null,
             ];

@@ -76,23 +76,11 @@ const HeaderAdmin = (props) => {
                 <ul>
                     <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Acolhidos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul className="ul_cab">
-                        <li><a href="#hero" class="active" onClick={(e)=>handleClick(e,'Acolhido')}>Novo Acolhido</a></li>
-                        <li><a href="#" onClick={(e)=>handleClick(e,'ListaAcolhidos')}>Lista Acolhidos</a></li>
-                        <li class="dropdown"><a href="#"><span>Controles de Ficha</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                <ul className='ul_cab'>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'Humor')}>Humor e Energia</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'Reativo')}>Comportamentos Reativos</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'Passivo')}>Comportamentos Passivos</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'Sono')}>Cognição e Sono</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'Gravidade')}>Gravidade Clínica</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'Relatadas')}>Condições Percebidas / Relatadas</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'DiaPasse')}>Dia do Passe</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'OrientacaoCasa')}>Orientações Dadas na Casa</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'OrientacaoExterna')}>Orientações Para Encaminhamento Externo</a></li>
-                                    <li><a href="#" onClick={(e)=>handleClick(e,'FichaEntrevista')}>Ficha de Entrevista</a></li>
-                                </ul>
-                        </li>
-                       </ul>
+                            <li><a href="#hero" class="active" onClick={(e)=>handleClick(e,'Acolhido')}>Novo Acolhido</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaAcolhidos')}>Lista Acolhidos</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'FaixaIdade')}>Cadastro Faixa de Idade</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaFaixaIdade')}>Listar Faixa de Idade</a></li>
+                        </ul>
                     </li>
                     <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Colaboradores</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul className="ul_cab">
@@ -101,6 +89,51 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaColaboradores')}>Lista Colaboradores</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Apresentacao')}>Nova Apresentação</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaApresentacao')}>Lista de Apresentações</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Entrevistas</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
+                            <li class="dropdown"><a href="#"><span>Controles de Entrevista</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul className='ul_cab'>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaHumor')}>Humor e Energia</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaReativo')}>Comportamentos Reativos</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaPassivo')}>Comportamentos Passivos</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaSono')}>Cognição e Sono</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaGravidade')}>Gravidade Clínica</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaRelatadas')}>Condições Percebidas / Relatadas</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaDiaPasse')}>Dia do Passe</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaOrientacaoCasa')}>Orientações Dadas na Casa</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaOrientacaoExterna')}>Orientações Para Encaminhamento Externo</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'FichaEntrevista')}>Nova Ficha de Entrevista</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaFichaEntrevista')}>Listar Ficha de Entrevistas</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'AssociarEntrevista')}>Associar Entrevista a Tratamento</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a href="#"><span className="cabecalho">Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul className="ul_cab">
+                            <li class="dropdown"><a href="#"><span>Controle Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul className='ul_cab'>
+                                    <li><a href="#about" onClick={(e)=>handleClick(e,'ListaPasses')}>Passes</a></li>
+                                    <li><a href="#services" onClick={(e)=>handleClick(e,'ListaFocoEnergeticos')} className="centralizado">Focos Energéticos</a></li>
+                                    <li><a href="#services" onClick={(e)=>handleClick(e,'ListaCondicaoEnergeticas')} className="centralizado">Condição Energética</a></li>
+                                    <li><a href="#portfolio" onClick={(e)=>handleClick(e,'ListaFortalecimentos')}>Fortalecimento</a></li>
+                                    <li><a href="#team" className="centralizado" onClick={(e)=>handleClick(e,'ListaLimpezas')}>Limpeza Desobsessão</a></li>
+                                    <li><a href="#team" className="centralizado" onClick={(e)=>handleClick(e,'ListaAlertas')}>Alertas Segurança</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaTipoTratamentos')}>Tipo Tratamento</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaStatusTratamentos')}>Status do Tratamento</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown"><a href="#"><span>Avaliações</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul className='ul_cab'>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaOcorrencias')}>Ocorrências Passe</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Tratamento')}>Novo Tratamento</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaTratamentos')}>Listar Tratamentos</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ControlePresenca')}>Controle de Presença</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Ficha')}>Geração de Ficha</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Eventos/Palestras</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -116,35 +149,19 @@ const HeaderAdmin = (props) => {
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaPresenca')}>Listagem de Presença</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Controle Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                    {/* <li class="dropdown"><a href="#"><span className="cabecalho">Avaliações</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul className="ul_cab">
-                        <li><a href="#about" onClick={(e)=>handleClick(e,'ListaPasses')}>Passes</a></li>
-                        <li><a href="#services" onClick={(e)=>handleClick(e,'ListaFocoEnergeticos')} className="centralizado">Focos Energéticos</a></li>
-                        <li><a href="#services" onClick={(e)=>handleClick(e,'ListaCondicaoEnergeticas')} className="centralizado">Condição Energética</a></li>
-                        <li><a href="#portfolio" onClick={(e)=>handleClick(e,'ListaFortalecimentos')}>Fortalecimento</a></li>
-                        <li><a href="#team" className="centralizado" onClick={(e)=>handleClick(e,'ListaLimpezas')}>Limpeza Desobsessão</a></li>
-                        <li><a href="#team" className="centralizado" onClick={(e)=>handleClick(e,'ListaAlertas')}>Alertas Segurança</a></li>
-                        <li><a href="#" onClick={(e)=>handleClick(e,'ListaTipoTratamentos')}>Tipo Tratamento</a></li>
-                        <li><a href="#" onClick={(e)=>handleClick(e,'ListaStatusTratamentos')}>Status do Tratamento</a></li>
+                            <li class="dropdown"><a href="#"><span>Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul className='ul_cab'>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaOcorrencias')}>Ocorrências Passe</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Tratamento')}>Novo Tratamento</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ListaTratamentos')}>Listar Tratamentos</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'ControlePresenca')}>Controle de Presença</a></li>
+                                    <li><a href="#" onClick={(e)=>handleClick(e,'Ficha')}>Geração de Ficha</a></li>
+                                </ul>
+                            </li>
                         </ul>
-                    </li>
-                    <li class="dropdown"><a href="#"><span className="cabecalho">Avaliações</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul className="ul_cab">
-                        <li class="dropdown"><a href="#"><span>Tratamentos</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul className='ul_cab'>
-                                <li><a href="#" onClick={(e)=>handleClick(e,'ListaOcorrencias')}>Ocorrências Passe</a></li>
-                                <li><a href="#" onClick={(e)=>handleClick(e,'Tratamento')}>Novo Tratamento</a></li>
-                                <li><a href="#" onClick={(e)=>handleClick(e,'ListaTratamentos')}>Listar Tratamentos</a></li>
-                                <li><a href="#" onClick={(e)=>handleClick(e,'ControlePresenca')}>Controle de Presença</a></li>
-                                <li><a href="#" onClick={(e)=>handleClick(e,'Ficha')}>Geração de Ficha</a></li>
-                            </ul>
-                        </li>
-                        {/* <li><a href="#">Dropdown 1</a></li>
-                        <li><a href="#">Dropdown 2</a></li>
-                        <li><a href="#">Dropdown 3</a></li>
-                        <li><a href="#">Dropdown 4</a></li> */}
-                        </ul>
-                    </li>
+                    </li> */}
                     <li class="dropdown"><a href="#"><span className="centralizado cabecalho">Livraria</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul className="ul_cab">
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaAutores')}>Lista Autores</a></li>
@@ -173,6 +190,12 @@ const HeaderAdmin = (props) => {
                                     <li><a href="#" onClick={(e)=>handleClick(e,'ListaSaidasEstoque')}>Listagem Saídas</a></li>
                                 </ul>
                             </li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'TipoFuncionalidade')}>Tipo de Funcionalidade</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaTipoFuncionalidade')}>Lista Tipo Funcionalidade</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'Funcionalidade')}>Funcionalidade</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaFuncionalidade')}>ListaFuncionalidades</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'Menu')}>Novo Menu</a></li>
+                            <li><a href="#" onClick={(e)=>handleClick(e,'ListaMenu')}>Listar Menus</a></li>
                             {/* <li><a href="#" onClick={(e)=>handleClick(e,'ListaEditoras')}>Lista Editoras</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'Editora')}>Nova Editora</a></li>
                             <li><a href="#" onClick={(e)=>handleClick(e,'ListaLivros')}>Lista Livros</a></li>

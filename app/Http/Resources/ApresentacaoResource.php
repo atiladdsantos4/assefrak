@@ -28,6 +28,8 @@ class ApresentacaoResource extends JsonResource
                 'apr_tema' => $this->apr_tema,
                 'apr_data_exibe' => Carbon::parse($this->apr_data_exibe)->format('d/m/Y'),
                 'apr_ativo' => $this->apr_ativo,
+                'apr_exclui' => false,
+                'apr_loadexclui' => false,
                 'apr_path_exibicao' => 'apresentacao/'.str_pad($this->apr_id_apr, 2, '0', STR_PAD_LEFT).'/',
                 'apr_created_at' => Carbon::parse($this->apr_created_at)->format('d/m/Y H:i:s'),
                 'apr_updated_at' => $this->apr_updated_at != null ? Carbon::parse($this->apr_updated_at)->format('d/m/Y H:i:s') : null,

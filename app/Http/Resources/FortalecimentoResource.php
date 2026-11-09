@@ -25,6 +25,8 @@ class FortalecimentoResource extends JsonResource
                 'for_id_for' => $this->for_id_for,
                 'for_descricao' => $this->for_descricao,
                 'for_ativo' => false,
+                'for_exclui' => false,
+                'for_loadexclui' => false,
                 'for_created_at' => Carbon::parse($this->for_created_at)->format('d/m/Y H:i:s'),
                 'for_updated_at' => $this->for_updated_at != null ? Carbon::parse($this->for_updated_at)->format('d/m/Y H:i:s') : null,
             ];

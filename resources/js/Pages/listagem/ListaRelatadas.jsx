@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,14 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
+import ModalDelete from '../componentes/ModalDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import DescricaoComp from '../componentes/DescricaoComp';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -33,7 +36,7 @@ const ListaRelatadas = (props) => {
   const token  = import.meta.env.VITE_APP_TOKEN
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
-  const [listarel,setListarel] = useState([])
+  const [listarel,setlistarel] = useState([])
   const [listafiltro,setListafiltro] = useState([])
   const [est,setEst] = useState(false)
   const [numnpagination,setNumpagination] = useState(null)
@@ -42,11 +45,15 @@ const ListaRelatadas = (props) => {
   const [registroini,setRegistroini] = useState(0)
   const [registrofim,setRegistrofim] = useState(0)
   const [qtderegistros,setQtderegistros] = useState(0)
-  const [qtderegistrospagina,setQtderegistrospagina] = useState(15)
+  const [qtderegistrospagina,setQtderegistrospagina] = useState(5)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
-
-
+  //--> Exclusão
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast, addToast] = useState()
 
   useEffect(()=>{
      setLoad(false)
@@ -61,7 +68,7 @@ const ListaRelatadas = (props) => {
        .then((result) => {
            altera(null)
            console.log(result)
-           setListarel(result.data.data)
+           setlistarel(result.data.data)
            setListafiltro(result.data.data)
            let tam = result.data.data.length
            setQtderegistros(tam)
@@ -113,7 +120,7 @@ const ListaRelatadas = (props) => {
         )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.cor_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -121,10 +128,10 @@ const ListaRelatadas = (props) => {
             } else {
                return(
                 <CTableRow color={classe}>
-                    <CTableDataCell>#-{index+1}</CTableDataCell>
+                    <CTableDataCell>#</CTableDataCell>
                     <CTableDataCell>{item.cor_descricao}</CTableDataCell>
                     <CTableDataCell>{item.cor_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao id={item.cor_id_cor}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}><ItensAcao load={item.cor_loadexclui} id={item.cor_id_cor}/></CTableDataCell>
                     {/* <CTableDataCell style={{textAlign:'center'}}></CTableDataCell> */}
                     </CTableRow>
                )
@@ -141,9 +148,9 @@ const ListaRelatadas = (props) => {
             (item)=>item.cor_descricao.toLowerCase().includes(valor.toLowerCase())
         )
         console.log(lista)
-        setListarel(lista.slice(0,qtderegistrospagina))
+        setlistarel(lista.slice(0,qtderegistrospagina))
      } else {
-        setListarel(listafiltro.slice(0,qtderegistrospagina))
+        setlistarel(listafiltro.slice(0,qtderegistrospagina))
      }
   }
 
@@ -196,7 +203,26 @@ const ListaRelatadas = (props) => {
     } else {
        setRegistrofim(fim)
     }
-    setListarel(lista)
+    setlistarel(lista)
+  }
+
+  const CompToast = (texto, color, autohide) => {
+        return (
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
   }
 
   const Pagination = (props) => {
@@ -227,17 +253,54 @@ const ListaRelatadas = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       {props.load ? <CSpinner className="spinner_div" color="danger" size="sm"/> : (<></>)}
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
-       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
+       <FontAwesomeIcon onClick={(e)=>EditaRegistro(e,props.id)} style={{color:'blue',cursor:'pointer'}} icon={faEdit} size="xl"/>
        </>
     )
   }
 
   const EditaRegistro = (event,valor) =>{
-      console.log('valor:'+valor)
       altera(valor)
       tela('Relatadas')
+  }
+
+  const Delete = (id) =>{
+     setIditemexclusao(id)
+     setTextomodal('Deseja Realmente excluir o registro?')
+     setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setlistarel(prevItems =>
+        prevItems.map(item =>
+            item.cor_id_cor === idexclusao ? { ...item, cor_loadexclui: true } : item
+        )
+    )
+    axios.delete(`${endpoint}/condicoesrelatada/${idexclusao}`,{
+        headers: {
+           Accept: 'application/json',
+           'Content-Type': 'multipart/form-data',
+           Authorization: 'Bearer ' + token,
+        },
+     })
+     .then(() => {
+        setlistarel(prevItems =>
+            prevItems.map(item =>
+                item.cor_id_cor === idexclusao ? { ...item, cor_loadexclui: false, cor_exclui: true } : item
+            )
+        )
+        addToast(CompToast('Exclusão Realizada com sucesso !!!', 'success'))
+        setTimeout(() => {
+            const elemento = document.getElementById('idtoast')
+            if(elemento){
+                elemento.classList.remove('show')
+                elemento.remove()
+            }
+        }, 2000)
+     })
   }
 
   const QtdeRegistrosPagina = () =>{
@@ -269,6 +332,8 @@ const ListaRelatadas = (props) => {
 
   return(
     <div data-aos="zoom-in">
+        <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+        <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
         <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader/>
@@ -277,8 +342,20 @@ const ListaRelatadas = (props) => {
             <CCard>
                 <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />&nbsp;Listagem de Condições Percebidas / Relatadas</CCardHeader>
                 <CCardBody className='mt-1 mb-4'>
-                    <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
+                    {/* <div className="mb-4" style={{display:'flex',justifyContent:'flex-end'}}>
                         <CButton color="primary" onClick={(e)=>tela('Relatadas')}>Novo Relato&nbsp;<FontAwesomeIcon size="lg" icon={faFile} /></CButton>
+                    </div> */}
+                    <div className="mb-4 d-flex align-items-center gap-2">
+                        <DescricaoComp title="Ficha de Entrevista" text={'Condições Percebidas / Relatadas'}/>
+                        <CButton
+                            color="primary"
+                            className="ms-auto flex-shrink-0"
+                            onClick={(e)=>tela('Relatadas')}
+                        >
+                            Nova Gravidade&nbsp;
+                            <FontAwesomeIcon size="lg" icon={faFile} />
+                        </CButton>
+
                     </div>
                     <div style={{display:'flex'}}>
                         <div style={{flex:'1'}}>
@@ -298,7 +375,7 @@ const ListaRelatadas = (props) => {
                         <CTableHead style={{fontSize:'11px !important'}}>
                             <CTableRow>
                                 <CTableHeaderCell className='clthinputtext'style={{borderRadius:'5px 0px 0px 0px',fontSize:'11px !important'}} scope="col">#</CTableHeaderCell>
-                                <CTableHeaderCell className='clthinterno' scope="col">Comportamento / Passivo</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col">Condições Percebidas / Relatadas</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Criação</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' style={{textAlign:'center',borderRadius:'0px 5px 0px 0px'}} scope="col">Acão</CTableHeaderCell>
                             </CTableRow>

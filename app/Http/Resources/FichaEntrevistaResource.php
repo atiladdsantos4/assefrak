@@ -46,6 +46,9 @@ class FichaEntrevistaResource extends JsonResource
                 'fie_anotacao' => $this->fie_anotacao,
                 'fie_ativo' => $this->fie_ativo,
                 'fie_retorno' => $this->fie_retorno,
+                'fie_exclui' => false,
+                'fie_loadexclui' => false,
+                'fie_data' => Carbon::parse($this->fie_created_at)->format('d/m/Y'),
                 'fie_created_at' => Carbon::parse($this->fie_created_at)->format('d/m/Y H:i:s'),
                 'fie_updated_at' => $this->fie_updated_at != null ? Carbon::parse($this->fie_updated_at)->format('d/m/Y H:i:s') : null,
             ];
@@ -76,6 +79,7 @@ class FichaEntrevistaResource extends JsonResource
                 'fie_orientacoes_externa' => $this->fie_orientacoes_externa,
                 'fie_anotacao' => $this->fie_anotacao,
                 'fie_ativo' => $this->fie_ativo,
+                'fie_data' => Carbon::parse($this->fie_created_at)->format('d/m/Y'),
                 'fie_retorno' => $this->retorno,
                 'fie_created_at' => Carbon::parse($this->fie_created_at)->format('d/m/Y H:i:s'),
                 'fie_updated_at' => $this->fie_updated_at != null ? Carbon::parse($this->fie_updated_at)->format('d/m/Y H:i:s') : null,

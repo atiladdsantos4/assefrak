@@ -1,6 +1,7 @@
 import { React, useEffect, useState, Suspense, useRef } from 'react';
 import { CCard, CCardBody,CCardHeader,CCol,CButton, CTable,CTableRow,CTableHeaderCell,CTableBody,CTableDataCell,
     CTableHead,CForm, CFormCheck,CFormFeedback,CFormInput,CSpinner,CFormLabel,CInputGroup,
+  CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle,CDropdownDivider,
   CToaster,CToast,CToastBody,CToastClose,CInputGroupText,CFormSelect, CPlaceholder,
   CRow,CFormTextarea,CBadge} from '@coreui/react'
 import axios from 'axios';
@@ -26,6 +27,11 @@ const Tratamento = (props) => {
     const [est, setEst] = useState(false)
     const [idtratamento, setIdtratamento] = useState(null)
     const [idocorrencia, setIdocorrencia] = useState(null)
+    const [identrevista, setIdentrevista] = useState(null)
+    const [textoentrevista, setTextoentrevista] = useState(null)
+    const [identrevistaparam, setIdentrevistaparam] = useState(null)
+    const [textoentrevistaparam, setTextoentrevistaparam] = useState(null)
+    const [listaentrevista, setListaentrevista] = useState([])
     const [idacolhidoocorrencia, setIdacolhidoocorrencia] = useState(null)
     const [dadoseditamodal, setDadoseditamodal] = useState(null)
     const [nome, setNome] = useState('')
@@ -230,6 +236,7 @@ const Tratamento = (props) => {
                 /** tratando a ediçao*/
                 console.log('acolhido:'+result_showtratamento.tra_id_aco)
                 setAcolhido(result_showtratamento.tra_id_aco)
+                setIdentrevista(result_showtratamento.tra_ficha)
                 setColaborador(result_showtratamento.tra_id_col)
                 let idade = result_acolhido.data.data.filter((item)=>item.aco_id_aco == result_showtratamento.tra_id_aco)
                 setIdade(idade[0].aco_idade)
@@ -237,6 +244,12 @@ const Tratamento = (props) => {
                 setTipotratamento(result_showtratamento.tra_id_tit)
                 setStatus(result_showtratamento.tra_id_stt)
                 setPrimeiro(result_showtratamento.tra_pri_impressao)
+
+                //ficha//
+                if(result_showtratamento.tra_ficha !=null){
+                   setIdentrevistaparam(result_showtratamento.tra_ficha)
+                   setTextoentrevistaparam('Ficha de Entrevista Nº '+result_showtratamento.tra_ficha)
+                }
                 let string  = null
 
                 //string = JSON.parse(result_showtratamento.tra_passe)
@@ -439,6 +452,30 @@ const Tratamento = (props) => {
         }
     }
 
+    //somente pra carregar fichas//
+    useEffect(()=>{
+        setIdentrevista(null)
+        setTextoentrevista('')
+        axios.get(`${endpoint}/fichaentrevista?listagem=S&acolhido=${acolhido}`,{
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
+                Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
+            },
+        })
+         .then((result) => {
+            let lista = result.data.data.filter((item)=>item.fie_id_tra == null)
+            setListaentrevista(lista)
+         })
+         if(param != null){
+            if(identrevistaparam){
+               setIdentrevista(identrevistaparam)
+               setTextoentrevista('Ficha de Entrevista Nº '+identrevistaparam)
+            }
+        }
+        console.log('acolhido:'+acolhido)
+    },[acolhido])
+
     //--> Cria Data Atual
     const formatDate = (date) => {
         const d = String(date.getDate()).padStart(2, '0');
@@ -453,7 +490,6 @@ const Tratamento = (props) => {
     };
 
     const CompAcolhido = () =>{
-        //listacidade.unshift({cid_id_cid:'',cid_descricao:'Selecione a Cidade'})
         return(
             listaacolhido.map((item,index)=>{
             return(
@@ -808,6 +844,9 @@ const Tratamento = (props) => {
             formData.append('tra_limpeza', Limpeza)
             formData.append('tra_alerta', Alerta)
             formData.append('tra_pri_impressao', primeiro)
+            if(identrevista !=null){
+               formData.append('fie_id_fie', identrevista)
+            }
             axios
             .post(`${endpoint}/tratamento`, formData, {
                 headers: {
@@ -847,6 +886,9 @@ const Tratamento = (props) => {
             formData.append('tra_limpeza', Limpeza)
             formData.append('tra_alerta', Alerta)
             formData.append('tra_pri_impressao', primeiro)
+            if(identrevista !=null){
+               formData.append('fie_id_fie', identrevista)
+            }
             formData.append('_method', 'put')
             axios
             .post(`${endpoint}/tratamento/${idtratamento}`, formData, {
@@ -990,6 +1032,37 @@ const Tratamento = (props) => {
     )
  }
 
+ const AlteraEntrevista = (id,valor)=>{
+   setIdentrevista(id)
+   setTextoentrevista(valor)
+
+ }
+
+ const InputFicha = () =>{
+    return(
+        <><CFormLabel htmlFor="exampleForm">Associar Ficha de Entrevista</CFormLabel>
+        <CInputGroup className="mb-3">
+            <CDropdown variant="input-group">
+            <CButton type="button" color="secondary" variant="outline">
+                Ficha
+            </CButton>
+            <CDropdownToggle color="secondary" variant="outline" split />
+            <CDropdownMenu>
+                {
+                  listaentrevista.map((item,index)=>{
+                    return(
+                       <CDropdownItem href="#" onClick={()=>AlteraEntrevista(item.fie_id_fie,'Ficha de Entrevista Nº'+item.fie_id_fie+' - '+item.fie_data)}>{'Ficha de Entrevista Nº'+item.fie_id_fie+' - '+item.fie_data}</CDropdownItem>
+                    )
+                  })
+                }
+            </CDropdownMenu>
+            </CDropdown>
+            <CFormInput aria-label="Text input with segmented dropdown button" value={textoentrevista}/>
+        </CInputGroup>
+        </>
+    )
+ }
+
 
     return(
         <div data-aos="zoom-in">
@@ -1064,7 +1137,7 @@ const Tratamento = (props) => {
                                                     required
                                                 />)}
                                         </CCol>
-                                        <CCol md={6}>
+                                        <CCol md={2}>
                                                 { loadpage
                                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                                 : (
@@ -1077,6 +1150,11 @@ const Tratamento = (props) => {
                                                     readOnly
                                                     required
                                                 />)}
+                                        </CCol>
+                                        <CCol md={4}>
+                                                { loadpage
+                                                ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                                : (<InputFicha/>)}
                                         </CCol>
                                         <CCol md={6}>
                                             { loadpage

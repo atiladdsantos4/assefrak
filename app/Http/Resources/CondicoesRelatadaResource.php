@@ -26,6 +26,8 @@ class CondicoesRelatadaResource extends JsonResource
                 'cor_descricao' => $this->cor_descricao,
                 'cor_local' => $this->cor_local,
                 'cor_ativo' => false,
+                'cor_exclui' => false,
+                'cor_loadexclui' => false,
                 'cor_created_at' => Carbon::parse($this->cor_created_at)->format('d/m/Y H:i:s'),
                 'cor_updated_at' => $this->cor_updated_at != null ? Carbon::parse($this->cor_updated_at)->format('d/m/Y H:i:s') : null,
             ];

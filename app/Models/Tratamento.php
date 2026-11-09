@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tratamento extends Model
 {
@@ -37,6 +38,11 @@ class Tratamento extends Model
         'tra_limpeza' =>'array',
         'tra_alerta' =>'array',
     ];
+
+    public function entrevista(){ //--> especilidade
+      return $this->belongsTo(FichaEntrevista::class, 'tra_id_tra', 'fie_id_tra');
+      //->makeHidden(['dataini', 'datafim']);
+    }
 
     public function acolhido(){ //--> especilidade
       return $this->hasOne(Acolhido::class, 'aco_id_aco', 'tra_id_aco');

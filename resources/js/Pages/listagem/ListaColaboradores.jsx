@@ -1,4 +1,4 @@
-import { React,useEffect,useState,Suspense } from 'react';
+import { React,useEffect,useState,Suspense,useRef } from 'react';
 import {
     CTable,
     CTableRow,
@@ -17,11 +17,13 @@ import {
     CCardText,
     CButton,
     CSpinner,
-    CFormSelect
+    CFormSelect,
+    CToaster, CToast, CToastBody, CToastClose
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import ModalDelete from '../componentes/ModalDelete';
 // import { NavbarComp } from '../layouts/NavbarComp';
 // import { SidebarComp } from '../layouts/SidebarComp';
 
@@ -45,6 +47,13 @@ const ListaColaboradores = (props) => {
   const [qtderegistrospagina,setQtderegistrospagina] = useState(10)
   const [pesquisar,setPesquisar] = useState(null)
   const [load,setLoad] = useState(false)
+
+  // Modal de exclusão
+  const [openmodalconfirma,setOpenmodalconfirma] = useState(false)
+  const [textomodal,setTextomodal] = useState('')
+  const [iditemexclusao,setIditemexclusao] = useState(null)
+  const toaster = useRef(null)
+  const [toast,addToast] = useState()
 
   useEffect(()=>{
     setLoad(false)
@@ -97,7 +106,7 @@ const ListaColaboradores = (props) => {
            )
       }
       return(
-         props.lista.map((item,index)=>{
+         props.lista.filter((item)=>item.col_exclui == false).map((item,index)=>{
             cont++
             classe = index % 2 == 0 ? 'primary' : 'secondary'
             if(cont > qtderegistrospagina){
@@ -116,7 +125,7 @@ const ListaColaboradores = (props) => {
                     <CTableDataCell style={{textAlign:'left'}}>{item.col_desc_ocupacao}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.col_nascimento}</CTableDataCell>
                     <CTableDataCell>{item.col_created_at}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}><ItensAcao id={item.col_id_col} estvalor={item.col_estado}/></CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center',whiteSpace:'nowrap'}}>{item.col_loadexclui ? <CSpinner className="spinner_div" size="sm"/> : <ItensAcao id={item.col_id_col} estvalor={item.col_estado}/>}</CTableDataCell>
                 </CTableRow>
                )
             }
@@ -223,7 +232,7 @@ const ListaColaboradores = (props) => {
   const ItensAcao = (props) => {
     return(
        <>
-       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash}/>
+       <FontAwesomeIcon size="xl" style={{color:'red',cursor:'pointer'}} icon={faTrash} onClick={()=>Delete(props.id)}/>
        &nbsp;
        <FontAwesomeIcon size="xl" onClick={(e)=>EditaRegistro(e,props.id,props.estvalor)} style={{color:'blue',cursor:'pointer'}} icon={faEdit}/>
        </>
@@ -235,6 +244,73 @@ const ListaColaboradores = (props) => {
       altera(valor)
       alteraestado(estvalor)
       tela('Colaborador')
+  }
+
+  const CompToast = (texto,color,autohide) => {
+        return (
+          <CToast
+            style={{borderRadius:'5px',color:'white'}}
+            id="idtoast"
+            autohide={autohide}
+            visible={false}
+            color={color}
+            delay="3000"
+            className="text-white align-items-center"
+          >
+            <div className="d-flex">
+              <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+              <CToastClose className="me-2 m-auto" white />
+            </div>
+          </CToast>
+        )
+  }
+
+  const Delete = (id) =>{
+      setIditemexclusao(id)
+      setTextomodal('Deseja Realmente excluir o registro?')
+      setOpenmodalconfirma(true)
+  }
+
+  const excluirItemBanco = (idexclusao) =>{
+    setOpenmodalconfirma(false)
+    setListacolaborador(prevItems =>
+        prevItems.map(item =>
+            item.col_id_col === idexclusao ? { ...item, col_loadexclui: true } : item
+        )
+    )
+    axios.delete(`${endpoint}/colaborador/${idexclusao}`,{
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + token,
+        },
+    })
+    .then((result) => {
+        setListacolaborador(prevItems =>
+            prevItems.map(item =>
+                item.col_id_col === idexclusao
+                    ? { ...item, col_loadexclui: false, col_exclui: true }
+                    : item
+            )
+        )
+        addToast(CompToast('Exclusão realizada com sucesso !!!','success'))
+        setTimeout(() => {
+            const toastElement = document.getElementById('idtoast')
+            if(toastElement){
+                toastElement.classList.remove('show')
+                toastElement.remove()
+            }
+        },2000)
+    })
+    .catch((error) => {
+        setListacolaborador(prevItems =>
+            prevItems.map(item =>
+                item.col_id_col === idexclusao ? { ...item, col_loadexclui: false } : item
+            )
+        )
+        addToast(CompToast('Não foi possível excluir o registro.','danger'))
+        console.error(error)
+    })
   }
 
   const ImageHeader = () =>{
@@ -249,6 +325,8 @@ const ListaColaboradores = (props) => {
 
   return(
     <div data-aos="zoom-in">
+       <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
+       <ModalDelete id={iditemexclusao} funcret={()=>excluirItemBanco(iditemexclusao)} open={openmodalconfirma} close={()=>setOpenmodalconfirma(false)} texto={textomodal}/>
        <section id="hero" class="hero section light-background">
         <div class="container section-title box-title mb-2" data-aos="fade-up">
           {/* <h2>Colaboradores</h2>

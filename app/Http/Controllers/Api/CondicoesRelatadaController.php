@@ -128,8 +128,24 @@ class CondicoesRelatadaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $registro = CondicoesRelatada::find($id);
+
+        if (!$registro) {
+            return response()->json([
+                "status" => false,
+                "mensagem" => "Registro não encontrado!!!",
+            ], 404);
+        }
+
+        $registro->delete();
+
+        $arr_result = [
+            "status" => true,
+            "mensagem" => "Registro excluido com Sucesso!!!",
+        ];
+
+        return json_encode($arr_result, JSON_PRETTY_PRINT);
     }
 }
