@@ -13,7 +13,7 @@ import axios from 'axios';
 const Menu = (props) => {
 
   console.log(props.param);
-  const { tela } = props;
+  const { tela,atualizamenu } = props;
 
   const imagem = import.meta.env.VITE_APP_ENDPOINT_IMG;
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API;
@@ -176,6 +176,7 @@ const Menu = (props) => {
         .then((result) => {
           setLoadsave(false);
           addToast(CompToast('Dados Gravados com sucesso !!!', 'success'));
+          atualizamenu(false)
 
           setTimeout(() => {
             document.getElementById('idtoast').classList.remove('show');
@@ -194,6 +195,7 @@ const Menu = (props) => {
         .then((result) => {
           setLoadsave(false);
           addToast(CompToast('Dados Atualizados com sucesso !!!', 'success'));
+          atualizamenu(false)
 
           setTimeout(() => {
             document.getElementById('idtoast').classList.remove('show');
@@ -319,7 +321,7 @@ const Menu = (props) => {
                     : (<CFormInput
                         type="number"
                         min="1"
-                        max="10"
+                        max="15"
                         id="idPositon"
                         label="Posição"
                         value={posicao}

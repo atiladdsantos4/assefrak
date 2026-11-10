@@ -59,6 +59,9 @@ use App\Http\Controllers\Api\FaixaIdadeController;
 use App\Http\Controllers\Api\TipoFuncionalidadeController;
 use App\Http\Controllers\Api\FuncionalidadeController;
 use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\InformacaoTecnicaController;
+
+
 
 
 
@@ -122,6 +125,8 @@ Route::apiResource('faixaidade',FaixaIdadeController::class)->middleware('auth:s
 Route::apiResource('tipofuncionalidade', TipoFuncionalidadeController::class)->middleware('auth:sanctum');
 Route::apiResource('funcionalidade', FuncionalidadeController::class)->middleware('auth:sanctum');
 Route::apiResource('menu',MenuController::class)->middleware('auth:sanctum');
+Route::apiResource('informacao-tecnica',InformacaoTecnicaController::class)->middleware('auth:sanctum');
+
 
 
 

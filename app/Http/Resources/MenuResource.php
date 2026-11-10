@@ -15,8 +15,21 @@ class MenuResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        if( $request->has('listagem') ){
+        if( $request->has('menu') ){
             $data =  [
+                'men_id_men' => $this->men_id_men,
+                'men_id_pai' => $this->men_id_pai,
+                'men_name' => $this->men_name,
+                'men_nivel' => $this->men_nivel,
+                'men_classe' => $this->men_classe,
+                'secondlevel' => $this->secondlevel
+                // 'secondlevel'  =>  MenuResource::collection(
+                //      $this->secondlevel
+                //  ),
+            ];
+
+         } else if( $request->has('menu') ){
+             $data =  [
                 'men_id_men' => $this->men_id_men,
                 'men_id_pai' => $this->men_id_pai,
                 'men_name' => $this->men_name,
@@ -30,7 +43,6 @@ class MenuResource extends JsonResource
                 'men_created_at' => Carbon::parse($this->men_created_at)->format('d/m/Y H:i:s'),
                 'men_updated_at' => $this->men_updated_at != null ? Carbon::parse($this->men_updated_at)->format('d/m/Y H:i:s') : null,
             ];
-
          } else {
             $data =  [
                 'men_id_men' => $this->men_id_men,

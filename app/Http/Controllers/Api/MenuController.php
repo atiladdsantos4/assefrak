@@ -19,7 +19,13 @@ class MenuController extends Controller
         $all = $request->all();
 
         if( isset($all["listagem"]) ){
-           if( isset($all["funcionalidade"]) ){
+
+          if( isset($all["menu"]) ){
+            //$result_men = Menu::whereBetween('men_id_men', [1,8])
+            $result_men = Menu::whereNull('men_id_pai')
+               ->orderBy('men_position')
+               ->get();
+          } else if( isset($all["funcionalidade"]) ){
               $result_men = Menu::whereIn('men_id_pai', [16,19,29])
                ->orderBy('men_id_pai')
                ->orderBy('men_position')

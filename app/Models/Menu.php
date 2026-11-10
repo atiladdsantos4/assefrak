@@ -35,6 +35,16 @@ class Menu extends Model
       //->makeHidden(['dataini', 'datafim']);
     }
 
+    // public function secondlevel(){ //--> especilidade
+    //   return $this->hasMany(Menu::class, 'men_id_pai', 'men_id_men');
+    //   //->makeHidden(['dataini', 'datafim']);
+    // }
+
+    public function secondlevel(){ //--> especilidade
+      return $this->hasMany(Menu::class, 'men_id_pai', 'men_id_men')->with('secondlevel');
+      //->makeHidden(['dataini', 'datafim']);
+    }
+
     protected function getacaoAttribute(){ //--> qtde_escopos
         return 1;
     }

@@ -70,9 +70,16 @@ input[type="checkbox"]{
       border: 1px solid gray
 }
 
+#form-inf-tecnica{
+   textarea{
+      font-size: 12px;
+   }
+}
+
 #form-acolhido,
 #form-apresentacao,
 #form-menu,
+#form-inf-tecnica,
 #form-funcionalidade {
 
     .form-label:not(:empty) {
