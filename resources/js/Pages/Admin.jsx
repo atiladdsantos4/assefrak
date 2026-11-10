@@ -1,4 +1,5 @@
 import { React, useEffect, useState, Suspense,lazy } from 'react';
+import axios from 'axios';
 import Footer from './componentes/Footer';
 import FooterAdmin from './componentes/FooterAdmin';
 import HeaderAdmin from './componentes/HeaderAdmin';
@@ -90,6 +91,9 @@ import Funcionalidade from './cadastros/Funcionalidade';
 import ListaFuncionalidade from './listagem/ListaFuncionalidade';
 import Menu from './cadastros/Menu';
 import ListaMenu from './listagem/ListaMenu';
+import InfTecnica from './cadastros/InfTecnica';
+import ListaInfTecnica from './listagem/ListaInfTecnica';
+import { faLeaf } from '@fortawesome/free-solid-svg-icons';
 
 
 /*
@@ -109,6 +113,9 @@ OrientacaoExterna
 const Main = ({ appName }) => {
   const theme_dark = import.meta.env.VITE_APP_THEME_DARK
   const theme_light = import.meta.env.VITE_APP_THEME_LIGHT
+  const token  = import.meta.env.VITE_APP_TOKEN
+  const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
+  const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
   const [view,setView] = useState(null)
   const [telaatual,setTelaatual] = useState('ListaHumor');
   const [param,setParam] = useState(null);
@@ -116,7 +123,31 @@ const Main = ({ appName }) => {
   const [paramacolhido,setParamacolhido] = useState(null);
   const [paramtratamento,setParamtratamento] = useState(null);
   const [novo,setNovo] = useState(false);
+  const [loadmenu,setLoadmenu] = useState(false);
+  const [listamenu,setListamenu] = useState([]);
+  let menuCache = null;
 
+
+  useEffect(() => {
+        if (menuCache) {
+            setListamenu(menuCache);
+            return;
+        }
+
+        axios
+            .get(`${endpoint}/menu?listagem=S&menu=S`, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: 'Bearer ' + token,
+                },
+            })
+            .then((result) => {
+                menuCache = result.data.data;
+                setListamenu(menuCache);
+                setLoadmenu(true)
+            });
+  }, [loadmenu]);
 //   useEffect(() => {
 //      document.documentElement.setAttribute('data-coreui-theme', theme_light);
 //      //setTelaatual()
@@ -409,28 +440,51 @@ const Main = ({ appName }) => {
         break
 
         case "Menu":
-            return(<Menu tela={setTelaatual} param={param}/>)
+            return(<Menu tela={setTelaatual} param={param} atualizamenu={setLoadmenu}/>)
         break
 
         case "ListaMenu":
             return(<ListaMenu tela={setTelaatual} altera={setParam}/>)
         break
-    }
+
+        case "InfTecnica":
+          return (
+            <InfTecnica tela={setTelaatual} param={param}/>
+          )
+        break
+
+        case "ListaInfTecnica":
+            return (
+                <ListaInfTecnica tela={setTelaatual} altera={setParam}/>
+        );
+     }
   }
 
-  return (
-           <>
-            <HeaderAdmin tela={setTelaatual} alteraficha={setParamacolhido} altera={setParam} mudatela={AtualizaTela}/>
-            <main id="idmain" class="main">
-                {/* <!-- Hero Section --> */}
+
+if (listamenu.length === 0) {
+    return <div>Loading menu...</div>;
+}
+
+    return (
+        <>
+            <HeaderAdmin
+                lista={listamenu}
+                tela={setTelaatual}
+                alteraficha={setParamacolhido}
+                altera={setParam}
+                mudatela={AtualizaTela}
+            />
+
+            <main id="idmain" className="main">
                 <Suspense fallback={<div>Loading dashboard view...</div>}>
-                   <ExibeLayout muda={novo} tela={telaatual}/>
+                    <ExibeLayout muda={novo} tela={telaatual}/>
                 </Suspense>
-                {/* <Acolhido/> */}
             </main>
-           <FooterAdmin/>
+
+            <FooterAdmin/>
         </>
-  )
+    )
+
 }
 
 export default Main
