@@ -8,12 +8,37 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use App\Models\InformacaoTecnica;
 use App\Http\Resources\InformacaoTecnicaResource;
+use Illuminate\Support\Facades\Hash;
+
 
 class InformacaoTecnicaController extends Controller
 {
     public function index(Request $request)
     {
         $dados = InformacaoTecnica::query();
+
+        if($request->has('exibedados')){
+          $senha = $request->get('senha');
+          $hash = Hash::make('Kardec');
+          $ret = Hash::check($senha, $hash);
+          if($ret){
+            $response = [
+                'status' => true,
+                'message' => 'Senha verificada com sucesso',
+            ];
+
+            return response()->json($response, 200);
+          } else {
+
+            $response = [
+                'status' => false,
+                'message' => 'Falha na verificação da senha',
+            ];
+
+            return response()->json($response, 200);
+          }
+          //return response()->json(['message' => 'Registro excluído com sucesso.']);
+        }
 
         if ($request->has('listagem')) {
             return InformacaoTecnicaResource::collection(
@@ -66,8 +91,8 @@ class InformacaoTecnicaController extends Controller
             'inf_url_prod' => 'nullable|string|max:300',
             'inf_env_dev' => 'nullable|string|max:1500',
             'inf_env_prod' => 'nullable|string|max:1500',
-            'inf_db_dev' => 'nullable|string|max:50',
-            'inf_db_prod' => 'nullable|string|max:50',
+            'inf_env_dev' => 'nullable|string|max:1500',
+            'inf_env_prod' => 'nullable|string|max:1500',
             'inf_url_git' => 'nullable|string|max:300',
             'inf_ftp_url' => 'nullable|string|max:300',
             'inf_ftp_senhas' => 'nullable|string|max:300',

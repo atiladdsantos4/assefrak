@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faArrowUp, faArrowDown, faThumbsUp, faPerson, faSave, faCheck, faFile, faTrash, faEdit, faPlus, faCirclePlus,faFilePdf,faList } from '@fortawesome/free-solid-svg-icons';
 import ListaFocoEnergetico from '../listagem/ListaFocoEnergetico';
 import ModalAvaliacao from '../componentes/ModalAvaliacao';
+import ModalExibe from '../componentes/ModalExibe';
 
 
 
@@ -50,7 +51,8 @@ const FichaEntrevista = (props) => {
     const [diapasse, setDiaPasse] = useState('')
     const [orientacaocasa, setOrientacaoCasa] = useState('')
     const [orientacaoexterna, setOrientacaoExterna] = useState('')
-
+    const [openmodalsenha, setOpenmodalsenha] = useState(false);
+    const [turvo, setTurvo] = useState('');
     //const [listacollapse, setListacollapse] = useState([])
     /*
     let result_humor = responses[2]
@@ -302,6 +304,7 @@ const FichaEntrevista = (props) => {
                 setAnotacao(result_ficha.data.data.fie_anotacao)
                 let listaret  = result_ficha.data.data.fie_retorno.sort((a,b)=>b.fir_id_fir > a.fir_id_fir)
                 setListaretornopasse(listaret)
+                setTurvo('texto-turvo')
                 setLoadpage(false)
                 setLoadtabela(false)
             }
@@ -1217,6 +1220,7 @@ const FichaEntrevista = (props) => {
             </div>
                 <div class="container">
                         {/* <ModalProgramacao open={openmodal} close={closeModal} imagem={imagem}/> */}
+                        <ModalExibe open={openmodalsenha} close={(e)=>setOpenmodalsenha(false)} classe={setTurvo}/>
                         <ModalAvaliacao
                             open={openmodal}
                             close={closeModal}
@@ -1252,14 +1256,17 @@ const FichaEntrevista = (props) => {
                                             >
                                                 {param}
                                             </span>
+                                            <CBadge color="success" className="badge-protegido ms-2" onClick={(e)=>setOpenmodalsenha(true)}>
+                                                 Confidencial
+                                            </CBadge>
                                         </>
                                     )
                                 }
                             </CCardHeader>
                             <CCardBody>
                                 <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
-                                    <CRow className='mt-3'>
-                                        <CCol md={6}>
+                                    <CRow className={`mt-3 ${turvo}`}>
+                                        <CCol md={6} className={turvo}>
                                             { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                             : (
@@ -1274,7 +1281,7 @@ const FichaEntrevista = (props) => {
                                             <CompAcolhido/>
                                             </CFormSelect>)}
                                         </CCol>
-                                        <CCol md={6}>
+                                        <CCol md={6} className={turvo}>
                                             { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                             : (
@@ -1289,7 +1296,7 @@ const FichaEntrevista = (props) => {
                                             <CompColaborador/>
                                             </CFormSelect>)}
                                         </CCol>
-                                        <CCol md={6}>
+                                        <CCol md={6} className={turvo}>
                                                 { loadpage
                                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                                 : (
@@ -1303,7 +1310,7 @@ const FichaEntrevista = (props) => {
                                                     required
                                                 />)}
                                         </CCol>
-                                        <CCol md={6}>
+                                        <CCol md={6} className={turvo}>
                                                 { loadpage
                                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                                 : (
@@ -1318,7 +1325,7 @@ const FichaEntrevista = (props) => {
                                                 />)}
                                         </CCol>
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1388,7 +1395,7 @@ const FichaEntrevista = (props) => {
                                             </div>
                                         </CCol>
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1405,7 +1412,7 @@ const FichaEntrevista = (props) => {
                                             <CompHumor/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1421,13 +1428,12 @@ const FichaEntrevista = (props) => {
                                                     text="Deve conter até 2000 caracteres"
                                                     feedbackInvalid="Observação do Entrevistador deve ser informada"
                                                     onChange={(e)=>setObshumor(e.target.value)}
-                                                    required
                                                 ></CFormTextarea>
                                                 </CCol>
                                             </CCollapse>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad80full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1445,7 +1451,7 @@ const FichaEntrevista = (props) => {
                                             <CompReativo/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1461,13 +1467,12 @@ const FichaEntrevista = (props) => {
                                                     text="Deve conter até 2000 caracteres"
                                                     feedbackInvalid="Observação do Entrevistador deve ser informada"
                                                     onChange={(e)=>setObsreativa(e.target.value)}
-                                                    required
                                                 ></CFormTextarea>
                                                 </CCol>
                                              </CCollapse>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1485,7 +1490,7 @@ const FichaEntrevista = (props) => {
                                             <CompPassivo/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1500,13 +1505,12 @@ const FichaEntrevista = (props) => {
                                                     text="Deve conter até 2000 caracteres"
                                                     feedbackInvalid="Observação do Entrevistador deve ser informada"
                                                     onChange={(e)=>setObspassivo(e.target.value)}
-                                                    required
                                                 ></CFormTextarea>
                                             </CCol>
                                             </CCollapse>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1524,7 +1528,7 @@ const FichaEntrevista = (props) => {
                                             <CompSono/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1540,13 +1544,12 @@ const FichaEntrevista = (props) => {
                                                     text="Deve conter até 2000 caracteres"
                                                     feedbackInvalid="Observação do Entrevistador deve ser informada"
                                                     onChange={(e)=>setObscognicao(e.target.value)}
-                                                    required
                                                 ></CFormTextarea>
                                                 </CCol>
                                                </CCollapse>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1564,7 +1567,7 @@ const FichaEntrevista = (props) => {
                                             <CompGravidade/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1580,13 +1583,12 @@ const FichaEntrevista = (props) => {
                                                     text="Deve conter até 2000 caracteres"
                                                     feedbackInvalid="Observação do Entrevistador deve ser informada"
                                                     onChange={(e)=>setObsgravidade(e.target.value)}
-                                                    required
                                                 ></CFormTextarea>
                                             </CCol>
                                             </CCollapse>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1604,7 +1606,7 @@ const FichaEntrevista = (props) => {
                                             <CompRelatada/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1620,13 +1622,12 @@ const FichaEntrevista = (props) => {
                                                     text="Deve conter até 2000 caracteres"
                                                     feedbackInvalid="Observação do Entrevistador deve ser informada"
                                                     onChange={(e)=>setObspercebida(e.target.value)}
-                                                    required
                                                 ></CFormTextarea>
                                                 </CCol>
                                                 </CCollapse>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad80full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1634,7 +1635,7 @@ const FichaEntrevista = (props) => {
                                             <CompDiaPasse/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad80full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1642,7 +1643,7 @@ const FichaEntrevista = (props) => {
                                             <CompOrientacaoCasa/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad80full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1650,7 +1651,7 @@ const FichaEntrevista = (props) => {
                                             <CompOrientacaoExterna/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1668,7 +1669,7 @@ const FichaEntrevista = (props) => {
                                                 ></CFormTextarea>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={estiloocorrencia}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={estiloocorrencia}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>

@@ -8,7 +8,7 @@ import ListaAcolhidos from '../listagem/ListaAcolhidos';
 // The Main component receives props passed from the Laravel controller
 const HeaderAdmin = (props) => {
   console.log(props.lista)
-  const { tela,mudatela,altera,alteraficha,lista }  = props
+  const { tela,mudatela,altera,alteraficha,lista, pesquisa }  = props
   const theme_dark = import.meta.env.VITE_APP_THEME_DARK
   const theme_light = import.meta.env.VITE_APP_THEME_LIGHT
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faThumbsUp, faPerson, faSave, faCheck, faFile, faTrash, faEdit, faPlus, faCirclePlus,faFilePdf,faList } from '@fortawesome/free-solid-svg-icons';
 import ListaFocoEnergetico from '../listagem/ListaFocoEnergetico';
 import ModalOcorrencia from '../componentes/ModalOcorrencia';
+import ModalExibe from '../componentes/ModalExibe';
 
 
 
@@ -34,10 +35,12 @@ const Tratamento = (props) => {
     const [listaentrevista, setListaentrevista] = useState([])
     const [idacolhidoocorrencia, setIdacolhidoocorrencia] = useState(null)
     const [dadoseditamodal, setDadoseditamodal] = useState(null)
+    const [openmodalsenha, setOpenmodalsenha] = useState(false);
     const [nome, setNome] = useState('')
     const [idade, setIdade] = useState('')
     const [ocupacao, setOcupacao] = useState('')
     const [ativo, setAtivo] = useState(false)
+    const [turvo, setTurvo] = useState('');
     const [listacolaborador, setListacolaborador] = useState([])
     const [listaacolhido, setListaacolhido] = useState([])
     const [listapasse, setListapasse] = useState([])
@@ -280,7 +283,7 @@ const Tratamento = (props) => {
                 setIdtratamento(result_showtratamento.tra_id_tra)
 
                 /** tratando a ediçao*/
-
+                setTurvo('texto-turvo')
                 setLoadpage(false)
                 setLoadtabela(false)
             }
@@ -1057,7 +1060,7 @@ const Tratamento = (props) => {
                 }
             </CDropdownMenu>
             </CDropdown>
-            <CFormInput aria-label="Text input with segmented dropdown button" value={textoentrevista}/>
+            <CFormInput aria-label="Text input with segmented dropdown button" value={textoentrevista} className={turvo}/>
         </CInputGroup>
         </>
     )
@@ -1074,6 +1077,7 @@ const Tratamento = (props) => {
             </div>
                 <div class="container">
                         {/* <ModalProgramacao open={openmodal} close={closeModal} imagem={imagem}/> */}
+                        <ModalExibe open={openmodalsenha} close={(e)=>setOpenmodalsenha(false)} classe={setTurvo}/>
                         <ModalOcorrencia
                             open={openmodal}
                             close={closeModal}
@@ -1088,7 +1092,31 @@ const Tratamento = (props) => {
                         <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
                         <CCard>
                             <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faPerson} />
-                            { idtratamento == null ? 'Efetuar Novo Tratamento' : 'Alterar Tratamento Nº '+param}
+                            {/* { idtratamento == null ? 'Efetuar Novo Tratamento' : 'Alterar Tratamento Nº '+param} */}
+                                {idtratamento == null
+                                    ? 'Efetuar Novo Tratamento'
+                                    : (
+                                        <>
+                                            Alterar Tratamento Nº{' '}
+                                            <span
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    verticalAlign: 'middle'
+                                                }}
+                                                className="circle_ficha text-ficha"
+                                            >
+                                                {param}
+                                            </span>
+                                            <CBadge color="success" className="badge-protegido ms-2" onClick={(e)=>setOpenmodalsenha(true)}>
+                                                Confidencial
+                                            </CBadge>
+                                        </>
+                                    )
+                                }
                             </CCardHeader>
                             <CCardBody>
                                 <CForm className="row g-3 needs-validation" noValidate  id="form-acolhido" onSubmit={handleSubmit} validated={validated}>
@@ -1104,7 +1132,7 @@ const Tratamento = (props) => {
                                                 feedbackInvalid="O Acolhido deve ser informado"
                                                 onChange={(e)=>mudaAcolhido(e.target.value)}
                                                 required
-                                            >
+                                             className={turvo}>
                                             <CompAcolhido/>
                                             </CFormSelect>)}
                                         </CCol>
@@ -1119,10 +1147,12 @@ const Tratamento = (props) => {
                                                 feedbackInvalid="O Entrevistador deve  ser informado"
                                                 onChange={(e)=>setColaborador(e.target.value)}
                                                 required
-                                            >
+                                             className={turvo}>
                                             <CompColaborador/>
                                             </CFormSelect>)}
                                         </CCol>
+                                </CRow>
+                                <CRow className='mt-3'>
                                         <CCol md={6}>
                                                 { loadpage
                                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
@@ -1135,7 +1165,7 @@ const Tratamento = (props) => {
                                                     feedbackInvalid="Please provide a valid zip."
                                                     readOnly
                                                     required
-                                                />)}
+                                                 className={turvo}/>)}
                                         </CCol>
                                         <CCol md={2}>
                                                 { loadpage
@@ -1149,7 +1179,7 @@ const Tratamento = (props) => {
                                                     feedbackInvalid="Please provide a valid zip."
                                                     readOnly
                                                     required
-                                                />)}
+                                                 className={turvo}/>)}
                                         </CCol>
                                         <CCol md={4}>
                                                 { loadpage
@@ -1167,7 +1197,7 @@ const Tratamento = (props) => {
                                                 feedbackInvalid="O tipo de Tratamento deve ser informado"
                                                 onChange={(e)=>setTipotratamento(e.target.value)}
                                                 required
-                                            >
+                                             className={turvo}>
                                             <CompTipoPasse/>
                                             </CFormSelect>)}
                                         </CCol>
@@ -1182,12 +1212,12 @@ const Tratamento = (props) => {
                                                 feedbackInvalid="O Status Tratamento deve ser informado"
                                                 onChange={(e)=>setStatus(e.target.value)}
                                                 required
-                                            >
+                                             className={turvo}>
                                             <CompStatus/>
                                             </CFormSelect>)}
                                         </CCol>
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1196,7 +1226,7 @@ const Tratamento = (props) => {
                                             </>)}
 
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad80full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1204,7 +1234,7 @@ const Tratamento = (props) => {
                                             <CompFoco/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1212,7 +1242,7 @@ const Tratamento = (props) => {
                                             <CompCondicao/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1220,7 +1250,7 @@ const Tratamento = (props) => {
                                             <CompFortalecimento/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1228,7 +1258,7 @@ const Tratamento = (props) => {
                                             <CompLimpeza/>
                                             </>)}
                                     </CRow>
-                                    <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
+                                    <CRow className={`mt-3 mb-3 ${turvo}`} style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
@@ -1236,13 +1266,14 @@ const Tratamento = (props) => {
                                             <CompAlerta/>
                                             </>)}
                                     </CRow>
+
                                     <CRow className='mt-3 mb-3' style={{marginLeft:'2px',border:'2px solid #6895C1',borderRadius:'5px'}}>
                                         { loadpage
                                             ? (<div style={style_placeholder}><CPlaceholder className='mt-2 grad68full' xs={12} size="lg"/></div>)
                                             : (<>
                                             <CCol className="mt-2 mb-3" md={12} xs={12}><div style={{width:'200px'}}><CBadge className="badgeazul">PRIMEIRAS IMPRESSÕES DO ATENDIMENTO:</CBadge></div></CCol>
                                             <CFormTextarea
-                                                    className="textarea_line"
+                                                    className={`textarea_line ${turvo}`}
                                                     id="exampleFormControlTextarea1"
                                                     label="Informe a Descrição"
                                                     rows={10}

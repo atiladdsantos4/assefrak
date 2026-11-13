@@ -1,0 +1,1123 @@
+{
+  "application": "Admin",
+  "catalogVersion": 1,
+  "source": {
+    "file": "Admin.jsx (production bundle)",
+    "basis": "Routes found in the Admin.jsx screen switch",
+    "note": "Names and screen routes are extracted from the bundle. Descriptions, IDs, tags, and grouping are draft examples for review."
+  },
+  "screens": [
+    {
+      "id": "acolhido",
+      "name": "Acolhido",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_acolhido",
+          "name": "Acolhido",
+          "description": "Acessar a funcionalidade Acolhido",
+          "tags": [
+            "acolhido"
+          ],
+          "screenComponents": [
+            "Acolhido",
+            "ListaAcolhidos"
+          ],
+          "onClick": {
+            "functionality": "Acolhido"
+          }
+        }
+      ]
+    },
+    {
+      "id": "passes",
+      "name": "Passes",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_passes",
+          "name": "Passes",
+          "description": "Acessar a funcionalidade Passes",
+          "tags": [
+            "passes"
+          ],
+          "screenComponents": [
+            "Passes",
+            "ListaPasses"
+          ],
+          "onClick": {
+            "functionality": "Passes"
+          }
+        }
+      ]
+    },
+    {
+      "id": "focoEnergetico",
+      "name": "FocoEnergetico",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_focoEnergetico",
+          "name": "FocoEnergetico",
+          "description": "Acessar a funcionalidade FocoEnergetico",
+          "tags": [
+            "focoenergetico"
+          ],
+          "screenComponents": [
+            "FocoEnergetico",
+            "ListaFocoEnergeticos"
+          ],
+          "onClick": {
+            "functionality": "FocoEnergetico"
+          }
+        }
+      ]
+    },
+    {
+      "id": "condicaoEnergetica",
+      "name": "CondicaoEnergetica",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_condicaoEnergetica",
+          "name": "CondicaoEnergetica",
+          "description": "Acessar a funcionalidade CondicaoEnergetica",
+          "tags": [
+            "condicaoenergetica"
+          ],
+          "screenComponents": [
+            "CondicaoEnergetica",
+            "ListaCondicaoEnergeticas"
+          ],
+          "onClick": {
+            "functionality": "CondicaoEnergetica"
+          }
+        }
+      ]
+    },
+    {
+      "id": "fortalecimento",
+      "name": "Fortalecimento",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_fortalecimento",
+          "name": "Fortalecimento",
+          "description": "Acessar a funcionalidade Fortalecimento",
+          "tags": [
+            "fortalecimento"
+          ],
+          "screenComponents": [
+            "Fortalecimento",
+            "ListaFortalecimentos"
+          ],
+          "onClick": {
+            "functionality": "Fortalecimento"
+          }
+        }
+      ]
+    },
+    {
+      "id": "limpeza",
+      "name": "Limpeza",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_limpeza",
+          "name": "Limpeza",
+          "description": "Acessar a funcionalidade Limpeza",
+          "tags": [
+            "limpeza"
+          ],
+          "screenComponents": [
+            "Limpeza",
+            "ListaLimpezas"
+          ],
+          "onClick": {
+            "functionality": "Limpeza"
+          }
+        }
+      ]
+    },
+    {
+      "id": "alerta",
+      "name": "Alerta",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_alerta",
+          "name": "Alerta",
+          "description": "Acessar a funcionalidade Alerta",
+          "tags": [
+            "alerta"
+          ],
+          "screenComponents": [
+            "Alerta",
+            "ListaAlertas"
+          ],
+          "onClick": {
+            "functionality": "Alerta"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tipoTratamento",
+      "name": "TipoTratamento",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_tipoTratamento",
+          "name": "TipoTratamento",
+          "description": "Acessar a funcionalidade TipoTratamento",
+          "tags": [
+            "tipotratamento"
+          ],
+          "screenComponents": [
+            "TipoTratamento",
+            "ListaTipoTratamentos"
+          ],
+          "onClick": {
+            "functionality": "TipoTratamento"
+          }
+        }
+      ]
+    },
+    {
+      "id": "colaborador",
+      "name": "Colaborador",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_colaborador",
+          "name": "Colaborador",
+          "description": "Acessar a funcionalidade Colaborador",
+          "tags": [
+            "colaborador"
+          ],
+          "screenComponents": [
+            "Colaborador",
+            "ListaColaboradores"
+          ],
+          "onClick": {
+            "functionality": "Colaborador"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tratamento",
+      "name": "Tratamento",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_tratamento",
+          "name": "Tratamento",
+          "description": "Acessar a funcionalidade Tratamento",
+          "tags": [
+            "tratamento"
+          ],
+          "screenComponents": [
+            "Tratamento",
+            "ListaTratamentos"
+          ],
+          "onClick": {
+            "functionality": "Tratamento"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocupacao",
+      "name": "Ocupacao",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_ocupacao",
+          "name": "Ocupacao",
+          "description": "Acessar a funcionalidade Ocupacao",
+          "tags": [
+            "ocupacao"
+          ],
+          "screenComponents": [
+            "Ocupacao",
+            "ListaOcupacao"
+          ],
+          "onClick": {
+            "functionality": "Ocupacao"
+          }
+        }
+      ]
+    },
+    {
+      "id": "evento",
+      "name": "Evento",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_evento",
+          "name": "Evento",
+          "description": "Acessar a funcionalidade Evento",
+          "tags": [
+            "evento"
+          ],
+          "screenComponents": [
+            "Evento",
+            "ListaEventos"
+          ],
+          "onClick": {
+            "functionality": "Evento"
+          }
+        }
+      ]
+    },
+    {
+      "id": "categoriaEvento",
+      "name": "CategoriaEvento",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_categoriaEvento",
+          "name": "CategoriaEvento",
+          "description": "Acessar a funcionalidade CategoriaEvento",
+          "tags": [
+            "categoriaevento"
+          ],
+          "screenComponents": [
+            "CategoriaEvento",
+            "ListaCategoriaEvento"
+          ],
+          "onClick": {
+            "functionality": "CategoriaEvento"
+          }
+        }
+      ]
+    },
+    {
+      "id": "palestra",
+      "name": "Palestra",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_palestra",
+          "name": "Palestra",
+          "description": "Acessar a funcionalidade Palestra",
+          "tags": [
+            "palestra"
+          ],
+          "screenComponents": [
+            "Palestra",
+            "ListaPalestras"
+          ],
+          "onClick": {
+            "functionality": "Palestra"
+          }
+        }
+      ]
+    },
+    {
+      "id": "curso",
+      "name": "Curso",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_curso",
+          "name": "Curso",
+          "description": "Acessar a funcionalidade Curso",
+          "tags": [
+            "curso"
+          ],
+          "screenComponents": [
+            "Curso",
+            "ListaCursos"
+          ],
+          "onClick": {
+            "functionality": "Curso"
+          }
+        }
+      ]
+    },
+    {
+      "id": "autor",
+      "name": "Autor",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_autor",
+          "name": "Autor",
+          "description": "Acessar a funcionalidade Autor",
+          "tags": [
+            "autor"
+          ],
+          "screenComponents": [
+            "Autor",
+            "ListaAutores"
+          ],
+          "onClick": {
+            "functionality": "Autor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "editora",
+      "name": "Editora",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_editora",
+          "name": "Editora",
+          "description": "Acessar a funcionalidade Editora",
+          "tags": [
+            "editora"
+          ],
+          "screenComponents": [
+            "Editora",
+            "ListaEditoras"
+          ],
+          "onClick": {
+            "functionality": "Editora"
+          }
+        }
+      ]
+    },
+    {
+      "id": "livro",
+      "name": "Livro",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_livro",
+          "name": "Livro",
+          "description": "Acessar a funcionalidade Livro",
+          "tags": [
+            "livro"
+          ],
+          "screenComponents": [
+            "Livro",
+            "ListaLivros"
+          ],
+          "onClick": {
+            "functionality": "Livro"
+          }
+        }
+      ]
+    },
+    {
+      "id": "status",
+      "name": "Status",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_status",
+          "name": "Status",
+          "description": "Acessar a funcionalidade Status",
+          "tags": [
+            "status"
+          ],
+          "screenComponents": [
+            "Status",
+            "ListaStatusTratamentos"
+          ],
+          "onClick": {
+            "functionality": "Status"
+          }
+        }
+      ]
+    },
+    {
+      "id": "categoriaVideo",
+      "name": "CategoriaVideo",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_categoriaVideo",
+          "name": "CategoriaVideo",
+          "description": "Acessar a funcionalidade CategoriaVideo",
+          "tags": [
+            "categoriavideo"
+          ],
+          "screenComponents": [
+            "CategoriaVideo",
+            "ListaCategoriaVideo"
+          ],
+          "onClick": {
+            "functionality": "CategoriaVideo"
+          }
+        }
+      ]
+    },
+    {
+      "id": "video",
+      "name": "Video",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_video",
+          "name": "Video",
+          "description": "Acessar a funcionalidade Video",
+          "tags": [
+            "video"
+          ],
+          "screenComponents": [
+            "Video",
+            "ListaVideos"
+          ],
+          "onClick": {
+            "functionality": "Video"
+          }
+        }
+      ]
+    },
+    {
+      "id": "departamento",
+      "name": "Departamento",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_departamento",
+          "name": "Departamento",
+          "description": "Acessar a funcionalidade Departamento",
+          "tags": [
+            "departamento"
+          ],
+          "screenComponents": [
+            "Departamento",
+            "ListaDepartamento"
+          ],
+          "onClick": {
+            "functionality": "Departamento"
+          }
+        }
+      ]
+    },
+    {
+      "id": "entradaEstoque",
+      "name": "EntradaEstoque",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_entradaEstoque",
+          "name": "EntradaEstoque",
+          "description": "Acessar a funcionalidade EntradaEstoque",
+          "tags": [
+            "entradaestoque"
+          ],
+          "screenComponents": [
+            "EntradaEstoque",
+            "ListaEntradasEstoque"
+          ],
+          "onClick": {
+            "functionality": "EntradaEstoque"
+          }
+        }
+      ]
+    },
+    {
+      "id": "saidaEstoque",
+      "name": "SaidaEstoque",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_saidaEstoque",
+          "name": "SaidaEstoque",
+          "description": "Acessar a funcionalidade SaidaEstoque",
+          "tags": [
+            "saidaestoque"
+          ],
+          "screenComponents": [
+            "SaidaEstoque",
+            "ListaSaidasEstoque"
+          ],
+          "onClick": {
+            "functionality": "SaidaEstoque"
+          }
+        }
+      ]
+    },
+    {
+      "id": "apresentacao",
+      "name": "Apresentacao",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_apresentacao",
+          "name": "Apresentacao",
+          "description": "Acessar a funcionalidade Apresentacao",
+          "tags": [
+            "apresentacao"
+          ],
+          "screenComponents": [
+            "Apresentacao",
+            "ListaApresentacao"
+          ],
+          "onClick": {
+            "functionality": "Apresentacao"
+          }
+        }
+      ]
+    },
+    {
+      "id": "humor",
+      "name": "Humor",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_humor",
+          "name": "Humor",
+          "description": "Acessar a funcionalidade Humor",
+          "tags": [
+            "humor"
+          ],
+          "screenComponents": [
+            "Humor",
+            "ListaHumor"
+          ],
+          "onClick": {
+            "functionality": "Humor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reativo",
+      "name": "Reativo",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_reativo",
+          "name": "Reativo",
+          "description": "Acessar a funcionalidade Reativo",
+          "tags": [
+            "reativo"
+          ],
+          "screenComponents": [
+            "Reativo",
+            "ListaReativo"
+          ],
+          "onClick": {
+            "functionality": "Reativo"
+          }
+        }
+      ]
+    },
+    {
+      "id": "passivo",
+      "name": "Passivo",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_passivo",
+          "name": "Passivo",
+          "description": "Acessar a funcionalidade Passivo",
+          "tags": [
+            "passivo"
+          ],
+          "screenComponents": [
+            "Passivo",
+            "ListaPassivo"
+          ],
+          "onClick": {
+            "functionality": "Passivo"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sono",
+      "name": "Sono",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_sono",
+          "name": "Sono",
+          "description": "Acessar a funcionalidade Sono",
+          "tags": [
+            "sono"
+          ],
+          "screenComponents": [
+            "Sono",
+            "ListaSono"
+          ],
+          "onClick": {
+            "functionality": "Sono"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gravidade",
+      "name": "Gravidade",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_gravidade",
+          "name": "Gravidade",
+          "description": "Acessar a funcionalidade Gravidade",
+          "tags": [
+            "gravidade"
+          ],
+          "screenComponents": [
+            "Gravidade",
+            "ListaGravidade"
+          ],
+          "onClick": {
+            "functionality": "Gravidade"
+          }
+        }
+      ]
+    },
+    {
+      "id": "relatadas",
+      "name": "Relatadas",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_relatadas",
+          "name": "Relatadas",
+          "description": "Acessar a funcionalidade Relatadas",
+          "tags": [
+            "relatadas"
+          ],
+          "screenComponents": [
+            "Relatadas",
+            "ListaRelatadas"
+          ],
+          "onClick": {
+            "functionality": "Relatadas"
+          }
+        }
+      ]
+    },
+    {
+      "id": "diaPasse",
+      "name": "DiaPasse",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_diaPasse",
+          "name": "DiaPasse",
+          "description": "Acessar a funcionalidade DiaPasse",
+          "tags": [
+            "diapasse"
+          ],
+          "screenComponents": [
+            "DiaPasse",
+            "ListaDiaPasse"
+          ],
+          "onClick": {
+            "functionality": "DiaPasse"
+          }
+        }
+      ]
+    },
+    {
+      "id": "orientacaoCasa",
+      "name": "OrientacaoCasa",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_orientacaoCasa",
+          "name": "OrientacaoCasa",
+          "description": "Acessar a funcionalidade OrientacaoCasa",
+          "tags": [
+            "orientacaocasa"
+          ],
+          "screenComponents": [
+            "OrientacaoCasa",
+            "ListaOrientacaoCasa"
+          ],
+          "onClick": {
+            "functionality": "OrientacaoCasa"
+          }
+        }
+      ]
+    },
+    {
+      "id": "orientacaoExterna",
+      "name": "OrientacaoExterna",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_orientacaoExterna",
+          "name": "OrientacaoExterna",
+          "description": "Acessar a funcionalidade OrientacaoExterna",
+          "tags": [
+            "orientacaoexterna"
+          ],
+          "screenComponents": [
+            "OrientacaoExterna",
+            "ListaOrientacaoExterna"
+          ],
+          "onClick": {
+            "functionality": "OrientacaoExterna"
+          }
+        }
+      ]
+    },
+    {
+      "id": "fichaEntrevista",
+      "name": "FichaEntrevista",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_fichaEntrevista",
+          "name": "FichaEntrevista",
+          "description": "Acessar a funcionalidade FichaEntrevista",
+          "tags": [
+            "fichaentrevista"
+          ],
+          "screenComponents": [
+            "FichaEntrevista",
+            "ListaFichaEntrevista"
+          ],
+          "onClick": {
+            "functionality": "FichaEntrevista"
+          }
+        }
+      ]
+    },
+    {
+      "id": "faixaIdade",
+      "name": "FaixaIdade",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_faixaIdade",
+          "name": "FaixaIdade",
+          "description": "Acessar a funcionalidade FaixaIdade",
+          "tags": [
+            "faixaidade"
+          ],
+          "screenComponents": [
+            "FaixaIdade",
+            "ListaFaixaIdade"
+          ],
+          "onClick": {
+            "functionality": "FaixaIdade"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tipoFuncionalidade",
+      "name": "TipoFuncionalidade",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_tipoFuncionalidade",
+          "name": "TipoFuncionalidade",
+          "description": "Acessar a funcionalidade TipoFuncionalidade",
+          "tags": [
+            "tipofuncionalidade"
+          ],
+          "screenComponents": [
+            "TipoFuncionalidade",
+            "ListaTipoFuncionalidade"
+          ],
+          "onClick": {
+            "functionality": "TipoFuncionalidade"
+          }
+        }
+      ]
+    },
+    {
+      "id": "funcionalidade",
+      "name": "Funcionalidade",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_funcionalidade",
+          "name": "Funcionalidade",
+          "description": "Acessar a funcionalidade Funcionalidade",
+          "tags": [
+            "funcionalidade"
+          ],
+          "screenComponents": [
+            "Funcionalidade",
+            "ListaFuncionalidade"
+          ],
+          "onClick": {
+            "functionality": "Funcionalidade"
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "name": "Menu",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_menu",
+          "name": "Menu",
+          "description": "Acessar a funcionalidade Menu",
+          "tags": [
+            "menu"
+          ],
+          "screenComponents": [
+            "Menu",
+            "ListaMenu"
+          ],
+          "onClick": {
+            "functionality": "Menu"
+          }
+        }
+      ]
+    },
+    {
+      "id": "infTecnica",
+      "name": "InfTecnica",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_infTecnica",
+          "name": "InfTecnica",
+          "description": "Acessar a funcionalidade InfTecnica",
+          "tags": [
+            "inftecnica"
+          ],
+          "screenComponents": [
+            "InfTecnica",
+            "ListaInfTecnica"
+          ],
+          "onClick": {
+            "functionality": "InfTecnica"
+          }
+        }
+      ]
+    },
+    {
+      "id": "infAssefrak",
+      "name": "InfAssefrak",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_infAssefrak",
+          "name": "InfAssefrak",
+          "description": "Acessar a funcionalidade InfAssefrak",
+          "tags": [
+            "infassefrak"
+          ],
+          "screenComponents": [
+            "InfAssefrak",
+            "ListaInfAssefrak"
+          ],
+          "onClick": {
+            "functionality": "InfAssefrak"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ficha",
+      "name": "Ficha",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_ficha",
+          "name": "Ficha",
+          "description": "Acessar a funcionalidade Ficha",
+          "tags": [
+            "ficha"
+          ],
+          "screenComponents": [
+            "Ficha"
+          ],
+          "onClick": {
+            "functionality": "Ficha"
+          }
+        }
+      ]
+    },
+    {
+      "id": "controlePresenca",
+      "name": "ControlePresenca",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_controlePresenca",
+          "name": "ControlePresenca",
+          "description": "Acessar a funcionalidade ControlePresenca",
+          "tags": [
+            "controlepresenca"
+          ],
+          "screenComponents": [
+            "ControlePresenca"
+          ],
+          "onClick": {
+            "functionality": "ControlePresenca"
+          }
+        }
+      ]
+    },
+    {
+      "id": "listaPublicoFoco",
+      "name": "ListaPublicoFoco",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_listaPublicoFoco",
+          "name": "ListaPublicoFoco",
+          "description": "Acessar a funcionalidade ListaPublicoFoco",
+          "tags": [
+            "listapublicofoco"
+          ],
+          "screenComponents": [
+            "ListaPublicoFoco"
+          ],
+          "onClick": {
+            "functionality": "ListaPublicoFoco"
+          }
+        }
+      ]
+    },
+    {
+      "id": "publicoAlvo",
+      "name": "PublicoAlvo",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_publicoAlvo",
+          "name": "PublicoAlvo",
+          "description": "Acessar a funcionalidade PublicoAlvo",
+          "tags": [
+            "publicoalvo"
+          ],
+          "screenComponents": [
+            "PublicoAlvo"
+          ],
+          "onClick": {
+            "functionality": "PublicoAlvo"
+          }
+        }
+      ]
+    },
+    {
+      "id": "listaOcorrencias",
+      "name": "ListaOcorrencias",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_listaOcorrencias",
+          "name": "ListaOcorrencias",
+          "description": "Acessar a funcionalidade ListaOcorrencias",
+          "tags": [
+            "listaocorrencias"
+          ],
+          "screenComponents": [
+            "ListaOcorrencias"
+          ],
+          "onClick": {
+            "functionality": "ListaOcorrencias"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ocorrencia",
+      "name": "Ocorrencia",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_ocorrencia",
+          "name": "Ocorrencia",
+          "description": "Acessar a funcionalidade Ocorrencia",
+          "tags": [
+            "ocorrencia"
+          ],
+          "screenComponents": [
+            "Ocorrencia"
+          ],
+          "onClick": {
+            "functionality": "Ocorrencia"
+          }
+        }
+      ]
+    },
+    {
+      "id": "precoLivro",
+      "name": "PrecoLivro",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_precoLivro",
+          "name": "PrecoLivro",
+          "description": "Acessar a funcionalidade PrecoLivro",
+          "tags": [
+            "precolivro"
+          ],
+          "screenComponents": [
+            "PrecoLivro"
+          ],
+          "onClick": {
+            "functionality": "PrecoLivro"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pix",
+      "name": "Pix",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_pix",
+          "name": "Pix",
+          "description": "Acessar a funcionalidade Pix",
+          "tags": [
+            "pix"
+          ],
+          "screenComponents": [
+            "Pix"
+          ],
+          "onClick": {
+            "functionality": "Pix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "listaPresenca",
+      "name": "ListaPresenca",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_listaPresenca",
+          "name": "ListaPresenca",
+          "description": "Acessar a funcionalidade ListaPresenca",
+          "tags": [
+            "listapresenca"
+          ],
+          "screenComponents": [
+            "ListaPresenca"
+          ],
+          "onClick": {
+            "functionality": "ListaPresenca"
+          }
+        }
+      ]
+    },
+    {
+      "id": "associarEntrevista",
+      "name": "AssociarEntrevista",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_associarEntrevista",
+          "name": "AssociarEntrevista",
+          "description": "Acessar a funcionalidade AssociarEntrevista",
+          "tags": [
+            "associarentrevista"
+          ],
+          "screenComponents": [
+            "AssociarEntrevista"
+          ],
+          "onClick": {
+            "functionality": "AssociarEntrevista"
+          }
+        }
+      ]
+    }
+  ]
+}

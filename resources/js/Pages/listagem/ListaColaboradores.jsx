@@ -142,7 +142,8 @@ const ListaColaboradores = (props) => {
         let lista = listafiltro.filter(
             (item)=>item.col_name.toLowerCase().includes(valor.toLowerCase()) ||
                     item.col_email.toLowerCase().includes(valor.toLowerCase()) ||
-                    item.col_cpf.toLowerCase().includes(valor.toLowerCase())
+                    item.col_cpf.toLowerCase().includes(valor.toLowerCase()) ||
+                    item.col_desc_ocupacao.toLowerCase().includes(valor.toLowerCase())
         )
         //listafiltro.filter((item)=> item.tes_id_tes == event.target.value)
         console.log(lista)

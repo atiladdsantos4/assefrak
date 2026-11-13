@@ -76,9 +76,22 @@ input[type="checkbox"]{
    }
 }
 
+.texto-turvo {
+   filter: blur(5px);
+}
+
+.badge-protegido {
+    border: 2px solid white;
+    background-color: #1c059f !important;
+    color: white;
+    cursor: pointer;
+}
+
 #form-acolhido,
 #form-apresentacao,
 #form-menu,
+#modal-pesq,
+#form-infassefrak,
 #form-inf-tecnica,
 #form-funcionalidade {
 
