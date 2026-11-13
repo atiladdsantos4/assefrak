@@ -60,6 +60,7 @@ use App\Http\Controllers\Api\TipoFuncionalidadeController;
 use App\Http\Controllers\Api\FuncionalidadeController;
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\InformacaoTecnicaController;
+use App\Http\Controllers\Api\InfAssefrakController;
 
 
 
@@ -126,6 +127,7 @@ Route::apiResource('tipofuncionalidade', TipoFuncionalidadeController::class)->m
 Route::apiResource('funcionalidade', FuncionalidadeController::class)->middleware('auth:sanctum');
 Route::apiResource('menu',MenuController::class)->middleware('auth:sanctum');
 Route::apiResource('informacao-tecnica',InformacaoTecnicaController::class)->middleware('auth:sanctum');
+Route::apiResource('infassefrak', InfAssefrakController::class);
 
 
 

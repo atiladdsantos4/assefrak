@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle,CRow,CCol,CBadge } from '@coreui/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {  faPerson, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const ModalVideos = (props) => {
   const pathlink="https://www.youtube.com/embed/"
@@ -9,7 +11,7 @@ const ModalVideos = (props) => {
   return (
     <>
       <CModal
-        
+
         size="xl"
         visible={open}
         onClose={() => close()}

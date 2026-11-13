@@ -94,6 +94,10 @@ import ListaMenu from './listagem/ListaMenu';
 import InfTecnica from './cadastros/InfTecnica';
 import ListaInfTecnica from './listagem/ListaInfTecnica';
 import { faLeaf } from '@fortawesome/free-solid-svg-icons';
+import InfAssefrak from './cadastros/InfAssefrak';
+import ListaInfAssefrak from './listagem/ListaInfAssefrak';
+import ModalPesquisa from './componentes/ModalPesquisa';
+
 
 
 /*
@@ -117,13 +121,14 @@ const Main = ({ appName }) => {
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
   const [view,setView] = useState(null)
-  const [telaatual,setTelaatual] = useState('ListaHumor');
+  const [telaatual,setTelaatual] = useState('InfAssefrak');
   const [param,setParam] = useState(null);
   const [paramestado,setParamestado] = useState(null);
   const [paramacolhido,setParamacolhido] = useState(null);
   const [paramtratamento,setParamtratamento] = useState(null);
   const [novo,setNovo] = useState(false);
   const [loadmenu,setLoadmenu] = useState(false);
+  const [openmodal,setOpenmodal] = useState(false);
   const [listamenu,setListamenu] = useState([]);
   let menuCache = null;
 
@@ -457,6 +462,21 @@ const Main = ({ appName }) => {
             return (
                 <ListaInfTecnica tela={setTelaatual} altera={setParam}/>
         );
+
+        case "InfAssefrak":
+            return (<InfAssefrak tela={setTelaatual} param={param} />)
+        break;
+
+        case "ListaInfAssefrak":
+           return (<ListaInfAssefrak tela={setTelaatual} altera={setParam} />);
+        break;
+
+        case "PesquisaSistema":
+           console.log('okdfdffddffd')
+           setOpenmodal(true)
+           setTelaatual('')
+           //return(<ModalPesquisa open={openmodal} close={setOpenmodal(false)}/>)
+        break;
      }
   }
 
@@ -467,12 +487,14 @@ if (listamenu.length === 0) {
 
     return (
         <>
+            <ModalPesquisa open={openmodal} close={() => setOpenmodal(false)} ExibeTela={setTelaatual}/>
             <HeaderAdmin
                 lista={listamenu}
                 tela={setTelaatual}
                 alteraficha={setParamacolhido}
                 altera={setParam}
                 mudatela={AtualizaTela}
+                pesquisa={(e)=>setOpenmodal(true)}
             />
 
             <main id="idmain" className="main">

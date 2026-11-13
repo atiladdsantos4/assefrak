@@ -38,7 +38,7 @@ const Colaborador = (props) => {
   const [faixa, setFaixa] = useState('')
   const [ocupacao, setOcupacao] = useState('')
   const [titulo, setTitulo] = useState('')
-  const [ativo, setAtivo] = useState(false)
+  const [ativo, setAtivo] = useState(true)
   const [listaestado, setListaestado] = useState([])
   const [listacidade, setListacidade] = useState([])
   const [listaocupacao, setListaocupacao] = useState([])
@@ -785,7 +785,6 @@ const Colaborador = (props) => {
                                     aria-describedby="button-addon1"
                                     defaultValue={titulo}
                                     feedbackInvalid="O Título precisa ser preenchido"
-                                    required
                                     onChange={(e)=>setTitulo(e.target.value)}
                                 />)}
                             </CCol>
@@ -877,16 +876,20 @@ const Colaborador = (props) => {
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
                                 <>
-                                <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/>
-                                <CFormCheck
-                                    type="checkbox"
-                                    id="invalidCheck"
-                                    label="Colaborador Ativo"
-                                    feedbackInvalid="Informe se Colaborador esta Ativo"
-                                    checked={ativo}
-                                    onChange={(e)=>setAtivo(e.target.checked)}
-                                    required
-                                />
+                                {/* <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/> */}
+
+                                 <div style={{ position: 'relative', top: '40px' }}>
+                                 <CFormCheck
+                                        // inline
+                                        // style={{ position: 'relative', top: '40px' }}
+                                        type="checkbox"
+                                        id="invalidCheck"
+                                        label="Colaborador Ativo"
+                                        feedbackInvalid="Informe se Colaborador esta Ativo"
+                                        checked={ativo}
+                                        onChange={(e)=>setAtivo(e.target.checked)}
+                                 />
+                                 </div>
                                 <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
                                 </>)}
                             </CCol>

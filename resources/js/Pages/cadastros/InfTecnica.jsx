@@ -2,11 +2,12 @@ import { React, useEffect, useState, useRef } from 'react';
 import {
   CCard, CCardBody, CCardHeader, CCol, CButton, CForm,
   CFormInput, CFormTextarea, CSpinner, CToaster, CToast,
-  CToastBody, CToastClose, CPlaceholder
+  CToastBody, CToastClose, CPlaceholder,CBadge
 } from '@coreui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faSave, faBars } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import ModalExibe from '../componentes/ModalExibe';
 
 // Cadastro de Informação Técnica
 const InfTecnica = (props) => {
@@ -20,6 +21,8 @@ const InfTecnica = (props) => {
   const [loadsave, setLoadsave] = useState(false);
   const [isedit, setIsedit] = useState(false);
   const [exibe, setExibe] = useState(false);
+  const [turvo, setTurvo] = useState('');
+  const [openmodal, setOpenmodal] = useState(false);
   const [idinf, setIdinf] = useState(null);
   const [autor, setAutor] = useState('');
   const [urldev, setUrldev] = useState('');
@@ -75,6 +78,7 @@ const InfTecnica = (props) => {
           setCadastro(result.inf_created_at ?? '');
           setIsedit(true)
           setExibe(false)
+          setTurvo('texto-turvo')
         }
         setLoadpage(false);
       } catch (error) {
@@ -173,7 +177,7 @@ const InfTecnica = (props) => {
     //let valor = isedit && !exibe ? '' : value;
     loadpage
       ? <div style={style_placeholder}><CPlaceholder className="grad68full" xs={12} size="lg" /></div>
-      : <CFormInput id={id} label={label} value={isedit && !exibe ? '' : value}
+      : <CFormInput className={turvo} id={id} label={label} value={value}
           onChange={(e) => onChange(e.target.value)} maxLength={maxLength}
           feedbackInvalid={feedbackInvalid} required />
   )
@@ -181,13 +185,14 @@ const InfTecnica = (props) => {
   const CompTextarea = (label, value, onChange, id, feedbackInvalid) => (
     loadpage
       ? <div style={style_placeholder}><CPlaceholder className="grad68full" xs={12} size="lg" /></div>
-      : <CFormTextarea id={id} label={label} value={value}
+      : <CFormTextarea className={turvo} id={id} label={label} value={value}
           onChange={(e) => onChange(e.target.value)} rows={4} maxLength={1500}
           feedbackInvalid={feedbackInvalid} required />
   );
 
   return (
     <div data-aos="zoom-in">
+      <ModalExibe open={openmodal} close={(e)=>setOpenmodal(false)} classe={setTurvo}/>
       <section id="hero" className="hero section light-background">
         <div className="container section-title box-title mb-2" data-aos="fade-up">
           <ImageHeader />
@@ -196,7 +201,10 @@ const InfTecnica = (props) => {
           <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
           <CCard className="card_bottom">
             <CCardHeader className="fundo_head">
-              <FontAwesomeIcon size="lg" icon={faBars} />&nbsp;Cadastro de Informação Técnica
+                <FontAwesomeIcon size="lg" icon={faBars} />&nbsp;Cadastro de Informação Técnica
+                <CBadge color="success" className="badge-protegido ms-2" onClick={(e)=>setOpenmodal(true)}>
+                    Confidencial
+                </CBadge>
             </CCardHeader>
             <CCardBody>
               <CForm className="row g-3 needs-validation" noValidate
