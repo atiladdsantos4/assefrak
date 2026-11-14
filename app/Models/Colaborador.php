@@ -18,7 +18,7 @@ class Colaborador extends Model
     protected $appends = ['acao'];
     //,'pla_planosaude','pac_planosaude'];
     protected $fillable = [
-       'col_name','col_cpf','col_sexo','col_email','col_titulo','col_tipo_telefone','col_telefone','col_ativo','col_estado','col_cidade','col_ocupacao','col_nascimento','col_imagem','col_created_at', 'col_updated_at', 'col_deleted_at'
+       'col_name','col_cpf','col_sexo','col_email','col_titulo','col_tipo_telefone','col_palestrante','col_telefone','col_ativo','col_estado','col_cidade','col_ocupacao','col_nascimento','col_imagem','col_created_at', 'col_updated_at', 'col_deleted_at'
     ];
     protected $dates = ['col_deleted_at'];//campo obrigatório pra o SoftDeletes
 

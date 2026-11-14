@@ -275,7 +275,7 @@ const ImageHeader = () =>{
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                 : (<CFormInput
                                     id="idtipotratamento"
-                                    label="Descrição do Alerta"
+                                    label="Descrição do Tipo de Tratamento"
                                     placeholder="Digite a Descrição do Tratamento"
                                     aria-label="Example text with button addon"
                                     aria-describedby="button-addon1"

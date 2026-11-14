@@ -1,0 +1,21 @@
+{
+  "functionalities": [
+    {
+      "id": "acessar_fichaEntrevista",
+      "context": {
+        "description": "Integra informações da entrevista para caracterização e orientação do atendimento.",
+        "functionalities": [
+            "acessar_humor",
+            "acessar_reativo",
+            "acessar_passivo",
+            "acessar_sono",
+            "acessar_gravidade",
+            "acessar_relatadas",
+            "acessar_diaPasse",
+            "acessar_orientacaoCasa",
+            "acessar_orientacaoExterna"
+        ]
+      }
+    }
+  ]
+}

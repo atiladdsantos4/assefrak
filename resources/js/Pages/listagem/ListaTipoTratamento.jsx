@@ -377,7 +377,7 @@ const ListaTipoTratamento = (props) => {
                                 className="ms-auto flex-shrink-0"
                                 onClick={(e)=>tela('TipoTratamento')}
                          >
-                            Nova Alerta&nbsp;
+                            Novo Tipo&nbsp;
                             <FontAwesomeIcon size="lg" icon={faFile} />
                          </CButton>
                     </div>

@@ -1,7 +1,5 @@
 import { React,useEffect } from 'react';
 import ListaAcolhidos from '../listagem/ListaAcolhidos';
-// import { NavbarComp } from '../layouts/NavbarComp';
-// import { SidebarComp } from '../layouts/SidebarComp';
 
 
 
@@ -139,10 +137,19 @@ const HeaderAdmin = (props) => {
             </nav>
 
             <div class="header-social-links">
-                <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+
+                <a
+                    href="#"
+                    class="search"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        pesquisa()
+                    }}
+                >
+                    <i class="bi bi-search"></i>
+                </a>
                 <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
                 <a target="_blank" href="https://www.instagram.com/assefrak?igsh=MW94NDAzOXYyMGtvdA==" class="instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
             </div>
 
         </div>

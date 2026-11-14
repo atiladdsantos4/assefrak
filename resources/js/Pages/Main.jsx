@@ -67,114 +67,47 @@ const Main = ({ appName }) => {
       setOpenmodallivro(true)
   }
 
-  useEffect(() => {
-     document.documentElement.setAttribute('data-coreui-theme', theme_light);
-     setModal(true)
-     /*scroll */
-        const observer = new IntersectionObserver(
-            ([entry]) => {
+
+useEffect(() => {
+    document.documentElement.setAttribute('data-coreui-theme', theme_light);
+    setModal(true);
+
+    const targets = [
+        { ref: targetRef, set: setEstevento, reached: setHasReached, name: 'evento' },
+        { ref: targetPalRef, set: setEstpalestra, reached: setHasPalReached, name: 'palestra' },
+        { ref: targetCurRef, set: setEstcurso, reached: setHasCurReached, name: 'curso' },
+        { ref: targetLivRef, set: setEstlivro, reached: setHasLivReached, name: 'livro' }
+    ];
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    setHasReached(true);
-                    console.log('Element reached!');
-                    if(estevento == true){//so carrega se estiver true
-                    console.log('carreguei o load evento')
-                    setEstevento(false)//caso nao seja acessado pelo click dispara pelo evento onscroll
+                    const target = targets.find(item => item.ref.current === entry.target);
+
+                    if (target) {
+                        target.reached(true);
+                        target.set(false);
+                        console.log('carreguei:', target.name);
                     }
-                    // Fire your custom logic here
                 }
-            },
-            {
-                root: null, // uses the viewport
-                threshold: 0.5, // triggers when 50% of the element is visible
-            }
-        );
-
-        const observerpal = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setHasPalReached(true);
-                    console.log('Element reached!');
-                    if(estpalestra == true){//so carrega se estiver true
-                        console.log('carreguei o load palestra')
-                        setEstpalestra(false)//caso nao seja acessado pelo click dispara pelo evento onscroll
-                    }
-                    // Fire your custom logic here
-                }
-            },
-            {
-                root: null, // uses the viewport
-                threshold: 0.5, // triggers when 50% of the element is visible
-            }
-        );
-
-        const observercur = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setHasCurReached(true);
-                    console.log('Element reached!');
-                    if(estcurso == true){//so carrega se estiver true
-                        console.log('carreguei o load curso')
-                        setEstcurso(false)//caso nao seja acessado pelo click dispara pelo evento onscroll
-                    }
-                    // Fire your custom logic here
-                }
-            },
-            {
-                root: null, // uses the viewport
-                threshold: 0.5, // triggers when 50% of the element is visible
-            }
-        );
-
-        const observerliv = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setHasLivReached(true);
-                    console.log('Element reached!');
-                    if(estlivro == true){//so carrega se estiver true
-                        console.log('carreguei o load livro')
-                        setEstlivro(false)//caso nao seja acessado pelo click dispara pelo evento onscroll
-                    }
-                    // Fire your custom logic here
-                }
-            },
-            {
-                root: null, // uses the viewport
-                threshold: 0.5, // triggers when 50% of the element is visible
-            }
-        );
-
-        if (targetRef.current) {
-           observer.observe(targetRef.current);
+            });
+        },
+        {
+            root: null,
+            threshold: 0.5
         }
+    );
 
-        if (targetPalRef.current) {
-           observerpal.observe(targetPalRef.current);
+    targets.forEach(({ ref }) => {
+        if (ref.current) {
+            observer.observe(ref.current);
         }
+    });
 
-        if (targetCurRef.current) {
-           observercur.observe(targetCurRef.current);
-        }
+    return () => observer.disconnect();
 
-        if (targetLivRef.current) {
-           observerliv.observe(targetLivRef.current);
-        }
-
-        return () => {
-            if (targetRef.current) {
-               observer.unobserve(targetRef.current);
-            }
-            if (targetPalRef.current) {
-               observerpal.unobserve(targetPalRef.current);
-            }
-            if (targetCurRef.current) {
-               observercur.unobserve(targetCurRef.current);
-            }
-            if (targetLivRef.current) {
-               observerliv.unobserve(targetLivRef.current);
-            }
-        };
-    /* scrool event */
-  },[])
+}, []);
 
   const closeModal = () =>{
     setModal(false)
@@ -184,12 +117,6 @@ const Main = ({ appName }) => {
     setModalcurso(false)
   }
 
-//   const ScLivraria = memo(function Child() {
-//       console.log('Child ScLivraria rendered'+estlivro);
-//       return(
-//         <SectionLivraria estado={estlivro} open={AbreModalLivro}/>
-//       )
-//   },[estlivro]);
 
   return (
          <>
@@ -197,7 +124,7 @@ const Main = ({ appName }) => {
          <ModalCursos open={openmodalcurso} close={closeModalCurso} dados={dadoscurso} publico={dadospublico}/>
          {/* <ModalQrCode livro={livro} autor={autor} valor={preco}  copia={copia} imagem={img} isOpen={openmodallivro} close={setOpenmodallivro}/> */}
          <Header clickevento={setEstevento} clickpalestra={setEstpalestra} opencursos={setModalcurso}/>
-            <main class="main">
+            <main className="main">
                 <SectionOurStory mudatela={setTela}/>
                 {/* <!-- Hero Section --> */}
                 <SectionHero mudatela={setTela}/>

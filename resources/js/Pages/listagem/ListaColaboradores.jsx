@@ -18,7 +18,8 @@ import {
     CButton,
     CSpinner,
     CFormSelect,
-    CToaster, CToast, CToastBody, CToastClose
+    CToaster, CToast, CToastBody, CToastClose,
+    CBadge
 } from '@coreui/react'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -117,10 +118,12 @@ const ListaColaboradores = (props) => {
                     <CTableDataCell className='sticky-col'>#</CTableDataCell>
                     <CTableDataCell className='sticky-col'>{item.col_name}</CTableDataCell>
                     <CTableDataCell>{item.col_titulo}</CTableDataCell>
+                    {/* <CTableDataCell style={{textAlign:'center'}}>{item.col_palestrante}</CTableDataCell> */}
+                    <CTableDataCell style={{textAlign:'center'}}>{item.col_palestrante == 'S' ? <CBadge color="primary">Sim</CBadge> : <CBadge color="danger">Não</CBadge> }</CTableDataCell>
                     <CTableDataCell>{item.col_email}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'center'}}>{item.col_sexo}</CTableDataCell>
                     <CTableDataCell>{item.col_telefone}</CTableDataCell>
-                    <CTableDataCell style={{textAlign:'center'}}>{item.col_ativo}</CTableDataCell>
+                    <CTableDataCell style={{textAlign:'center'}}>{item.col_ativo == 1 ? <CBadge color="success">Ativo</CBadge> : <CBadge color="danger">Inativo</CBadge> }</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.col_cidade+'/'+item.col_uf_sigla}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.col_desc_ocupacao}</CTableDataCell>
                     <CTableDataCell style={{textAlign:'left'}}>{item.col_nascimento}</CTableDataCell>
@@ -372,6 +375,7 @@ const ListaColaboradores = (props) => {
                                 <CTableHeaderCell className='clthinputtext sticky-col'style={{borderRadius:'5px 0px 0px 0px',fontSize:'11px !important'}} scope="col">#</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno sticky-col' scope="col">Nome</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Titulo</CTableHeaderCell>
+                                <CTableHeaderCell className='clthinterno' scope="col">Palestrante</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Email</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Sexo</CTableHeaderCell>
                                 <CTableHeaderCell className='clthinterno' scope="col">Telefone</CTableHeaderCell>

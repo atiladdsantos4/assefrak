@@ -39,6 +39,7 @@ const Colaborador = (props) => {
   const [ocupacao, setOcupacao] = useState('')
   const [titulo, setTitulo] = useState('')
   const [ativo, setAtivo] = useState(true)
+  const [palestrante, setPalestrante] = useState(false)
   const [listaestado, setListaestado] = useState([])
   const [listacidade, setListacidade] = useState([])
   const [listaocupacao, setListaocupacao] = useState([])
@@ -130,6 +131,8 @@ const Colaborador = (props) => {
             setTitulo(result_colaborador.data.data.col_titulo)
             setCadastro(result_colaborador.data.data.col_created_at)
             setAtivo(ativock)
+            let ativopal = result_colaborador.data.data.col_palestrante === "1" ? true : false
+            setPalestrante(ativopal)
             setFaixa(result_colaborador.data.data.col_faixa)
             setOcupacao(result_colaborador.data.data.col_ocupacao)
             setEstado(result_colaborador.data.data.col_estado)
@@ -346,6 +349,13 @@ const Colaborador = (props) => {
         );
   }
 
+  useEffect(()=>{
+      let dados = listaocupacao.find((item)=>item.ocu_id_ocu == ocupacao)
+      setPalestrante(
+        dados?.ocu_descricao == 'Palestrante' ||  palestrante == 'S'
+      )
+  },[ocupacao])
+
   const FixoInput = (props) => {
       const [value, setValue] = useState(props.telefone)
         return (
@@ -404,6 +414,8 @@ const Colaborador = (props) => {
         formData.append('col_estado', estado)
         let status = ativo ? 1 : 0
         formData.append('col_ativo', status)
+        status = palestrante ? 'S' : 'N'
+        formData.append('col_palestrante', status)
         if(folder != null){
            let pal_dados_inf =  MontaJsonImagem()
            formData.append('col_imagem', pal_dados_inf)
@@ -445,6 +457,8 @@ const Colaborador = (props) => {
         formData.append('col_estado', estado)
         let status = ativo ? 1 : 0
         formData.append('col_ativo', status)
+        status = palestrante ? 'S' : 'N'
+        formData.append('col_palestrante', status)
         if(folder != null && imagefolder != null ){
            let pal_dados_inf =  MontaJsonImagem()
            formData.append('col_imagem', pal_dados_inf)
@@ -871,7 +885,7 @@ const Colaborador = (props) => {
                                 // />
                                 )}
                             </CCol>
-                            <CCol xs={4}>
+                            <CCol xs={2}>
                                 { loadpage
                                 ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
                                 : (
@@ -888,6 +902,28 @@ const Colaborador = (props) => {
                                         feedbackInvalid="Informe se Colaborador esta Ativo"
                                         checked={ativo}
                                         onChange={(e)=>setAtivo(e.target.checked)}
+                                 />
+                                 </div>
+                                <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
+                                </>)}
+                            </CCol>
+                            <CCol xs={2}>
+                                { loadpage
+                                ? (<div style={style_placeholder}><CPlaceholder className='grad38full' xs={4} size="lg"/></div>)
+                                : (
+                                <>
+                                {/* <CFormLabel htmlFor="exampleFormControlInput1">&nbsp;</CFormLabel><br/> */}
+
+                                 <div style={{ position: 'relative', top: '40px' }}>
+                                 <CFormCheck
+                                        // inline
+                                        // style={{ position: 'relative', top: '40px' }}
+                                        type="checkbox"
+                                        id="invalidCheck"
+                                        label="Palestrante"
+                                        feedbackInvalid="Informe se Colaborador esta Ativo"
+                                        checked={palestrante}
+                                        onChange={(e)=>setPalestrante(e.target.checked)}
                                  />
                                  </div>
                                 <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>

@@ -1,123 +1,476 @@
-import React, { useState, useEffect } from 'react'
-import { CBadge,CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CFormInput,CRow,CCol  } from '@coreui/react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  faFolderOpen, faSave, faCheck, faFile, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
-import CatalogoAdmin from './CatalogoAdmin';
 
+import React, { useState, useEffect, useRef } from 'react'
+import {
+  CButton,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CFormInput
+} from '@coreui/react'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import {
+  faFolderOpen,
+  faSearch,
+  faDesktop,
+  faFile,
+  faHistory,
+  faXmark
+} from '@fortawesome/free-solid-svg-icons'
+
+import CatalogoAdmin from './CatalogoAdmin'
+import {catalogoTratamento, catalogoFicha} from './CatalogoAdmin'
+// //import { catalogoContext } from './CatalogoAdmin'
+// import { catalogoTratamento } from './CatalogoAdmin'
+// import { catalogoFicha } from './CatalogoAdmin'
+// console.log('Context:', catalogoTratamento)
 
 const ModalPesquisa = (props) => {
-  const {open,close,ExibeTela} = props
-  const [pesquisa, setPesquisa] = useState('')
 
-  const ClickPesquisa = (tela) =>{
+  const { open, close, ExibeTela } = props
+
+  const [pesquisa, setPesquisa] = useState('')
+  const inputRef = useRef(null)
+
+  const ClickPesquisa = (tela) => {
+    console.log('Screen:'+tela)
     ExibeTela(tela)
     close()
   }
 
-  useEffect(()=>{
-    setPesquisa('');
-  },[open])
+  useEffect(() => {
+    setPesquisa('')
+  }, [open])
+
+  const azul = '#087DEB'
+  const azulEscuro = '#142DA8'
+  const azulClaro = '#DFF2FF'
+  const texto = '#243B75'
+  const cinza = '#687895'
 
   return (
-    <>
-      <CModal
-            id="modal-pesq"
-            backdrop="static"
-            visible={open}
-            onClose={close}
-            aria-labelledby="LiveDemoExampleLabel"
-            size="xl"
+    <CModal
+    portal
+    id="modal-pesq"
+    backdrop="static"
+    visible={open}
+    onClose={close}
+    onOpened={() => inputRef.current?.focus()}
+    size="xl"
+    >
+
+      {/* HEADER */}
+      <CModalHeader
+        closeButton
+        style={{
+          background: 'linear-gradient(110deg, #142DA8 0%, #087DEB 48%, #00B8F0 100%)',
+          borderBottom: '4px solid #00B8F0',
+          color: 'white',
+          padding: '18px 24px'
+        }}
       >
-        <CModalHeader style={{backgroundColor:'#6895C1'}}>
-          <CModalTitle id="LiveDemoExampleLabel" style={{color:'white'}}>
-            <FontAwesomeIcon icon={faFolderOpen}/>&nbsp;Pesquisar no Sistema
-          </CModalTitle>
-        </CModalHeader>
-        <CModalBody style={{display: 'flex',flexDirection: 'column', height: '70vh'}}>
-            <CRow>
-               <CCol md="12">
-                   <CFormInput
-                      label="Pesquisar Escopo"
-                      type="text"
-                      placeholder="Default input"
-                      aria-label="default input example"
-                      value={pesquisa}
-                      onChange={(e)=>setPesquisa(e.target.value)}
-                    />
-               </CCol>
-            </CRow>
-            <CatalogoAdmin>
-                {({ catalogo }) => {
+        <CModalTitle
+          id="LiveDemoExampleLabel"
+          style={{
+            color: 'white',
+            fontSize: '18px',
+            fontWeight: '600'
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faFolderOpen}
+            style={{
+              marginRight: '12px',
+              color: 'white'
+            }}
+          />
 
-                    const listaPesquisa = catalogo.screens.flatMap((screen) => [
-                        {
-                            ...screen,
-                            parent: null
-                        },
-                        ...screen.functionalities.map((func) => ({
-                            ...func,
-                            parent: screen.name
-                        }))
-                    ])
+          Pesquisar no Sistema
+        </CModalTitle>
+      </CModalHeader>
 
-                    const listaFiltrada = listaPesquisa.filter((item) =>
-                        item.name.toLowerCase().includes(pesquisa.toLowerCase()) ||
-                        (item.description || '').toLowerCase().includes(pesquisa.toLowerCase()) ||
-                        (item.tags || []).some((tag) =>
-                            tag.toLowerCase().includes(pesquisa.toLowerCase())
-                        )
-                    )
+      {/* BODY */}
+      <CModalBody
+        style={{
+          backgroundColor: '#F7FBFF',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '70vh',
+          padding: '18px 20px'
+        }}
+      >
 
-                    return (
-                        <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-                            <h3><CBadge className='badge-protegido'>Informações no Sistema</CBadge></h3>
+        {/* SEARCH */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '20px',
+            padding: '5px 12px',
+            backgroundColor: 'white',
+            border: '1px solid #B8DFFF',
+            borderRadius: '10px',
+            boxShadow: '0 2px 8px #087DEB20'
+          }}
+        >
 
-                            {listaFiltrada.map((item) => (
-                                <div key={item.id}>
-                                    {item.parent && (
-                                        <small>{item.parent} → </small>
-                                    )}
-                                    {item.name}
-                                    {item.onClick?.functionality && (
-                                        <FontAwesomeIcon
-                                            style={{ color: '#4b41dd', cursor: 'pointer' }}
-                                            icon={faFolderOpen}
-                                            onClick={() => ClickPesquisa(item.onClick.functionality)}
-                                        />
-                                     )}
-                                </div>
-                            ))}
-                        </div>
-                    )
+          <FontAwesomeIcon
+            icon={faSearch}
+            style={{
+              color: azul,
+              fontSize: '20px'
+            }}
+          />
+
+          <CFormInput
+            ref={inputRef}
+            value={pesquisa}
+            onChange={(e) => setPesquisa(e.target.value)}
+            placeholder="Pesquisar funcionalidade, tela, menu, campo..."
+            aria-label="Pesquisar no sistema"
+            style={{
+              border: 'none',
+              boxShadow: 'none',
+              backgroundColor: 'transparent',
+              color: texto,
+              padding: '10px 4px'
+            }}
+          />
+
+          {pesquisa && (
+            <FontAwesomeIcon
+              icon={faXmark}
+              onClick={() => setPesquisa('')}
+              style={{
+                color: '#8AA3C7',
+                cursor: 'pointer',
+                fontSize: '18px',
+                padding: '5px'
+              }}
+            />
+          )}
+
+        </div>
+
+        {/* RESULTS */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            paddingRight: '5px'
+          }}
+        >
+
+
+       <CatalogoAdmin>
+        {({ catalogo }) => {
+
+            const listaPesquisa = catalogo.screens.flatMap((screen) => [
+            {
+                ...screen,
+                parent: null,
+                tipo: 'Tela'
+            },
+
+            ...screen.functionalities.flatMap((func) => [
+                {
+                ...func,
+
+                context: [
+                    catalogoTratamento,
+                    catalogoFicha
+                ]
+                    .flatMap((catalog) => catalog.functionalities)
+                    .filter((ctx) => ctx)
+                    .find((ctx) => ctx.id === func.id)?.context,
+
+                parent: screen.name,
+                tipo: 'Funcionalidade'
+                },
+
+                ...(func.screenComponents || []).map((component) => ({
+                id: `${func.id}_${component}`,
+                name: component,
+                description: `Componente da funcionalidade ${func.name}`,
+                tags: func.tags || [],
+                parent: func.name,
+                tipo: 'Componente'
+                }))
+            ])
+            ])
+
+            console.log('CATALOGO FICHA:', catalogoFicha)
+            console.log('FICHA KEYS:', Object.keys(catalogoFicha))
+
+            console.log(
+            'FICHA SEARCH:',
+            listaPesquisa.find(
+                (item) => item.id === 'acessar_fichaEntrevista'
+            )
+            )
+            const termo = pesquisa.toLowerCase()
+
+            const listaFiltrada = listaPesquisa.filter((item) =>
+            item.name.toLowerCase().includes(termo) ||
+            (item.description || '').toLowerCase().includes(termo) ||
+            (item.tags || []).some((tag) =>
+                tag.toLowerCase().includes(termo)
+            )
+            )
+
+            return (
+            <>
+
+                {/* SECTION TITLE */}
+                <div
+                style={{
+                    backgroundColor: azulClaro,
+                    color: azulEscuro,
+                    padding: '10px 15px',
+                    borderRadius: '8px',
+                    marginBottom: '10px',
+                    fontWeight: '600'
                 }}
-            </CatalogoAdmin>
-            {/* <CatalogoAdmin>
-               {({ catalogo }) => (
-                    <div>
-                        <h3>Pesquisar no Sistema</h3>
+                >
+                <FontAwesomeIcon
+                    icon={faHistory}
+                    style={{
+                    marginRight: '12px',
+                    color: azul
+                    }}
+                />
 
-                        {catalogo.screens
-                            .filter((item) =>
-                                item.name.toLowerCase().includes(pesquisa.toLowerCase())
-                            )
-                            .map((item) => (
-                                <div key={item.id}>
-                                    {item.name}
-                                </div>
-                            ))
-                        }
+                Resultados da pesquisa
+                </div>
+
+                {/* ITEMS */}
+                {listaFiltrada.map((item) => (
+
+                <div
+                    key={item.id}
+                    onClick={() =>
+                    item.onClick?.functionality &&
+                    ClickPesquisa(item.onClick.functionality)
+                    }
+                    style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '15px',
+                    padding: '12px 15px',
+                    marginBottom: '3px',
+                    borderBottom: '1px solid #DCEBFA',
+                    borderRadius: '8px',
+                    cursor: item.onClick?.functionality
+                        ? 'pointer'
+                        : 'default',
+                    transition: 'background-color 0.15s'
+                    }}
+                    onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#DFF2FF'
+                    }}
+                    onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                >
+
+                    {/* ICON */}
+                    <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: '48px',
+                        height: '48px',
+                        backgroundColor: '#E2F3FF',
+                        borderRadius: '10px'
+                    }}
+                    >
+                    <FontAwesomeIcon
+                        icon={item.parent ? faFile : faDesktop}
+                        style={{
+                        color: azul,
+                        fontSize: '21px'
+                        }}
+                    />
                     </div>
+
+                    {/* TEXT */}
+                    <div style={{ flex: 1 }}>
+
+                    <div
+                        style={{
+                        color: azulEscuro,
+                        fontWeight: '600',
+                        fontSize: '15px'
+                        }}
+                    >
+                        {item.name}
+                    </div>
+
+                    <small
+                        style={{
+                        color: cinza,
+                        fontSize: '13px'
+                        }}
+                    >
+                        {item.parent && (
+                        <>
+                            {item.parent} &nbsp; › &nbsp;
+                        </>
+                        )}
+
+                        {item.description}
+                    </small>
+
+                    {/* CONTEXT */}
+                    {item.context && (
+                        <div style={{
+                        color: cinza,
+                        fontSize: '13px',
+                        marginTop: '4px'
+                        }}>
+                        {item.context.description}
+                        </div>
+                    )}
+
+                    {/* RELATED FUNCTIONALITIES */}
+                    {item.context?.functionalities && (
+                        <div style={{
+                        color: cinza,
+                        fontSize: '13px',
+                        marginTop: '4px'
+                        }}>
+                        <strong>Funcionalidades relacionadas:</strong>
+
+                        {item.context.functionalities.map((id) => {
+                            const relacionada = catalogo.screens
+                            .flatMap((screen) => screen.functionalities)
+                            .find((func) => func.id === id)
+
+                            return relacionada && (
+                            <span key={id}>
+                                {' · '}
+                                {relacionada.name}
+                            </span>
+                            )
+                        })}
+                        </div>
+                    )}
+
+                    </div>
+
+                    {/* ACTION ICON */}
+                    {(item.onClick?.functionality || item.tipo === 'Componente') && (
+                    <FontAwesomeIcon
+                        icon={faFolderOpen}
+                        style={{
+                        color: azul,
+                        fontSize: '18px',
+                        cursor: 'pointer'
+                        }}
+                        onClick={(e) => {
+                        e.stopPropagation()
+
+                        const destino = item.tipo === 'Componente'
+                            ? item.name
+                            : item.onClick?.functionality
+
+                        ClickPesquisa(destino)
+                        }}
+                    />
+                    )}
+
+                </div>
+
+                ))}
+
+                {/* EMPTY RESULT */}
+                {listaFiltrada.length === 0 && (
+                <div
+                    style={{
+                    textAlign: 'center',
+                    padding: '35px',
+                    color: cinza
+                    }}
+                >
+                    <FontAwesomeIcon
+                    icon={faSearch}
+                    style={{
+                        fontSize: '30px',
+                        color: '#A8D8FA',
+                        marginBottom: '12px'
+                    }}
+                    />
+
+                    <div>
+                    Nenhuma funcionalidade encontrada.
+                    </div>
+                </div>
                 )}
-            </CatalogoAdmin> */}
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={close}>
-            Close
-          </CButton>
-          <CButton color="primary">Save changes</CButton>
-        </CModalFooter>
-      </CModal>
-    </>
+
+            </>
+            )
+        }}
+       </CatalogoAdmin>
+
+
+        </div>
+
+      </CModalBody>
+
+      {/* FOOTER */}
+      <CModalFooter
+        style={{
+          backgroundColor: '#E7F5FF',
+          borderTop: '1px solid #C5E5FF',
+          padding: '15px 20px'
+        }}
+      >
+
+        <span
+          style={{
+            color: cinza,
+            fontSize: '12px',
+            marginRight: 'auto'
+          }}
+        >
+          <span style={{ color: azul, fontWeight: '600' }}>
+            ↑ ↓
+          </span>
+          &nbsp; Navegar &nbsp;&nbsp;
+
+          <span style={{ color: azul, fontWeight: '600' }}>
+            Enter
+          </span>
+          &nbsp; Abrir
+        </span>
+
+        <CButton
+          color="primary"
+          onClick={close}
+          style={{
+            background: 'linear-gradient(110deg, #087DEB, #00A9F0)',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '8px 18px'
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faXmark}
+            style={{ marginRight: '8px' }}
+          />
+
+          Fechar
+        </CButton>
+
+      </CModalFooter>
+
+    </CModal>
   )
 }
+
 export default ModalPesquisa

@@ -40,6 +40,86 @@
             height: 75px;
             width: auto;
         }
+        /* tabelas */
+
+        .movimentacao-box {
+            border: 1px solid #777;
+            border-radius: 5px;
+            padding: 6px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+        }
+
+        .movimentacao-title {
+            background-color: #6998c3;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            padding: 7px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .movimentacao-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+
+        .movimentacao-table thead th {
+            background-color: #e9f1f8;
+            color: #234c70;
+            font-weight: bold;
+            padding: 7px 5px;
+            border-bottom: 1px solid #9bb5cc;
+            text-align: center;
+        }
+
+        .movimentacao-table tbody td {
+            padding: 7px 5px;
+            border-bottom: 1px solid #dddddd;
+            vertical-align: middle;
+        }
+
+        .movimentacao-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .movimentacao-table .col-tipo {
+            width: 27%;
+        }
+
+        .movimentacao-table .col-descricao {
+            width: 53%;
+        }
+
+        .movimentacao-table .col-data {
+            width: 20%;
+        }
+
+        .movimentacao-table .tipo {
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .movimentacao-table .descricao {
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        .movimentacao-table .data {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .movimentacao-table .sem-registros {
+            text-align: center;
+            color: #777777;
+            font-style: italic;
+            padding: 15px 5px;
+        }
     </style>
 </head>
 <body>

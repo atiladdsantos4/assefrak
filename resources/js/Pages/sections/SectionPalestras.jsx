@@ -4,10 +4,6 @@ import { CPlaceholder,CBadge, CSpinner,CPagination,CPaginationItem } from '@core
 import ModalEventos from '../componentes/ModalEventos';
 import ModalPalestra from '../componentes/ModalPalestra';
 
-// import { NavbarComp } from '../layouts/NavbarComp';
-// import { SidebarComp } from '../layouts/SidebarComp';
-
-
 
 // The Main component receives props passed from the Laravel controller
 const SectionPalestras = (props) => {

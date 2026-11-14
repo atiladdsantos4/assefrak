@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle,CFormInput,CSpinner, CAlert } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios';
@@ -15,9 +15,11 @@ const ModalExibe = (props) => {
   const [show, setShow] = useState(false)
   const [texto, setTexto] = useState('')
   const [showclasse, setShowclasse] = useState('danger')
+  const inputRef = useRef(null)
 
   useEffect(()=>{
       setSenha('')
+       inputRef.current?.focus();
   },[open])
 
   const VerificaSenha = () =>{
@@ -72,6 +74,7 @@ const ModalExibe = (props) => {
       <CModal
         backdrop="static"
         visible={open}
+        onOpened={() => inputRef.current?.focus()}
         onClose={() => close()}
         aria-labelledby="StaticBackdropExampleLabel"
       >
@@ -83,6 +86,7 @@ const ModalExibe = (props) => {
          <CAlert visible={show} color={showclasse} >{texto}</CAlert>
         <CModalBody>
           <CFormInput
+            ref={inputRef}
             className='form-control'
             label="Informe a senha"
             value={senha}

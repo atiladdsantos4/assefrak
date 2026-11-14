@@ -299,7 +299,7 @@ useEffect(()=>{
     let classe = showdrop ? style_drop : 'dropdown-menu'
     return(
      <CDropdown>
-        <CDropdownToggle color="secondary" onClick={(e)=>setShowdrop(!showdrop)}>Selecionar Tratamento</CDropdownToggle>
+        <CDropdownToggle  size="sm"  className="small associar" color="secondary" onClick={(e)=>setShowdrop(!showdrop)}>Selecionar Tratamento</CDropdownToggle>
         <CDropdownMenu className={classe}>
                 {listatratamento.map((item,index)=>{
                     return(
@@ -351,7 +351,7 @@ const SelectEntrevista = (props) =>{
     let classe = showdropent ? style_drop : 'dropdown-menu'
     return(
      <CDropdown>
-        <CDropdownToggle color="secondary" onClick={(e)=>setShowdropent(!showdropent)}>Lista de Entrevistas</CDropdownToggle>
+        <CDropdownToggle size="sm" className="small associar"  color="secondary" onClick={(e)=>setShowdropent(!showdropent)}>Lista de Entrevistas</CDropdownToggle>
         <CDropdownMenu className={classe}>
                 {listaentrevista.map((item,index)=>{
                     return(

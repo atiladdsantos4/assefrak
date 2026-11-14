@@ -26,6 +26,11 @@
     background-image: url('../img/telas/AssefrakHeader.png') !important;
 }
 
+.associar{
+   background-color: #1c059f;
+   border: 2px solid rgb(106, 101, 101);
+}
+
 
 .fundo_header {
     .cabecalho{
@@ -54,7 +59,12 @@
     background-image: url('../img/telas/AssefrakHeader.png') !important;
 }
 
-
+#form-acolhido {
+   .form-check-input:checked {
+        background-color: #1c059f;
+        border-color: #7a7885;
+   }
+}
 .badgeazul{
    background-color:#6895C1 !important;
    /* font-size: 11px; */
@@ -127,14 +137,14 @@ input[type="checkbox"]{
     input:focus {
         border-color: #007bff;
         background-color: #e5f6b7;
-        outline: 2px solid #007bff; /* Keeps it accessible */
+        outline: 2px solid #007bff;
         outline-offset: 1px;
     }
 
     select:focus {
         border-color: #007bff;
         background-color: #e5f6b7;
-        outline: 2px solid #007bff; /* Keeps it accessible */
+        outline: 2px solid #007bff;
         outline-offset: 1px;
     }
 

@@ -36,7 +36,7 @@ const Palestra = (props) => {
   const [titulo, setTitulo] = useState('')
   const [colaborador, setColaborador] = useState('')
   const [tema, setTema] = useState('')
-  const [texto, setTexto] = useState('')
+  const [texto, setTexto] = useState('Venha refletir, se fortalecer espiritualmente e descobrir caminhos de cura interior à luz do Espiritismo. Aberto a todos os corações!')
   const [categoriaevento, setCategoriaevento] = useState('')
   //const [texto, setTexto] = useState('')
   const [concluido, setConcluido] = useState(false)
@@ -45,7 +45,7 @@ const Palestra = (props) => {
   const [listacidade, setListacidade] = useState([])
   const [listacategoriaevento, setListacategoriaevento] = useState([])
   const [estado, setEstado] = useState(21)
-  const [cidade, setCidade] = useState(null)
+  const [cidade, setCidade] = useState(1897)
   const [datainicio, setDatainicio] = useState(null)
   const [datafim, setDatafim] = useState(null)
   const [horainicio, setHorainicio] = useState(null)
@@ -54,7 +54,7 @@ const Palestra = (props) => {
   const [cadastro, setCadastro] = useState('')
   const [local, setLocal] = useState('Rua da Ambrosia, 183, Proximo ao arena 2 deJulho, Bairro 2 de Julho');
   const [finalizado, setFinalizado] = useState(false)
-  const [exibir, setExibir] = useState(false)
+  const [exibir, setExibir] = useState(true)
   const [saved,setSaved] = useState(false)
   const [toast, addToast] = useState()//toast
   const [param, setParam] = useState(props.param)
@@ -71,8 +71,8 @@ const Palestra = (props) => {
   //imagens do evento
   const [listaimagens,setListaimagens] = useState([])
   const [dadozoom,setDadozoom] = useState('zoom-in')
-  const style_imagem_plus = {width:'110%',zIndex:'20'}
-  const style_imagem_minus = {width:'30%',zIndex:'20'}
+  const style_imagem_plus = {borderRadius:'8px',width:'110%',zIndex:'20'}
+  const style_imagem_minus = {borderRadius:'8px',width:'30%',zIndex:'20'}
   const [tamimagem,setTamimagem] = useState(style_imagem_minus)
   const [iconimagem,setIconimagem] = useState(faMagnifyingGlassPlus)
   //pal_id_pal,pal_name,pal_cpf,pal_texto,pal_tipo_telefone,pal_telefone,pal_concluido,pal_created_at,pal_updated_at,pal_deleted_at
@@ -239,6 +239,7 @@ const Palestra = (props) => {
                 let array_cat = result_categoriaevento.data.data
                 array_cat.unshift({cae_id_cae:'',cae_descricao:'Selecione a Categoria da Palestra'})
                 setListacategoriaevento(array_cat)
+                setCidade(1897)
                 setLoadpage(false)
             }
             catch (error) {
@@ -466,9 +467,15 @@ const Palestra = (props) => {
  const CompCidades = () =>{
     return(
         listacidade.map((item,index)=>{
-        return(
-            <option key={index} value={item.cid_id_cid}>{item.cid_descricao}</option>
-            )
+            if(cidade == null){
+                return(
+                    <option key={index} value={item.cid_id_cid}>{item.cid_descricao}</option>
+                )
+            } else {
+               return(
+                    <option key={index} value={item.cid_id_cid} selected>{item.cid_descricao}</option>
+               )
+            }
         })
     )
  }
@@ -544,11 +551,21 @@ const Palestra = (props) => {
                    {folder && <p>Arquivo Selecionado: <CBadge color="primary">{folder}</CBadge></p>}
                 </div>
             </CCol>
-            { folder != null ?
+            {/* { folder != null ?
             (<CCol md={4} className='mt-3 mb-3'>
                <div className="containerimg">
                    <img style={{width:'30%'}} src={imagem + 'palestra/'+folder}/>
                </div>
+            </CCol>)
+            :('')} */}
+            { folder != null ?
+            (<CCol md={4} className='mt-3 mb-3'>
+            <div className="containerimg">
+                <img style={tamimagem} data-aos="zoom-in" src={imagem + 'palestra/'+folder}/>
+            </div>
+            <div style={{position:'relative',top:'-125px',display:'flex',justifyContent:'center',alignItems:'center',zIndex:'21'}}>
+                <FontAwesomeIcon size="lg" style={{color:'blue',cursor:'pointer'}} icon={iconimagem} onClick={(e)=>expande(e)}/>
+            </div>
             </CCol>)
             :('')}
           </CRow>
@@ -983,7 +1000,7 @@ const Palestra = (props) => {
               { folder != null ?
               (<CCol md={4} className='mt-3 mb-3'>
                  <div className="containerimg">
-                     <img style={tamimagem} src={imagem + 'palestra/'+folder}/>
+                     <img data-aos="zoom-in" style={tamimagem} src={imagem + 'palestra/'+folder}/>
                  </div>
                  <div style={{position:'relative',top:'-125px',display:'flex',justifyContent:'center',alignItems:'center',zIndex:'21'}}>
                     <FontAwesomeIcon size="lg" style={{color:'blue',cursor:'pointer'}} icon={iconimagem} onClick={(e)=>expande(e)}/>

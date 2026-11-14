@@ -22,10 +22,23 @@ class ColaboradorController extends Controller
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
            if( isset($all["palestrante"]) ){
               $desc = 'Palestrante';
-              $result_pal = Colaborador::whereRaw("exists(select 1 from ocu_ocupacao where ocu_id_ocu = col_ocupacao and (ocu_descricao='Palestrante' or ocu_descricao='Suporte ao Sistema'))")
-              ->orderBy('col_name')->get();
-            } else {
-              $result_pal = Colaborador::orderBy('col_name')->get();
+              $result_pal = Colaborador::where(function ($query) {
+              $query->where('col_palestrante', 'S')
+                    ->orWhereRaw("exists (
+                        select 1
+                        from ocu_ocupacao
+                        where ocu_id_ocu = col_ocupacao
+                        and (
+                            ocu_descricao = 'Palestrante'
+                            or ocu_descricao = 'Suporte ao Sistema'
+                        )
+                    )");
+              })
+              ->whereNull('col_deleted_at')
+              ->orderBy('col_name')
+              ->get();
+              } else {
+                $result_pal = Colaborador::orderBy('col_name')->get();
            }
            $result = ColaboradorResource::collection($result_pal); //only works for colection
 

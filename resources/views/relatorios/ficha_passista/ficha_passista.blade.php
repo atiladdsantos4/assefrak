@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Ficha de Entrevista - Assefrak</title>
+    <title>{{$textohead}}</title>
     <style>
         @page {
             margin: 125px 28px 65px 28px;

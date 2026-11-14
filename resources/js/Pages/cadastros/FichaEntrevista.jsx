@@ -1296,7 +1296,7 @@ const FichaEntrevista = (props) => {
                                             <CompColaborador/>
                                             </CFormSelect>)}
                                         </CCol>
-                                        <CCol md={6} className={turvo}>
+                                        <CCol md={6} className={turvo} className="mt-3">
                                                 { loadpage
                                                 ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
                                                 : (
@@ -1707,7 +1707,7 @@ const FichaEntrevista = (props) => {
                                         {loadsave? <CSpinner size="sm" /> : ''}
                                         </CButton>
                                         {' '}
-                                        {idficha == null
+                                        {idficha == null || turvo =='texto-turvo'
                                         ? <></>
                                         : (<CButton as="a" color="danger" role="button" target="_blank" href={endpoint_report+'/relatorio/fichaentrevista?id='+param+'&relatorio=entrevista'}>
                                             Imprimir Ficha&nbsp;<FontAwesomeIcon size="lg" icon={faFilePdf} /></CButton>)}

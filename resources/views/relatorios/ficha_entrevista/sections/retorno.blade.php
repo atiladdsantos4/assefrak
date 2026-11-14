@@ -38,7 +38,9 @@
                         </td>
 
                         <td class="descricao">
-                            {{ $item->fir_data_retorno }}
+                            {{ $item->fir_data_retorno
+                                ? \Carbon\Carbon::parse($item->fir_data_retorno)->format('d/m/Y')
+                                : '-' }}
                         </td>
 
                         <td class="data">

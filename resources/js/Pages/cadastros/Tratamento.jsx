@@ -1321,7 +1321,7 @@ const Tratamento = (props) => {
                                         {loadsave? <CSpinner size="sm" /> : ''}
                                         </CButton>
                                         {' '}
-                                        {idtratamento == null
+                                        {idtratamento == null || turvo =='texto-turvo'
                                         ? <></>
                                         : (<CButton as="a" color="danger" role="button" target="_blank" href={endpoint_report+'/relatorio/fichatratamento?id='+param+'&relatorio=tratamento'}>
                                             Imprimir Ficha&nbsp;<FontAwesomeIcon size="lg" icon={faFilePdf} /></CButton>)}

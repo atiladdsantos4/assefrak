@@ -104,7 +104,7 @@ const SectionOurStory = (props) => {
                  </a>
             </div> */}
             <div class="about-image" data-aos="zoom-in" data-aos-delay="300">
-              <img src={imagem+'estrutura/fachada.jpg'} alt="Campus" style={{borderRadius:'10px'}} class="img-fluid"/>
+              <img src={imagem+'estrutura/fachada.png'} alt="Campus" style={{borderRadius:'10px'}} class="img-fluid"/>
 
               <div class="mission-vision" data-aos="fade-up" data-aos-delay="400">
                 <div class="mission">

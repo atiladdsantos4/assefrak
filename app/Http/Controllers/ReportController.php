@@ -71,7 +71,7 @@ class ReportController extends Controller
            //return response()->json($response, 200);
            $pdf = Pdf::loadView('relatorios.tratamento', [
                 "textohead"=>"HAIR SALON",
-                "textofooter"=>"Ficha para Passistas - Assefrak",
+                "textofooter"=>"Ficha de Tratamento - Assefrak",
                 "bootstrap" => $bootstrapCss,
                 "passe"=> $abapasse,
                 "foco"=> $abafoco,
@@ -97,13 +97,14 @@ class ReportController extends Controller
            ->first();
 
            $pdf = Pdf::loadView('relatorios.ficha_passista.ficha_passista', [
-                "textohead"=>"HAIR SALON",
-                "textofooter"=>"Ficha para Passistas - Assefrak",
+                "textohead"=>"Ficha para Passistas - Assefrak",
+                "textofooter"=>"Ficha de Tratamento - Assefrak",
                 "bootstrap" => $bootstrapCss,
                 "ficha"=>$tratamento
             ]);
            $pdf->setPaper('A4', 'portrait');
-           return $pdf->stream('ficha-tratamento.pdf');
+           $name ='ficha-tratamento-'.$tratamento->acolhido->aco_name.'pdf';
+           return $pdf->stream($name);
         }
 
         if( $all["relatorio"] == 'entrevista' ){

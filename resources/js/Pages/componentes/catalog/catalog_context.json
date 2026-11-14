@@ -1,0 +1,19 @@
+{
+  "functionalities": [
+    {
+      "id": "acessar_tratamento",
+      "context": {
+        "description": "Integra diferentes categorias funcionais no atendimento.",
+        "functionalities": [
+            "acessar_passes",
+            "acessar_focoEnergetico",
+            "acessar_condicaoEnergetica",
+            "acessar_fortalecimento",
+            "acessar_limpeza",
+            "acessar_alerta",
+            "impressoes_atendimento"
+        ]
+      }
+    }
+  ]
+}
