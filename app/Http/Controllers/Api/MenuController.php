@@ -25,6 +25,10 @@ class MenuController extends Controller
             $result_men = Menu::whereNull('men_id_pai')
                ->orderBy('men_position')
                ->get();
+          } else if( isset($all["tela"]) ){
+              $result_men = Menu::whereIn('men_nivel', [1,2])
+               ->orderBy('men_name','ASC')
+               ->get();
           } else if( isset($all["funcionalidade"]) ){
               $result_men = Menu::whereIn('men_id_pai', [16,19,29])
                ->orderBy('men_id_pai')

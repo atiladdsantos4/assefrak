@@ -97,8 +97,8 @@ import { faLeaf } from '@fortawesome/free-solid-svg-icons';
 import InfAssefrak from './cadastros/InfAssefrak';
 import ListaInfAssefrak from './listagem/ListaInfAssefrak';
 import ModalPesquisa from './componentes/ModalPesquisa';
-
-
+import GraficoEntrevista from './graficos/GraficoEntrevista';
+import GraficoTratamento from './graficos/GraficoTratamento';
 
 /*
 Humor
@@ -121,7 +121,7 @@ const Main = ({ appName }) => {
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
   const [view,setView] = useState(null)
-  const [telaatual,setTelaatual] = useState('InfAssefrak');
+  const [telaatual,setTelaatual] = useState('GrafTratamentos');
   const [param,setParam] = useState(null);
   const [paramestado,setParamestado] = useState(null);
   const [paramacolhido,setParamacolhido] = useState(null);
@@ -476,6 +476,14 @@ const Main = ({ appName }) => {
            setOpenmodal(true)
            setTelaatual('')
            //return(<ModalPesquisa open={openmodal} close={setOpenmodal(false)}/>)
+        break;
+
+        case "GrafEntrevistas":
+            return (<GraficoEntrevista tela={setTelaatual} param={param} />)
+        break;
+
+        case "GrafTratamentos":
+            return (<GraficoTratamento tela={setTelaatual} param={param} />)
         break;
      }
   }
