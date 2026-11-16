@@ -19,19 +19,38 @@ class VTratamentoController extends Controller
 
         if( isset($all["filtro"]) ){ //filtro do grafico por contexto
             $descricao = $request->input('descricao');
-            $ano = $request->input('ano');
-            $mes = $request->input('mes');
-            $result_vtr = VTratamento::select(
-                'id',
-                'descricao',
-                'descricao_item'
-            )
-            ->selectRaw('COUNT(*) AS total')
-            ->where('descricao', $descricao)
-            ->where('ano', $ano)
-            ->where('mes', $mes)
-            ->groupBy('id', 'descricao', 'descricao_item')
-            ->get();
+            if( isset($all["todos"]) ){
+                $mes = $request->input('mes');
+                $result_vtr = VTratamento::select('id', 'descricao','descricao_item')
+                ->selectRaw('COUNT(*) AS total')
+                ->where('descricao', $descricao)
+                ->groupBy('id', 'descricao','descricao_item')
+                ->get();
+            } else {
+                $ano = $request->input('ano');
+                $mes = $request->input('mes');
+                $result_vtr = VTratamento::select('id', 'descricao','descricao_item')
+                ->selectRaw('COUNT(*) AS total')
+                ->where('descricao', $descricao)
+                ->where('ano', $ano)
+                ->where('mes', $mes)
+                ->groupBy('id', 'descricao','descricao_item')
+                ->get();
+            }
+            // $descricao = $request->input('descricao');
+            // $ano = $request->input('ano');
+            // $mes = $request->input('mes');
+            // $result_vtr = VTratamento::select(
+            //     'id',
+            //     'descricao',
+            //     'descricao_item'
+            // )
+            // ->selectRaw('COUNT(*) AS total')
+            // ->where('descricao', $descricao)
+            // ->where('ano', $ano)
+            // ->where('mes', $mes)
+            // ->groupBy('id', 'descricao', 'descricao_item')
+            // ->get();
         }
 
         if( isset($all["grupo"]) ){ //select interface
@@ -50,18 +69,37 @@ class VTratamentoController extends Controller
         }
 
         if( isset($all["drill"]) ){ //select interface
-            $ano = $request->input('ano');
-            $mes = $request->input('mes');
             $descricao = $request->input('descricao');
             $id = $request->input('id');
+            if( isset($all["todos"]) ){
+                $result = VTratamento::select()
+                    ->where('descricao', $descricao)
+                    ->where('id', $id)
+                    ->with('acolhido')
+                    ->get();
+            } else {
+                $ano = $request->input('ano');
+                $mes = $request->input('mes');
+                $result = VTratamento::select()
+                    ->where('descricao', $descricao)
+                    ->where('id', $id)
+                    ->where('ano', $ano)
+                    ->where('mes', $mes)
+                    ->with('acolhido')
+                    ->get();
+            }
+            // $ano = $request->input('ano');
+            // $mes = $request->input('mes');
+            // $descricao = $request->input('descricao');
+            // $id = $request->input('id');
 
-            $result = VTratamento::select()
-                ->where('descricao', $descricao)
-                ->where('id', $id)
-                ->where('ano', $ano)
-                ->where('mes', $mes)
-                ->with('acolhido')
-                ->get();
+            // $result = VTratamento::select()
+            //     ->where('descricao', $descricao)
+            //     ->where('id', $id)
+            //     ->where('ano', $ano)
+            //     ->where('mes', $mes)
+            //     ->with('acolhido')
+            //     ->get();
 
             //dd($result->first()->acolhido);
 
@@ -79,6 +117,7 @@ class VTratamentoController extends Controller
                     'name' => $name,
                     'value' => $total
                 ])
+                ->sortBy('name')
                 ->values();
 
             $response = [

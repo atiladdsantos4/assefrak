@@ -32,7 +32,7 @@ const GraficoEntrevista = (props) => {
    const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
    const token  = import.meta.env.VITE_APP_TOKEN
    const endpoint_report =import.meta.env.VITE_APP_ENDPOINT
-   const [validated, setValidated] = useState(false)
+   const primeiroLoad = useRef(true);
    const [loadpage, setLoadpage] = useState(false)
    const [loadtabela, setLoadtabela] = useState(false)
    const [loadsave, setLoadsave] = useState(false)
@@ -49,6 +49,8 @@ const GraficoEntrevista = (props) => {
    const [loadbar, setLoadbar] = useState(false);
    const [descricao, setDescricao] = useState(null);
    const [titulo, setTitulo] = useState(null);
+   const [valida, setValida] = useState(false);
+   const [toast, addToast] = useState()//toast
    const [data, setData] = useState({
         data_sexo: [],
         data_faixa: [],
@@ -349,7 +351,30 @@ const dadosGrafico = [
   { name: 'Gravidade', value: 3 }
 ];
 
+// const valida = () =>{
+
+// }
+
 useEffect(()=>{
+    let usetodos = false
+    if (primeiroLoad.current) {
+        primeiroLoad.current = false;
+        return;
+    }
+
+    if(ano == '' || mes == ''){
+         addToast(CompToast('O Ano e o Mês precisam ser informados!!!', 'danger')) //--> usa toast
+         setTimeout(() => {
+                document.getElementById('idtoast').classList.remove('show')
+                document.getElementById('idtoast').remove()
+          }, 2000)
+          setValida(false)
+          return
+    }
+
+    if(mes == 'todos'){
+       usetodos = true
+    }
 
     if (!grupo) {
         setdadosGrafico1([]);
@@ -358,37 +383,67 @@ useEffect(()=>{
     }
 
     setdadosGrafico1([]);
+    setData([]);
     setGrupoAtual(grupo);
     setLoadini(true)
 
-   axios.get(`${endpoint}/vficha?filtro=S&descricao=${grupo}`,{
-         headers: {
-             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
-         },
-   })
-   .then((result) => {
+    const requests = [];
 
-       setdadosGrafico1(
-          result.data.data.map(item => ({
-                id: item.id,
-                option: item.option,
-                name: item.descricao,
-                value: item.total
-          }))
-        )
-    /*
-    0	{ id: 2, descricao: "Insônia", total: 7 }
-    1	{ id: 3, descricao: "Impulsividade", total: 1 }
-    2	{ id: 4, descricao: "Intolerância/Impaciência", total: 7 }
-    */
-    //    setIdDiaPasse(result.data.data.dip_id_dip)
-    //    setDescricao(result.data.data.dip_descricao)
-    //    setCadastro(result.data.data.dip_created_at)
-       //console.log(dados)
-       //setLoadpage(false)
-    })
+    if (usetodos) {
+        requests.push(
+            axios.get(`${endpoint}/vficha?filtro=S&descricao=${grupo}&todos=S`, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: 'Bearer ' + token,
+                }
+            })
+        );
+    } else {
+        requests.push(
+                axios.get(`${endpoint}/vficha?filtro=T&descricao=${grupo}&ano=${ano}&mes=${mes}`, {
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: 'Bearer ' + token,
+                    }
+                })
+            );
+    }
+
+     Promise.all(requests)
+        .then((responses) => {
+            const result_graf = responses[0];
+
+            setdadosGrafico1(
+                result_graf.data.data.map(item => ({
+                    id: item.id,
+                    option: item.option,
+                    name: item.descricao,
+                    value: item.total
+                }))
+            );
+
+            setValida(true);
+            setLoadini(false);
+        });
+
+//     axios.get(`${endpoint}/vficha?filtro=S&descricao=${grupo}&ano=${ano}&mes=${mes}`,{
+//          headers: {
+//              Accept: 'application/json',
+//             'Content-Type': 'multipart/form-data',
+//             Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
+//          },
+//    })
+//    .then((result) => {
+//        setValida(true)
+//        setdadosGrafico1(
+//           result.data.data.map(item => ({
+//                 id: item.id,
+//                 option: item.option,
+//                 name: item.descricao,
+//                 value: item.total
+//           }))
+//         )
+//     })
 },[grupo])
 
 const RADIAN = Math.PI / 180;
@@ -415,34 +470,41 @@ const COLORS = [
   '#6A5ACD', // Slate Blue
 ];
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }) => {
+
+const renderCustomizedLabel = ({
+  cx, cy, midAngle, innerRadius, outerRadius,
+  percent, name, payload
+}) => {
   if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
     return null;
   }
+
   const radius = innerRadius + (outerRadius - innerRadius) * 0.35;
-  const ncx = Number(cx);
-  const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-  const ncy = Number(cy);
-  const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+  const x = Number(cx) + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const y = Number(cy) + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
   return (
     <text
-        x={x}
-        y={y}
-        fill="#38231b"
-        textAnchor="middle"
-        dominantBaseline="central"
-        style={{fontWeight:'bold',cursor:'pointer'}}
-        fontSize={12}
-        >
-        <tspan x={x} dy="-0.5em">
-            {name.includes('/') ? name.split('/')[0] : name}
-        </tspan>
+      x={x}
+      y={y}
+      fill="#38231b"
+      textAnchor="middle"
+      dominantBaseline="central"
+      style={{ fontWeight: 'bold', cursor: 'pointer' }}
+      fontSize={12}
+      onClick={(event) => {
+        event.stopPropagation();
+        handleClickPie({ payload });
+      }}
+    >
+      <tspan x={x} dy="-0.5em">
+        {name.includes('/') ? name.split('/')[0] : name}
+      </tspan>
 
-        <tspan x={x} dy="1.2em">
-            {name.includes('/') ? name.split('/')[1] : ''}
-            {' '}{((percent ?? 1) * 100).toFixed(0)}%
-        </tspan>
+      <tspan x={x} dy="1.2em">
+        {name.includes('/') ? name.split('/')[1] : ''}
+        {' '}{((percent ?? 1) * 100).toFixed(0)}%
+      </tspan>
     </text>
   );
 };
@@ -466,7 +528,7 @@ const MyCustomPie = (props) => {
       fill={COLORS[props.index % COLORS.length]}
       stroke="none"
       fillOpacity={fillOpacity}
-      style={{ transition: 'fill-opacity 0.3s ease' }}
+      style={{ transition: 'fill-opacity 0.3s ease', cursor: 'pointer' }}
     />
   );
 };
@@ -482,9 +544,6 @@ const handleClickPie = (data) => {
     //setIdBar(data.payload.id)
     //setDescricao(data.payload.option)
 
-    // Later:
-    // setItemSelecionado(data);
-    // setOpenmodal(true);
 };
 
 const PieChartWithCustomizedLabel = ({data,isAnimationActive = true}) => {
@@ -508,6 +567,7 @@ const PieChartWithCustomizedLabel = ({data,isAnimationActive = true}) => {
         //isAnimationActive={false}
         shape={MyCustomPie}
         onClick={handleClickPie}
+        style={{ cursor: 'pointer' }}
       />
 
       <Legend content={<MinhaLegenda />} />
@@ -519,11 +579,11 @@ const PieChartWithCustomizedLabel = ({data,isAnimationActive = true}) => {
 
 const MinhaLegenda = ({ payload }) => {
   return (
-    <div className="d-flex flex-column align-items-center mt-3">
+    <div className="d-flex flex-row flex-wrap justify-content-center mt-3">
       {payload.map((item, index) => (
         <div
           key={index}
-          className="d-flex align-items-center mb-1"
+          className="d-flex align-items-center me-2 mb-1"
           style={{ fontSize: 14 }}
         >
           <span
@@ -605,22 +665,62 @@ const SimpleBarChart = ({data,tipo}) => {
 };
 
 const ExibeBar =(id,descricao) =>{
+   let anoatual =  ano
+   let mesatual =  mes
+   let usetodos = false
 
+   if(mes == 'todos'){
+       usetodos = true
+   }
    setLoadbar(true)
-   axios.get(`${endpoint}/vficha?drill=S&descricao=${encodeURIComponent(descricao)}&id=${id}`,{
-         headers: {
-             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
-         },
-   })
-   .then((result) => {
-        setLoadbar(false)
-        setData(result.data);
+   const requests = [];
+   if (usetodos) {
+        requests.push(
+            axios.get(`${endpoint}/vficha?drill=S&descricao=${encodeURIComponent(descricao)}&id=${id}&todos=S`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: 'Bearer ' + token,
+                }
+            })
+        );
+   } else {
+        requests.push(
+            axios.get(`${endpoint}/vficha?drill=S&descricao=${encodeURIComponent(descricao)}&id=${id}&ano=${anoatual}&mes=${mesatual}`,{
+                headers: {
+                        Accept: 'application/json',
+                        Authorization: 'Bearer ' + token,
+                    }
+            })
+        );
+   }
+   Promise.all(requests)
+        .then((responses) => {
+            const result_graf = responses[0];
+            setLoadbar(false)
+            setData(result_graf.data);
 
-    })
+        });
 }
 
+   //--> Exibe o Toast
+    const CompToast = (texto, color, autohide) => {
+            return (
+              <CToast
+                style={{borderRadius:'5px',color:'white'}}
+                id="idtoast"
+                autohide={autohide}
+                visible={false}
+                color={color}
+                delay="3000"
+                className="text-white align-items-center"
+              >
+                <div className="d-flex">
+                  <CToastBody style={{color:'white'}}>{texto}</CToastBody>
+                  <CToastClose className="me-2 m-auto" white />
+                </div>
+              </CToast>
+            )
+    }
 
     const ImageHeader = () =>{
      return(
@@ -643,6 +743,7 @@ const ExibeBar =(id,descricao) =>{
 
     return(
        <div data-aos="zoom-in">
+            <CToaster className="p-3" placement="middle-end" push={toast} ref={toaster} />
             <section id="grafico-form" class="hero section light-background">
                 <div class="container section-title box-title mb-2" data-aos="fade-up">
                     <ImageHeader/>
@@ -653,7 +754,7 @@ const ExibeBar =(id,descricao) =>{
                         <CCard>
                             <CCardHeader className="fundo_head"><FontAwesomeIcon size="lg" icon={faChartPie} />{' '}Estatísticas Entrevistas</CCardHeader>
                             <CCardBody>
-                                <CRow>
+                                <CRow className='mb-3'>
                                    <CCol md={1}>
                                        <CFormSelect
                                           size="sm"
@@ -679,6 +780,7 @@ const ExibeBar =(id,descricao) =>{
                                             disabled={!ano}
                                         >
                                             <option value="">Selecione o mês</option>
+                                            <option value="todos">Todos</option>
                                             {listameses.map(item =>
                                                 <option key={item} value={item}>{item}</option>
                                             )}
@@ -703,7 +805,7 @@ const ExibeBar =(id,descricao) =>{
                                 </CRow>
                                 <CRow className="align-items-center">
                                     <CCol md={6}>
-                                            {grupoAtual === grupo && dadosGrafico1.length > 0 ? (
+                                            {grupoAtual === grupo && dadosGrafico1.length > 0 && valida === true ? (
                                                 <PieChartWithCustomizedLabel data={dadosGrafico1} />
                                             ) : (
                                                 <div
@@ -732,7 +834,7 @@ const ExibeBar =(id,descricao) =>{
                                                         style={{ width: '3rem', height: '3rem' }}
                                                     />  :
                                                     <>
-                                                    { titulo != null ? <CFormLabel style={{ marginTop: '-95px' }} htmlFor="exampleForm">{'Contexto: '+titulo}</CFormLabel> : <></>}
+                                                    {titulo != null &&  <CFormLabel className="mb-2">{'Contexto: ' + titulo}</CFormLabel>}
                                                     <SimpleBarChart data={data.data_sexo} tipo="sexo" />
                                                     </>
                                                     }

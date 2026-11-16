@@ -1716,11 +1716,11 @@ const FichaEntrevista = (props) => {
                                             Listar Ficha de Entrevistas&nbsp;<FontAwesomeIcon size="lg" icon={faList} />
                                         </CButton>
                                         {' '}
-                                        {loadtabela == false
+                                        {/* {loadtabela == false
                                           ?(<CButton color="info" type="button" onClick={(e)=>handleClick(e,'ControlePresenca')}>
                                             Gerar Presença&nbsp;<FontAwesomeIcon size="lg" icon={faThumbsUp} />
                                             </CButton>)
-                                          :(<></>)}
+                                          :(<></>)} */}
                                     </CCol>
                                 </CForm>
                             </CCardBody>
