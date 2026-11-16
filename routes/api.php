@@ -61,13 +61,8 @@ use App\Http\Controllers\Api\FuncionalidadeController;
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\InformacaoTecnicaController;
 use App\Http\Controllers\Api\InfAssefrakController;
-
-
-
-
-
-
-
+use App\Http\Controllers\Api\VFichaController;
+use App\Http\Controllers\Api\VTratamentoController;
 
 
 /*
@@ -153,5 +148,7 @@ Route::apiResource('fichaentrevista',FichaEntrevistaController::class)->middlewa
 Route::apiResource('ficharetorno',FichaRetornoController::class)->middleware('auth:sanctum');
 
 
-
+//graficos
+Route::apiResource('vficha', VFichaController::class);
+Route::apiResource('vtratamento', VTratamentoController::class);
 

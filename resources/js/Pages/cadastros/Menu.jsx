@@ -55,7 +55,7 @@ const Menu = (props) => {
         if (props.param != null) {
 
           const requests = [
-            axios.get(`${endpoint}/menu?listagem=S`, config),
+            axios.get(`${endpoint}/menu?listagem=S&tela=S`, config),
             axios.get(`${endpoint}/menu/${props.param}`, config),
           ];
 
@@ -85,7 +85,7 @@ const Menu = (props) => {
         } else {
 
           const requests = [
-            axios.get(`${endpoint}/menu?listagem=S`, config),
+            axios.get(`${endpoint}/menu?listagem=S&tela=S`, config),
           ];
 
           const responses = await Promise.all(requests);

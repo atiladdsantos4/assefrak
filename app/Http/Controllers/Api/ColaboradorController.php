@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Colaborador;
 use App\Http\Resources\ColaboradorResource;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\TestSchedule;
 
 class ColaboradorController extends Controller
 {
@@ -18,6 +19,7 @@ class ColaboradorController extends Controller
     public function index(Request $request)
     {
          $all = $request->all();
+         TestSchedule::dispatch()->onConnection('sync');
 
         if( isset($all["listagem"]) ){ //para renderizar as interfaces convencionais
            if( isset($all["palestrante"]) ){
