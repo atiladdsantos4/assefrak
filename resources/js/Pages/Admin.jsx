@@ -121,7 +121,7 @@ const Main = ({ appName }) => {
   const imagem  = import.meta.env.VITE_APP_ENDPOINT_IMG
   const endpoint = import.meta.env.VITE_APP_ENDPOINT_API
   const [view,setView] = useState(null)
-  const [telaatual,setTelaatual] = useState('GrafTratamentos');
+  const [telaatual,setTelaatual] = useState('GrafEntrevistas');
   const [param,setParam] = useState(null);
   const [paramestado,setParamestado] = useState(null);
   const [paramacolhido,setParamacolhido] = useState(null);

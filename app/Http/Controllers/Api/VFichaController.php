@@ -19,16 +19,27 @@ class VFichaController extends Controller
 
         if( isset($all["filtro"]) ){ //filtro do grafico por contexto
             $descricao = $request->input('descricao');
-            $ano = $request->input('ano');
-            $mes = $request->input('mes');
-            $result_vfi = VFicha::select('id', 'descricao','descricao_item')
-            ->selectRaw('COUNT(*) AS total')
-            ->where('descricao', $descricao)
-            ->where('ativo', 1)
-            ->where('ano', $ano)
-            ->where('mes', $mes)
-            ->groupBy('id', 'descricao','descricao_item')
-            ->get();
+            if( isset($all["todos"]) ){
+                $mes = $request->input('mes');
+                $result_vfi = VFicha::select('id', 'descricao','descricao_item')
+                ->selectRaw('COUNT(*) AS total')
+                ->where('descricao', $descricao)
+                ->where('ativo', 1)
+                ->groupBy('id', 'descricao','descricao_item')
+                ->get();
+            } else {
+                $ano = $request->input('ano');
+                $mes = $request->input('mes');
+                $result_vfi = VFicha::select('id', 'descricao','descricao_item')
+                ->selectRaw('COUNT(*) AS total')
+                ->where('descricao', $descricao)
+                ->where('ativo', 1)
+                ->where('ano', $ano)
+                ->where('mes', $mes)
+                ->groupBy('id', 'descricao','descricao_item')
+                ->get();
+            }
+
         }
 
         if( isset($all["grupo"]) ){ //select interface
@@ -77,19 +88,28 @@ class VFichaController extends Controller
         }
 
         if(isset($all["drill"])) { // select interface
-            $ano = $request->input('ano');
-            $mes = $request->input('mes');
+
             $descricao = $request->input('descricao');
             $id = $request->input('id');
-
-            $result = VFicha::select()
-                ->where('descricao', $descricao)
-                ->where('id', $id)
-                ->where('ano', $ano)
-                ->where('mes', $mes)
-                ->where('ativo', 1)
-                ->with('acolhido')
-                ->get();
+            if( isset($all["todos"]) ){
+                $result = VFicha::select()
+                    ->where('descricao', $descricao)
+                    ->where('id', $id)
+                    ->where('ativo', 1)
+                    ->with('acolhido')
+                    ->get();
+            } else {
+                $ano = $request->input('ano');
+                $mes = $request->input('mes');
+                $result = VFicha::select()
+                    ->where('descricao', $descricao)
+                    ->where('id', $id)
+                    ->where('ano', $ano)
+                    ->where('mes', $mes)
+                    ->where('ativo', 1)
+                    ->with('acolhido')
+                    ->get();
+            }
 
             $sexo = $result->groupBy('acolhido.aco_sexo')
                 ->map(fn($items) => $items->count())
@@ -105,6 +125,7 @@ class VFichaController extends Controller
                     'name' => $name,
                     'value' => $total
                 ])
+                ->sortBy('name')
                 ->values();
 
             $response = [

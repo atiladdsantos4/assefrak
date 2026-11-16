@@ -21,8 +21,288 @@ import {
 } from 'recharts';
 //import { RechartsDevtools, generateMockData } from '@recharts/devtools';
 
+//fix rerender//
+const PieChartWithCustomizedLabel = ({
+    data,
+    mes,
+    ano,
+    isAnimationActive = true,
+    setLoadbar,
+    endpoint,
+    token,
+    setData,
+    setTitulo
+}) => {
+
+  console.log('GRAFICO TRATAMENTO RENDER');
+  return (
+    <PieChart
+      style={{
+        width: '100%',
+        maxWidth: '500px',
+        maxHeight: '80vh',
+        aspectRatio: 1
+      }}
+      responsive
+    >
+      <Pie
+        data={data}
+        labelLine={false}
+        label={renderCustomizedLabel}
+        dataKey="value"
+        isAnimationActive={isAnimationActive}
+        //isAnimationActive={false}
+        shape={MyCustomPie}
+        onClick={(data) => handleClickPie(data, mes, ano, setLoadbar, endpoint, token, setTitulo ,setData)}
+        style={{ cursor: 'pointer' }}
+      />
+
+      <Legend content={<MinhaLegenda />} />
+
+      {/* <RechartsDevtools /> */}
+    </PieChart>
+  );
+}
+
+const MinhaLegenda = ({ payload }) => {
+  return (
+    <div className="d-flex flex-row flex-wrap justify-content-center mt-3">
+      {payload.map((item, index) => (
+        <div
+          key={index}
+          className="d-flex align-items-center me-2 mb-1"
+          style={{ fontSize: 14 }}
+        >
+          <span
+            style={{
+              width: 12,
+              height: 12,
+              backgroundColor: COLORS[index % COLORS.length],
+              display: 'inline-block',
+              marginRight: 6,
+              borderRadius: 2
+            }}
+          />
+
+          <span style={{ color: '#000' }}>
+            {item.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const SimpleBarChart = ({data,tipo}) => {
+  return (
+    <BarChart
+      //style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
+      style={{
+          width: '100%',
+          maxWidth: '700px',
+          height: '250px',
+      }}
+      responsive
+      data={data}
+      margin={{
+        top: 5,
+        right: 0,
+        left: 0,
+        bottom: 5,
+      }}
+    >
+      <CartesianGrid />
+      <XAxis dataKey="name" fontSize={11} />
+      <YAxis width="auto" fontSize={11} />
+      <Tooltip />
+      {/* <Legend /> */}
+      {
+        tipo === 'faixa'
+            ? (
+                <Bar
+                    dataKey="value"
+                    radius={[10, 10, 0, 0]}
+                    shape={(props) => (
+                        <Rectangle
+                            {...props}
+                            fill={COLORS[props.index % COLORS.length]}
+                        />
+                    )}
+                />
+            )
+            : (
+                <Bar
+                    dataKey="value"
+                    radius={[10, 10, 0, 0]}
+                    shape={(props) => (
+                        <Rectangle
+                            {...props}
+                            fill={props.name === 'Masculino'
+                                ? '#0d6efd'
+                                : '#e83e8c'}
+                        />
+                    )}
+                />
+            )
+      }
+      {/* <Bar dataKey="y" radius={[10, 10, 0, 0]} /> */}
+      {/* <RechartsDevtools /> */}
+    </BarChart>
+  );
+};
+
+const renderCustomizedLabel = ({
+  cx, cy, midAngle, innerRadius, outerRadius,
+  percent, name, payload
+}) => {
+
+  if (name == null) return null;
+
+  if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
+    return null;
+  }
+
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.35;
+  const x = Number(cx) + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const y = Number(cy) + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="#38231b"
+      textAnchor="middle"
+      dominantBaseline="central"
+      style={{ fontWeight: 'bold', cursor: 'pointer' }}
+      fontSize={12}
+      onClick={(event) => {
+        event.stopPropagation();
+        handleClickPie({ payload });
+      }}
+    >
+      <tspan x={x} dy="-0.5em">
+        {name.includes('/') ? name.split('/')[0] : name}
+      </tspan>
+
+      <tspan x={x} dy="1.2em">
+        {name.includes('/') ? name.split('/')[1] : ''}
+        {' '}{((percent ?? 1) * 100).toFixed(0)}%
+      </tspan>
+    </text>
+  );
+};
+
+const MyCustomPie = (props) => {
+  const p = useActiveTooltipDataPoints();
+  const isAnyPieActive = useIsTooltipActive();
+  const isThisPieActive = isAnyPieActive && props.payload === p?.[0];
+
+  let fillOpacity;
+
+  if (isAnyPieActive && !isThisPieActive) {
+    fillOpacity = 0.5;
+  } else {
+    fillOpacity = 1;
+  }
+
+  return (
+    <Sector
+      {...props}
+      fill={COLORS[props.index % COLORS.length]}
+      stroke="none"
+      fillOpacity={fillOpacity}
+      style={{ transition: 'fill-opacity 0.3s ease', cursor: 'pointer' }}
+
+    />
+  );
+};
+
+const handleClickPie = (data, mes, ano, setLoadbar, endpoint, token, setTitulo,setData ) => {
+    console.log('SETDATA:', setData);
+    console.log('TYPE:', typeof setData);
+    console.log('handleClickPie:', data.payload);
+    console.log('Selected:', data.payload);
+    // console.log('Name:', data.name);
+    // console.log('Total:', data.payload.value);
+    console.log('PAYLOAD:', data.payload);
 
 
+    ExibeBar(data.payload.id, data.payload.option, mes, ano, setLoadbar, endpoint, token, setData);
+    setTitulo(data.payload.name)
+    //setIdBar(data.payload.id)
+    //setDescricao(data.payload.option)
+
+    // Later:
+    // setItemSelecionado(data);
+    // setOpenmodal(true);
+};
+
+const RADIAN = Math.PI / 180;
+const COLORS = [
+  '#0088FE', // Blue
+  '#00C49F', // Teal
+  '#FFBB28', // Yellow
+  '#FF8042', // Orange
+  '#A020F0', // Purple
+  '#FF1493', // Deep Pink
+  '#32CD32', // Lime Green
+  '#DC143C', // Crimson
+  '#00BFFF', // Deep Sky Blue
+  '#FF6347', // Tomato
+  '#8A2BE2', // Blue Violet
+  '#20B2AA', // Light Sea Green
+  '#FFD700', // Gold
+  '#6495ED', // Cornflower Blue
+  '#FF69B4', // Hot Pink
+  '#2E8B57', // Sea Green
+  '#BA55D3', // Medium Orchid
+  '#4169E1', // Royal Blue
+  '#F08080', // Light Coral
+  '#6A5ACD', // Slate Blue
+];
+
+// ExibeBar(data.payload.id, data.payload.option, mes, ano, setLoadbar, endpoint, token);
+const ExibeBar =(id,descricao, mes, ano, setLoadbar,endpoint,token, setData) =>{
+   console.log('ExibeBar :mes: '+mes)
+   console.log('ExibeBar :ano: '+ano)
+   let usetodos = false
+
+   if(mes == 'todos'){
+       usetodos = true
+   }
+   setLoadbar(true)
+   const requests = [];
+   if (usetodos) {
+        requests.push(
+            axios.get(`${endpoint}/vtratamento?drill=S&descricao=${encodeURIComponent(descricao)}&id=${id}&todos=S`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: 'Bearer ' + token,
+                }
+            })
+        );
+   } else {
+        requests.push(
+            axios.get(`${endpoint}/vtratamento?drill=S&descricao=${encodeURIComponent(descricao)}&id=${id}&ano=${ano}&mes=${mes}`,{
+                headers: {
+                        Accept: 'application/json',
+                        Authorization: 'Bearer ' + token,
+                    }
+            })
+        );
+   }
+   Promise.all(requests)
+        .then((responses) => {
+            const result_graf = responses[0];
+            setLoadbar(false)
+            setData(result_graf.data);
+
+        });
+
+}
+
+
+// end fix rerender //
 
 
 // The Main component receives props passed from the Laravel controller
@@ -51,6 +331,7 @@ const GraficoTratamento = (props) => {
    const [loadbar, setLoadbar] = useState(false);
    const [descricao, setDescricao] = useState(null);
    const [titulo, setTitulo] = useState(null);
+   const [titulogrupo, setTitulogrupo] = useState(null);
    const [data, setData] = useState({
         data_sexo: [],
         data_faixa: [],
@@ -371,7 +652,7 @@ const dadosGrafico = [
 ];
 
 useEffect(()=>{
-
+    console.log('USEEFFECT EXECUTED');
     if (primeiroLoad.current) {
         primeiroLoad.current = false;
         return;
@@ -393,27 +674,54 @@ useEffect(()=>{
         return;
     }
 
+    let usetodos = false
     setdadosGrafico1([]);
     setGrupoAtual(grupo);
-    setLoadini(true)
+    setLoadini(true)//vtratamento
+    if(mes == 'todos'){
+       usetodos = true
+    }
 
-   axios.get(`${endpoint}/vtratamento?filtro=S&descricao=${grupo}&ano=${ano}&mes=${mes}`,{
-         headers: {
-             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
-         },
-   })
-   .then((result) => {
-       setValida(true)
-       setdadosGrafico1(
-          result.data.data.map(item => ({
-                id: item.id,
-                option: item.option,
-                name: item.descricao,
-                value: item.total
-          }))
-        )
+    const textoGrupo = document.querySelector('#idGrupo').selectedOptions[0].text;
+    setTitulogrupo(textoGrupo)
+    console.log(textoGrupo)
+
+    const requests = [];
+    setData([])
+    setTitulo(null)
+    if (usetodos) {
+        requests.push(
+            axios.get(`${endpoint}/vtratamento?filtro=S&descricao=${grupo}&todos=S`, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: 'Bearer ' + token,
+                }
+            })
+        );
+    } else {
+        requests.push(
+                axios.get(`${endpoint}/vtratamento?filtro=T&descricao=${grupo}&ano=${ano}&mes=${mes}`, {
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: 'Bearer ' + token,
+                    }
+                })
+            );
+    }
+   Promise.all(requests)
+        .then((responses) => {
+            const result_graf = responses[0];
+            setdadosGrafico1(
+                result_graf.data.data.map(item => ({
+                    id: item.id,
+                    option: item.option,
+                    name: item.descricao,
+                    value: item.total
+                }))
+            );
+            setValida(true);
+            setLoadini(false);
+        });
     /*
     0	{ id: 2, descricao: "Insônia", total: 7 }
     1	{ id: 3, descricao: "Impulsividade", total: 1 }
@@ -424,250 +732,9 @@ useEffect(()=>{
     //    setCadastro(result.data.data.dip_created_at)
        //console.log(dados)
        //setLoadpage(false)
-    })
 },[grupo])
 
-const RADIAN = Math.PI / 180;
-const COLORS = [
-  '#0088FE', // Blue
-  '#00C49F', // Teal
-  '#FFBB28', // Yellow
-  '#FF8042', // Orange
-  '#A020F0', // Purple
-  '#FF1493', // Deep Pink
-  '#32CD32', // Lime Green
-  '#DC143C', // Crimson
-  '#00BFFF', // Deep Sky Blue
-  '#FF6347', // Tomato
-  '#8A2BE2', // Blue Violet
-  '#20B2AA', // Light Sea Green
-  '#FFD700', // Gold
-  '#6495ED', // Cornflower Blue
-  '#FF69B4', // Hot Pink
-  '#2E8B57', // Sea Green
-  '#BA55D3', // Medium Orchid
-  '#4169E1', // Royal Blue
-  '#F08080', // Light Coral
-  '#6A5ACD', // Slate Blue
-];
 
-const renderCustomizedLabel = ({
-  cx, cy, midAngle, innerRadius, outerRadius,
-  percent, name, payload
-}) => {
-
-  if (name == null) return null;
-
-  if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
-    return null;
-  }
-
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.35;
-  const x = Number(cx) + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-  const y = Number(cy) + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-
-  return (
-    <text
-      x={x}
-      y={y}
-      fill="#38231b"
-      textAnchor="middle"
-      dominantBaseline="central"
-      style={{ fontWeight: 'bold', cursor: 'pointer' }}
-      fontSize={12}
-      onClick={(event) => {
-        event.stopPropagation();
-        handleClickPie({ payload });
-      }}
-    >
-      <tspan x={x} dy="-0.5em">
-        {name.includes('/') ? name.split('/')[0] : name}
-      </tspan>
-
-      <tspan x={x} dy="1.2em">
-        {name.includes('/') ? name.split('/')[1] : ''}
-        {' '}{((percent ?? 1) * 100).toFixed(0)}%
-      </tspan>
-    </text>
-  );
-};
-
-
-const MyCustomPie = (props) => {
-  const p = useActiveTooltipDataPoints();
-  const isAnyPieActive = useIsTooltipActive();
-  const isThisPieActive = isAnyPieActive && props.payload === p?.[0];
-
-  let fillOpacity;
-
-  if (isAnyPieActive && !isThisPieActive) {
-    fillOpacity = 0.5;
-  } else {
-    fillOpacity = 1;
-  }
-
-  return (
-    <Sector
-      {...props}
-      fill={COLORS[props.index % COLORS.length]}
-      stroke="none"
-      fillOpacity={fillOpacity}
-      style={{ transition: 'fill-opacity 0.3s ease', cursor: 'pointer' }}
-
-    />
-  );
-};
-
-const handleClickPie = (data) => {
-    console.log('Selected:', data.payload);
-    // console.log('Name:', data.name);
-    // console.log('Total:', data.payload.value);
-    console.log('PAYLOAD:', data.payload);
-
-    ExibeBar(data.payload.id, data.payload.option);
-    setTitulo(data.payload.name)
-    //setIdBar(data.payload.id)
-    //setDescricao(data.payload.option)
-
-    // Later:
-    // setItemSelecionado(data);
-    // setOpenmodal(true);
-};
-
-const PieChartWithCustomizedLabel = ({data,isAnimationActive = true}) => {
-  console.log('Dados do gráfico:', data);
-  return (
-    <PieChart
-      style={{
-        width: '100%',
-        maxWidth: '500px',
-        maxHeight: '80vh',
-        aspectRatio: 1
-      }}
-      responsive
-    >
-      <Pie
-        data={data}
-        labelLine={false}
-        label={renderCustomizedLabel}
-        dataKey="value"
-        isAnimationActive={isAnimationActive}
-        //isAnimationActive={false}
-        shape={MyCustomPie}
-        onClick={handleClickPie}
-        style={{ cursor: 'pointer' }}
-      />
-
-      <Legend content={<MinhaLegenda />} />
-
-      {/* <RechartsDevtools /> */}
-    </PieChart>
-  );
-}
-
-const MinhaLegenda = ({ payload }) => {
-  return (
-    <div className="d-flex flex-row flex-wrap justify-content-center mt-3">
-      {payload.map((item, index) => (
-        <div
-          key={index}
-          className="d-flex align-items-center me-2 mb-1"
-          style={{ fontSize: 14 }}
-        >
-          <span
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: COLORS[index % COLORS.length],
-              display: 'inline-block',
-              marginRight: 6,
-              borderRadius: 2
-            }}
-          />
-
-          <span style={{ color: '#000' }}>
-            {item.value}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const SimpleBarChart = ({data,tipo}) => {
-  return (
-    <BarChart
-      //style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
-      style={{
-          width: '100%',
-          maxWidth: '700px',
-          height: '250px',
-      }}
-      responsive
-      data={data}
-      margin={{
-        top: 5,
-        right: 0,
-        left: 0,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid />
-      <XAxis dataKey="name" fontSize={11} />
-      <YAxis width="auto" fontSize={11} />
-      <Tooltip />
-      {/* <Legend /> */}
-      {
-        tipo === 'faixa'
-            ? (
-                <Bar
-                    dataKey="value"
-                    radius={[10, 10, 0, 0]}
-                    shape={(props) => (
-                        <Rectangle
-                            {...props}
-                            fill={COLORS[props.index % COLORS.length]}
-                        />
-                    )}
-                />
-            )
-            : (
-                <Bar
-                    dataKey="value"
-                    radius={[10, 10, 0, 0]}
-                    shape={(props) => (
-                        <Rectangle
-                            {...props}
-                            fill={props.name === 'Masculino'
-                                ? '#0d6efd'
-                                : '#e83e8c'}
-                        />
-                    )}
-                />
-            )
-      }
-      {/* <Bar dataKey="y" radius={[10, 10, 0, 0]} /> */}
-      {/* <RechartsDevtools /> */}
-    </BarChart>
-  );
-};
-
-const ExibeBar =(id,descricao) =>{
-
-   setLoadbar(true)
-   axios.get(`${endpoint}/vtratamento?drill=S&descricao=${encodeURIComponent(descricao)}&id=${id}&ano=${ano}&mes=${mes}`,{
-         headers: {
-             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + token, //--> Dentro do Env <--//
-         },
-   })
-   .then((result) => {
-        setLoadbar(false)
-        setData(result.data);
-
-    })
-}
 
 
     const ImageHeader = () =>{
@@ -704,6 +771,9 @@ const ExibeBar =(id,descricao) =>{
                             <CCardBody>
                                 <CRow className='mb-3'>
                                     <CCol md={1}>
+                                        { loadpage
+                                        ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                        : (
                                         <CFormSelect
                                             size="sm"
                                             label="Anos"
@@ -717,21 +787,26 @@ const ExibeBar =(id,descricao) =>{
                                             {listaanos.map(item =>
                                                 <option key={item} value={item}>{item}</option>
                                             )}
-                                        </CFormSelect>
+                                        </CFormSelect>)}
                                     </CCol>
                                     <CCol md={2}>
+                                        { loadpage
+                                        ? (<div style={style_placeholder}><CPlaceholder className='grad68full' xs={12} size="lg"/></div>)
+                                        : (
                                         <CFormSelect
                                             size="sm"
+                                            id="idmes"
                                             label="Meses"
                                             value={mes}
                                             onChange={e => setMes(e.target.value)}
                                             disabled={!ano}
                                         >
                                             <option value="">Selecione o mês</option>
+                                            <option value="todos">Todos</option>
                                             {listameses.map(item =>
                                                 <option key={item} value={item}>{item}</option>
                                             )}
-                                        </CFormSelect>
+                                        </CFormSelect>)}
                                     </CCol>
                                     <CCol md={4}>
                                         { loadpage
@@ -753,7 +828,19 @@ const ExibeBar =(id,descricao) =>{
                                 <CRow className="align-items-center">
                                     <CCol md={6}>
                                             {grupoAtual === grupo && dadosGrafico1.length > 0 && valida === true ? (
-                                                <PieChartWithCustomizedLabel data={dadosGrafico1} />
+                                                <>
+                                                {titulogrupo != null &&  <CFormLabel className="mb-2">{'Contexto: ' + titulogrupo}</CFormLabel>}
+                                                <PieChartWithCustomizedLabel
+                                                   setLoadbar={setLoadbar}
+                                                   mes={mes}
+                                                   ano={ano}
+                                                   data={dadosGrafico1}
+                                                   endpoint={endpoint}
+                                                   token={token}
+                                                   setData={setData}
+                                                   setTitulo={setTitulo}
+                                                />
+                                                </>
                                             ) : (
                                                 <div
                                                     className="d-flex justify-content-center align-items-center"
