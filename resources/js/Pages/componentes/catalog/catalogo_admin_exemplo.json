@@ -1118,6 +1118,28 @@
           }
         }
       ]
+    },
+    {
+      "id": "graficos",
+      "name": "Graficos",
+      "context": [],
+      "functionalities": [
+        {
+          "id": "acessar_graficos",
+          "name": "Gráficos",
+          "description": "Acessar a funcionalidade Gráficos",
+          "tags": [
+            "graficos"
+          ],
+          "screenComponents": [
+            "GrafEntrevistas",
+            "GrafTratamentos"
+          ],
+          "onClick": {
+            "functionality": "GrafEntrevistas"
+          }
+        }
+      ]
     }
   ]
 }
